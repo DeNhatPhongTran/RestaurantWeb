@@ -11,7 +11,6 @@ Dự án này là ứng dụng web fullstack sử dụng:
 - **Backend port**: 5000
 - **Frontend port**: 3000
 
-Mục tiêu: Người mới vào dự án chỉ cần Docker là chạy được toàn bộ hệ thống.
 
 ---
 
@@ -22,6 +21,7 @@ Mục tiêu: Người mới vào dự án chỉ cần Docker là chạy được
 - Chọn bản **amd64** nếu máy Intel/AMD, **arm64** nếu Mac M1/M2.
 - Cài đặt và bật Docker Desktop.
 - Tải Mongodb Compasss: https://www.mongodb.com/try/download/compass
+- Connect đường link URI của mongo từ sheet
 
 
 ### 2.2 Linux
@@ -33,8 +33,8 @@ sudo apt install docker.io docker-compose-plugin
 docker -v
 docker compose version
 
-### Build docker 
-docker-compose build
-
 ### Chạy dự án
+- Tại thư mục frontend, backend, tạo thêm .env, chạy npm install
+- Nội dung .env được gửi trong sheet
+
 docker-compose up
