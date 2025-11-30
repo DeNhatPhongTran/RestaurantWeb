@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: my-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - restaurant-network
+
+
+  backend:
+    build: ./backend
+    container_name: web-backend
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      MONGO_URI: ${MONGO_URI}
+    depends_on:
+      - mongo
+    networks:
+      - restaurant-network
+    restart: on-failure
+
+  frontend:
+    build: ./_frontend
+    container_name: web-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - restaurant-network
+    restart: on-failure
+
+volumes:
+  mongo-data:
+
+networks:
+  restaurant-network:
+    driver: bridge
