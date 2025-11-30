@@ -10,15 +10,15 @@ export const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log(" MongoDB connected successfully: ", MONGO_URI);
-    console.log("Connected DB name:", mongoose.connection.name);
-    console.log("Connected host:", mongoose.connection.host);
-    console.log("Connected port:", mongoose.connection.port);
+    // console.log(" MongoDB connected successfully: ", MONGO_URI);
+    // console.log("Connected DB name:", mongoose.connection.name);
+    // console.log("Connected host:", mongoose.connection.host);
+    // console.log("Connected port:", mongoose.connection.port);
 
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log("Collections found:", collections.map(c => c.name));
 
-    await add_init();
+    // await add_init();
   } catch (err) {
     console.error(" MongoDB connection failed:", err.message);
     process.exit(1);
