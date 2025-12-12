@@ -1,8 +1,20 @@
-export default function App() {
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import ForgotPassword from './pages/ForgotPassword';
+import Profile from './pages/Profile';
+import Home from './pages/Home';
+
+function App() {
   return (
-    <div>
-      <h1>Restaurant Web Frontend</h1>
-      <p>Welcome to Restaurant Management System</p>
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </Router>
+  );
 }
+
+export default App;
