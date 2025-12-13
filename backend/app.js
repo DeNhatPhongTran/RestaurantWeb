@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./database/db_connect.js";
 import authRoutes from "./routes/auth.js";
+import menuRoutes from "./routes/menu.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/menu", menuRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {
