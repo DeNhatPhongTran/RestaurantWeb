@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/Tabs'
@@ -23,6 +24,8 @@ const recipes = [
 ]
 
 export default function Home() {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100">
       {/* Header */}
@@ -53,6 +56,12 @@ export default function Home() {
 
             {/* Search & Filter Row */}
             <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+              <Button 
+                onClick={() => navigate('/login')}
+                className="sm:w-auto bg-orange-500 hover:bg-orange-600"
+              >
+                Login
+              </Button>
               <Input placeholder="Search Dishes..." className="w-full sm:flex-1" />
               <Button className="sm:w-auto">Search</Button>
             </div>
