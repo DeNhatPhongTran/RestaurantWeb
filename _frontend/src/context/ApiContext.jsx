@@ -73,12 +73,12 @@ export function ApiProvider({ children }) {
     }
   }
 
-  const register = async (name, email, password, phone = '') => {
+  const register = async (fullname, username, password, phone = '') => {
     setLoading(true)
     try {
       const result = await apiCall('/api/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password, phone })
+        body: JSON.stringify({ fullname, username, password, phone })
       })
 
       if (result.success) {
@@ -93,12 +93,12 @@ export function ApiProvider({ children }) {
     }
   }
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     setLoading(true)
     try {
       const result = await apiCall('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password })
       })
 
       if (result.success) {
@@ -140,12 +140,12 @@ export function ApiProvider({ children }) {
     }
   }
 
-  const updateUser = async (name, phone) => {
+  const updateUser = async (fullname, phone) => {
     setLoading(true)
     try {
       const result = await apiCall('/api/auth/me', {
         method: 'PUT',
-        body: JSON.stringify({ name, phone })
+        body: JSON.stringify({ fullname, phone })
       })
 
       if (result.success) {

@@ -7,12 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { apiUrl, login, user, loading } = useApi()
-  const [email, setEmail] = useState('')
+  const { apiUrl, login, register, user, loading } = useApi()
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isRegistering, setIsRegistering] = useState(false)
-  const [name, setName] = useState('')
+  const [fullname, setFullname] = useState('')
+  const [phone, setPhone] = useState('')
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -25,17 +26,35 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
 
-    if (!email || !password) {
+    if (!username || !password) {
       setError('Please fill in all fields')
       return
     }
 
-    const result = await login(email, password)
+    const result = await login(username, password)
 
     if (result.success) {
       navigate('/')
     } else {
       setError(result.error || 'Login failed')
+    }
+  }
+
+  const handleRegister = async (e) => {
+    e.preventDefault()
+    setError('')
+
+    if (!fullname || !username || !password) {
+      setError('Please fill in all fields')
+      return
+    }
+
+    const result = await register(fullname, username, password, phone)
+
+    if (result.success) {
+      navigate('/')
+    } else {
+      setError(result.error || 'Registration failed')
     }
   }
 
@@ -52,7 +71,7 @@ export default function LoginPage() {
             <strong>🔗 API:</strong> {apiUrl.replace('http://', '')}
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={isRegistering ? handleRegister : handleLogin} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm border border-red-200">
                 {error}
@@ -60,24 +79,36 @@ export default function LoginPage() {
             )}
 
             {isRegistering && (
-              <div>
-                <label className="block text-sm font-medium mb-2">Full Name</label>
-                <Input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your name"
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Full Name</label>
+                  <Input
+                    type="text"
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
+                    placeholder="Your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Phone (Optional)</label>
+                  <Input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Your phone number"
+                  />
+                </div>
+              </>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">Username</label>
               <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="user@example.com"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Choose a username"
               />
             </div>
 
@@ -101,8 +132,12 @@ export default function LoginPage() {
                 onClick={() => {
                   setIsRegistering(!isRegistering)
                   setError('')
+                  setUsername('')
+                  setPassword('')
+                  setFullname('')
+                  setPhone('')
                 }}
-                className="text-primary hover:underline"
+                className="text-blue-600 hover:underline"
               >
                 {isRegistering ? 'Back to Login' : 'Create an account'}
               </button>
@@ -113,7 +148,7 @@ export default function LoginPage() {
             <p>
               <strong>Demo Login:</strong>
               <br />
-              manager@restaurant.com / password
+              Username: manager1 / Password: 123
             </p>
             <p>
               💡 Use 🔌 API button to switch backend endpoints

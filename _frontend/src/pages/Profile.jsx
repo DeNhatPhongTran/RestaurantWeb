@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 export default function ProfilePage() {
   const { user, loading, updateUser } = useApi()
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    fullname: user?.fullname || '',
     phone: user?.phone || ''
   })
   const [message, setMessage] = useState('')
@@ -25,7 +25,7 @@ export default function ProfilePage() {
     setError('')
     setMessage('')
 
-    const result = await updateUser(formData.name, formData.phone)
+    const result = await updateUser(formData.fullname, formData.phone)
 
     if (result.success) {
       setMessage('Profile updated successfully!')
@@ -57,22 +57,22 @@ export default function ProfilePage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Name</label>
+                <label className="block text-sm font-medium mb-2">Full Name</label>
                 <Input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="fullname"
+                  value={formData.fullname}
                   onChange={handleChange}
-                  placeholder="Your name"
+                  placeholder="Your full name"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
+                <label className="block text-sm font-medium mb-2">Username</label>
                 <Input
-                  type="email"
-                  value={user?.email || ''}
-                  placeholder="your@email.com"
+                  type="text"
+                  value={user?.username || ''}
+                  placeholder="your username"
                   disabled
                 />
               </div>
