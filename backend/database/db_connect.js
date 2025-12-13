@@ -5,10 +5,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/restaurant
 
 export const connectDB = async () => {
   try {
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGO_URI);
 
     console.log(" MongoDB connected successfully: ", MONGO_URI);
     console.log("Connected DB name:", mongoose.connection.name);
@@ -18,7 +15,7 @@ export const connectDB = async () => {
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log("Collections found:", collections.map(c => c.name));
 
-    await add_init();
+    // await add_init();
   } catch (err) {
     console.error(" MongoDB connection failed:", err.message);
     process.exit(1);
