@@ -4,18 +4,30 @@ const ApiContext = createContext()
 
 export function ApiProvider({ children }) {
   const [apiUrl, setApiUrl] = useState(() => {
-    // Load from localStorage or default to localhost
     return localStorage.getItem('apiUrl') || 'http://localhost:5000'
+  })
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('token') || null
   })
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('user')
     return saved ? JSON.parse(saved) : null
   })
+  const [loading, setLoading] = useState(false)
 
   // Save API URL to localStorage
   useEffect(() => {
     localStorage.setItem('apiUrl', apiUrl)
   }, [apiUrl])
+
+  // Save token to localStorage
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token)
+    } else {
+      localStorage.removeItem('token')
+    }
+  }, [token])
 
   // Save user to localStorage
   useEffect(() => {
@@ -26,30 +38,143 @@ export function ApiProvider({ children }) {
     }
   }, [user])
 
-  const login = async (email, password) => {
+  // Verify token on mount
+  useEffect(() => {
+    if (token) {
+      verifyToken()
+    }
+  }, [apiUrl])
+
+  const apiCall = async (endpoint, options = {}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers
+    }
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+
     try {
-      const response = await fetch(`${apiUrl}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+      const response = await fetch(`${apiUrl}${endpoint}`, {
+        ...options,
+        headers
       })
+
       const data = await response.json()
-      if (response.ok) {
-        setUser(data.user)
-        return { success: true, user: data.user }
+
+      if (!response.ok) {
+        throw new Error(data.message || 'API request failed')
       }
-      return { success: false, error: data.message || 'Login failed' }
+
+      return { success: true, data }
     } catch (error) {
       return { success: false, error: error.message }
     }
   }
 
-  const logout = () => {
-    setUser(null)
+  const register = async (name, email, password, phone = '') => {
+    setLoading(true)
+    try {
+      const result = await apiCall('/api/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, phone })
+      })
+
+      if (result.success) {
+        setToken(result.data.token)
+        setUser(result.data.user)
+        return { success: true, user: result.data.user }
+      }
+
+      return { success: false, error: result.error }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const login = async (email, password) => {
+    setLoading(true)
+    try {
+      const result = await apiCall('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      })
+
+      if (result.success) {
+        setToken(result.data.token)
+        setUser(result.data.user)
+        return { success: true, user: result.data.user }
+      }
+
+      return { success: false, error: result.error }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const logout = async () => {
+    setLoading(true)
+    try {
+      await apiCall('/api/auth/logout', { method: 'POST' })
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      setToken(null)
+      setUser(null)
+      setLoading(false)
+    }
+  }
+
+  const verifyToken = async () => {
+    if (!token) return
+
+    const result = await apiCall('/api/auth/me')
+
+    if (result.success) {
+      setUser(result.data.user)
+    } else {
+      // Token is invalid, clear it
+      setToken(null)
+      setUser(null)
+    }
+  }
+
+  const updateUser = async (name, phone) => {
+    setLoading(true)
+    try {
+      const result = await apiCall('/api/auth/me', {
+        method: 'PUT',
+        body: JSON.stringify({ name, phone })
+      })
+
+      if (result.success) {
+        setUser(result.data.user)
+        return { success: true, user: result.data.user }
+      }
+
+      return { success: false, error: result.error }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <ApiContext.Provider value={{ apiUrl, setApiUrl, user, setUser, login, logout }}>
+    <ApiContext.Provider
+      value={{
+        apiUrl,
+        setApiUrl,
+        user,
+        token,
+        loading,
+        login,
+        register,
+        logout,
+        updateUser,
+        verifyToken,
+        apiCall
+      }}
+    >
       {children}
     </ApiContext.Provider>
   )

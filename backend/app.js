@@ -1,13 +1,27 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./database/db_connect.js";
+import authRoutes from "./routes/auth.js";
 
 const app = express();
+
+// Middleware
+app.use(cors());
 app.use(express.json());
 
 await connectDB();
 
+// Routes
 app.get("/", (req, res) => {
-  res.send("Backend is running!");
+  res.json({ message: "Backend is running!" });
+});
+
+app.use("/api/auth", authRoutes);
+
+// Error handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal server error" });
 });
 
 app.listen(5000, () => {

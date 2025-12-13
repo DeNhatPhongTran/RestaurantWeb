@@ -5,12 +5,13 @@ import { Input } from '../components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 
 export default function ProfilePage() {
-  const { user } = useApi()
+  const { user, loading, updateUser } = useApi()
   const [formData, setFormData] = useState({
     name: user?.name || '',
-    email: user?.email || '',
     phone: user?.phone || ''
   })
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     setFormData({
@@ -21,8 +22,16 @@ export default function ProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // Handle profile update
-    console.log('Updating profile:', formData)
+    setError('')
+    setMessage('')
+
+    const result = await updateUser(formData.name, formData.phone)
+
+    if (result.success) {
+      setMessage('Profile updated successfully!')
+    } else {
+      setError(result.error || 'Failed to update profile')
+    }
   }
 
   return (
@@ -35,6 +44,17 @@ export default function ProfilePage() {
             <CardTitle>Profile Information</CardTitle>
           </CardHeader>
           <CardContent>
+            {message && (
+              <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-md text-sm border border-green-200">
+                {message}
+              </div>
+            )}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm border border-red-200">
+                {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Name</label>
@@ -51,9 +71,7 @@ export default function ProfilePage() {
                 <label className="block text-sm font-medium mb-2">Email</label>
                 <Input
                   type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={user?.email || ''}
                   placeholder="your@email.com"
                   disabled
                 />
@@ -70,21 +88,27 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <Button className="w-full">Save Changes</Button>
+              <Button className="w-full" disabled={loading}>
+                {loading ? 'Saving...' : 'Save Changes'}
+              </Button>
             </form>
           </CardContent>
         </Card>
 
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Account Settings</CardTitle>
+            <CardTitle>Account Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 text-sm">
             <div>
-              <p className="text-sm text-gray-600 mb-2">Change Password</p>
-              <Button variant="outline" className="w-full text-left">
-                Update Password
-              </Button>
+              <p className="text-gray-600">
+                <strong>User ID:</strong> {user?.id}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-600">
+                <strong>Role:</strong> {user?.role}
+              </p>
             </div>
           </CardContent>
         </Card>

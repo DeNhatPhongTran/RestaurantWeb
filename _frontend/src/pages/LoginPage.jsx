@@ -7,11 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { apiUrl, login, user } = useApi()
+  const { apiUrl, login, user, loading } = useApi()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [name, setName] = useState('')
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -20,36 +21,53 @@ export default function LoginPage() {
     }
   }, [user, navigate])
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     setError('')
-    setLoading(true)
+
+    if (!email || !password) {
+      setError('Please fill in all fields')
+      return
+    }
 
     const result = await login(email, password)
-    setLoading(false)
 
     if (result.success) {
       navigate('/')
     } else {
-      setError(result.error)
+      setError(result.error || 'Login failed')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 flex items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Login to Poodb</CardTitle>
+          <CardTitle className="text-center text-2xl">
+            {isRegistering ? 'Create Account' : 'Login to Poodb'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-4 p-3 bg-blue-50 rounded-md text-sm text-gray-700">
-            <strong>API:</strong> {apiUrl.replace('http://', '')}
+            <strong>🔗 API:</strong> {apiUrl.replace('http://', '')}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm">
+              <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm border border-red-200">
                 {error}
+              </div>
+            )}
+
+            {isRegistering && (
+              <div>
+                <label className="block text-sm font-medium mb-2">Full Name</label>
+                <Input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                />
               </div>
             )}
 
@@ -60,7 +78,6 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@example.com"
-                required
               />
             </div>
 
@@ -71,27 +88,36 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                required
               />
             </div>
 
             <Button className="w-full" disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Loading...' : isRegistering ? 'Create Account' : 'Login'}
             </Button>
 
             <div className="text-center text-sm">
-              <p className="text-gray-600">
-                Demo credentials:
-                <br />
-                <code className="bg-gray-100 px-2 py-1 rounded">manager@restaurant.com</code>
-                <br />
-                <code className="bg-gray-100 px-2 py-1 rounded">password</code>
-              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsRegistering(!isRegistering)
+                  setError('')
+                }}
+                className="text-primary hover:underline"
+              >
+                {isRegistering ? 'Back to Login' : 'Create an account'}
+              </button>
             </div>
           </form>
 
-          <div className="mt-4 p-3 bg-yellow-50 rounded-md text-xs text-gray-700">
-            💡 Use the API button in the header to switch between different backend endpoints
+          <div className="mt-4 p-3 bg-yellow-50 rounded-md text-xs text-gray-700 space-y-2">
+            <p>
+              <strong>Demo Login:</strong>
+              <br />
+              manager@restaurant.com / password
+            </p>
+            <p>
+              💡 Use 🔌 API button to switch backend endpoints
+            </p>
           </div>
         </CardContent>
       </Card>
