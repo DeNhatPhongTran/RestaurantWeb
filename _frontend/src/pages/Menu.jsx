@@ -37,7 +37,7 @@ export default function MenuPage() {
     }
 
     fetchMenuItems()
-  }, [apiCall])
+  }, [])
 
   // Filter items by category
   const filteredItems = selectedCategory === "all" 

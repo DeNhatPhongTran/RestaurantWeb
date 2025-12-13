@@ -4,6 +4,29 @@ import Category from "../database/schema/category_schema.js";
 
 const router = express.Router();
 
+// IMPORTANT: Specific routes must come BEFORE parameterized routes (:id)
+// Otherwise GET /categories/all/list will be treated as GET /:id with id="categories"
+
+// GET all categories (helper for frontend) - MUST be before /:id route
+router.get("/categories/all", async (req, res) => {
+  try {
+    const categories = await Category.find()
+      .select("_id category_name");
+    
+    res.json({
+      success: true,
+      data: categories,
+      count: categories.length
+    });
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch categories"
+    });
+  }
+});
+
 // GET all menu items with category details
 router.get("/", async (req, res) => {
   try {
@@ -25,7 +48,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET menu items by category
+// GET menu items by category - MUST be before generic /:id route
 router.get("/category/:categoryId", async (req, res) => {
   try {
     const items = await MenuItem.find({ category: req.params.categoryId })
@@ -46,7 +69,7 @@ router.get("/category/:categoryId", async (req, res) => {
   }
 });
 
-// GET single menu item by ID
+// GET single menu item by ID - MUST be after specific routes
 router.get("/:id", async (req, res) => {
   try {
     const item = await MenuItem.findById(req.params.id)
@@ -171,26 +194,6 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({
       success: false,
       error: "Failed to delete menu item"
-    });
-  }
-});
-
-// GET all categories (helper for frontend)
-router.get("/categories/all/list", async (req, res) => {
-  try {
-    const categories = await Category.find()
-      .select("_id name");
-    
-    res.json({
-      success: true,
-      data: categories,
-      count: categories.length
-    });
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch categories"
     });
   }
 });
