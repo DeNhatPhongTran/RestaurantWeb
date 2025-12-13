@@ -1,6 +1,6 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs'
 import User from '../database/schema/user_schema.js'
 import Role from '../database/schema/role_schema.js'
 
@@ -11,22 +11,29 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
   if (!token) {
-    return res.status(401).json({ message: 'No token provided' })
+    return res.status(401).json({ 
+      success: false,
+      message: 'No token provided' 
+    })
   }
   try {
     const decoded = jwt.verify(token, JWT_SECRET)
     req.userId = decoded.userId
     next()
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' })
+    res.status(401).json({ 
+      success: false,
+      message: 'Invalid token' 
+    })
   }
 }
 
-// Register
+// POST /api/auth/register - Register new user
 router.post('/register', async (req, res) => {
   try {
     const { fullname, username, password, phone } = req.body
 
+    // Validate required fields
     if (!fullname || !username || !password) {
       return res.status(400).json({ 
         success: false,
@@ -34,7 +41,7 @@ router.post('/register', async (req, res) => {
       })
     }
 
-    // Check if user already exists
+    // Check if username already exists
     const existingUser = await User.findOne({ username })
     if (existingUser) {
       return res.status(400).json({ 
@@ -67,7 +74,7 @@ router.post('/register', async (req, res) => {
     await user.save()
     await user.populate('role', 'role_name')
 
-    // Generate token
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '24h' })
 
     res.status(201).json({
@@ -92,11 +99,12 @@ router.post('/register', async (req, res) => {
   }
 })
 
-// Login
+// POST /api/auth/login - Login user
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body
 
+    // Validate required fields
     if (!username || !password) {
       return res.status(400).json({ 
         success: false,
@@ -104,7 +112,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // Find user
+    // Find user by username
     const user = await User.findOne({ username }).populate('role', 'role_name')
     if (!user) {
       return res.status(401).json({ 
@@ -113,7 +121,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // Check password
+    // Compare password with hashed password
     const passwordMatch = await bcrypt.compare(password, user.password_hash)
     if (!passwordMatch) {
       return res.status(401).json({ 
@@ -122,7 +130,7 @@ router.post('/login', async (req, res) => {
       })
     }
 
-    // Generate token
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '24h' })
 
     res.json({
@@ -133,6 +141,24 @@ router.post('/login', async (req, res) => {
         fullname: user.fullname,
         username: user.username,
         phone: user.phone,
+        role: user.role
+      },
+      token
+    })
+  } catch (error) {
+    console.error('Login error:', error)
+    res.status(500).json({ 
+      success: false,
+      message: 'Login failed', 
+      error: error.message 
+    })
+  }
+})
+
+// GET /api/auth/me - Get current user info (requires token)
+router.get('/me', verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId)
       .select('-password_hash')
       .populate('role', 'role_name')
     
@@ -158,13 +184,15 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ 
       success: false,
       message: 'Failed to get user' 
-   
-      success: false,
-      message: 'Login failed', 
-      error: error.message 
     })
   }
-})fullname, phone } = req.body
+})
+
+// PUT /api/auth/me - Update current user info (requires token)
+router.put('/me', verifyToken, async (req, res) => {
+  try {
+    const { fullname, phone } = req.body
+    
     const user = await User.findByIdAndUpdate(
       req.userId,
       { fullname, phone },
@@ -188,10 +216,7 @@ router.post('/login', async (req, res) => {
         fullname: user.fullname,
         username: user.username,
         phone: user.phone,
-        role:
-    success: true,
-    message: 'Logged out successfully' 
- 
+        role: user.role
       }
     })
   } catch (error) {
@@ -199,33 +224,17 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ 
       success: false,
       message: 'Failed to update user' 
-   
-  try {
-    const { name, phone } = req.body
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { name, phone },
-      { new: true }
-    ).select('-password')
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' })
-    }
-
-    res.json({
-      message: 'User updated successfully',
-      user
     })
-  } catch (error) {
-    console.error('Update user error:', error)
-    res.status(500).json({ message: 'Failed to update user' })
   }
 })
 
-// Logout
+// POST /api/auth/logout - Logout user (requires token)
 router.post('/logout', verifyToken, (req, res) => {
-  // Token is stored on client, so logout just confirms the action
-  res.json({ message: 'Logged out successfully' })
+  // Token is stored on client side, so logout just confirms the action
+  res.json({ 
+    success: true,
+    message: 'Logged out successfully' 
+  })
 })
 
 export default router
