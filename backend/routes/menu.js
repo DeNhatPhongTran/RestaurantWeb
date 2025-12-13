@@ -4,17 +4,29 @@ import Category from "../database/schema/category_schema.js";
 
 const router = express.Router();
 
-// IMPORTANT: Specific routes must come BEFORE parameterized routes (:id)
-// Otherwise GET /categories/all/list will be treated as GET /:id with id="categories"
+// ============================================================================
+// ROUTES STRUCTURE:
+// GET  /api/menu/categories         - Get all categories
+// GET  /api/menu/items              - Get all menu items
+// GET  /api/menu/items/:id          - Get single menu item by ID
+// GET  /api/menu/items/by-category/:categoryId - Get items by category
+// POST /api/menu/items              - Create new menu item
+// PUT  /api/menu/items/:id          - Update menu item
+// DELETE /api/menu/items/:id        - Delete menu item
+// ============================================================================
 
-// GET all categories (helper for frontend) - MUST be before /:id route
-router.get("/categories/all", async (req, res) => {
+// IMPORTANT: Specific routes MUST come BEFORE parameterized routes (:id)
+// Order: /categories → /items/by-category/:categoryId → /items/:id
+
+// GET /api/menu/categories - Get all categories
+router.get("/categories", async (req, res) => {
   try {
     const categories = await Category.find()
       .select("_id category_name");
     
     res.json({
       success: true,
+      message: "Categories fetched successfully",
       data: categories,
       count: categories.length
     });
@@ -22,41 +34,22 @@ router.get("/categories/all", async (req, res) => {
     console.error("Error fetching categories:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to fetch categories"
+      message: "Failed to fetch categories",
+      error: error.message
     });
   }
 });
 
-// GET all menu items with category details
-router.get("/", async (req, res) => {
-  try {
-    const items = await MenuItem.find()
-      .populate("category", "name") // Populate category name
-      .select("_id name price image description status category");
-    
-    res.json({
-      success: true,
-      data: items,
-      count: items.length
-    });
-  } catch (error) {
-    console.error("Error fetching menu items:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch menu items"
-    });
-  }
-});
-
-// GET menu items by category - MUST be before generic /:id route
-router.get("/category/:categoryId", async (req, res) => {
+// GET /api/menu/items/by-category/:categoryId - Get items by category (BEFORE /:id)
+router.get("/items/by-category/:categoryId", async (req, res) => {
   try {
     const items = await MenuItem.find({ category: req.params.categoryId })
-      .populate("category", "name")
+      .populate("category", "category_name")
       .select("_id name price image description status category");
     
     res.json({
       success: true,
+      message: "Menu items by category fetched successfully",
       data: items,
       count: items.length
     });
@@ -64,45 +57,74 @@ router.get("/category/:categoryId", async (req, res) => {
     console.error("Error fetching menu items by category:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to fetch menu items by category"
+      message: "Failed to fetch menu items by category",
+      error: error.message
     });
   }
 });
 
-// GET single menu item by ID - MUST be after specific routes
-router.get("/:id", async (req, res) => {
+// GET /api/menu/items - Get all menu items with category details
+router.get("/items", async (req, res) => {
+  try {
+    const items = await MenuItem.find()
+      .populate("category", "category_name")
+      .select("_id name price image description status category");
+    
+    res.json({
+      success: true,
+      message: "All menu items fetched successfully",
+      data: items,
+      count: items.length
+    });
+  } catch (error) {
+    console.error("Error fetching menu items:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch menu items",
+      error: error.message
+    });
+  }
+});
+
+// GET /api/menu/items/:id - Get single menu item by ID (AFTER specific routes)
+router.get("/items/:id", async (req, res) => {
   try {
     const item = await MenuItem.findById(req.params.id)
-      .populate("category", "name");
+      .populate("category", "category_name");
     
     if (!item) {
       return res.status(404).json({
         success: false,
-        error: "Menu item not found"
+        message: "Menu item not found",
+        error: "Item with this ID does not exist"
       });
     }
     
     res.json({
       success: true,
+      message: "Menu item fetched successfully",
       data: item
     });
   } catch (error) {
     console.error("Error fetching menu item:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to fetch menu item"
+      message: "Failed to fetch menu item",
+      error: error.message
     });
   }
 });
 
-// POST create new menu item (admin only - optional role check)
-router.post("/", async (req, res) => {
+// POST /api/menu/items - Create new menu item (requires authentication)
+router.post("/items", async (req, res) => {
   try {
     const { name, price, image, description, category, status } = req.body;
     
+    // Validate required fields
     if (!name || !price || !category) {
       return res.status(400).json({
         success: false,
+        message: "Validation failed",
         error: "Name, price, and category are required"
       });
     }
@@ -117,24 +139,25 @@ router.post("/", async (req, res) => {
     });
     
     await newItem.save();
-    await newItem.populate("category", "name");
+    await newItem.populate("category", "category_name");
     
     res.status(201).json({
       success: true,
-      data: newItem,
-      message: "Menu item created successfully"
+      message: "Menu item created successfully",
+      data: newItem
     });
   } catch (error) {
     console.error("Error creating menu item:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to create menu item"
+      message: "Failed to create menu item",
+      error: error.message
     });
   }
 });
 
-// PUT update menu item
-router.put("/:id", async (req, res) => {
+// PUT /api/menu/items/:id - Update menu item (requires authentication)
+router.put("/items/:id", async (req, res) => {
   try {
     const { name, price, image, description, category, status } = req.body;
     
@@ -149,51 +172,55 @@ router.put("/:id", async (req, res) => {
         status
       },
       { new: true, runValidators: true }
-    ).populate("category", "name");
+    ).populate("category", "category_name");
     
     if (!item) {
       return res.status(404).json({
         success: false,
-        error: "Menu item not found"
+        message: "Menu item not found",
+        error: "Item with this ID does not exist"
       });
     }
     
     res.json({
       success: true,
-      data: item,
-      message: "Menu item updated successfully"
+      message: "Menu item updated successfully",
+      data: item
     });
   } catch (error) {
     console.error("Error updating menu item:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to update menu item"
+      message: "Failed to update menu item",
+      error: error.message
     });
   }
 });
 
-// DELETE menu item
-router.delete("/:id", async (req, res) => {
+// DELETE /api/menu/items/:id - Delete menu item (requires authentication)
+router.delete("/items/:id", async (req, res) => {
   try {
     const item = await MenuItem.findByIdAndDelete(req.params.id);
     
     if (!item) {
       return res.status(404).json({
         success: false,
-        error: "Menu item not found"
+        message: "Menu item not found",
+        error: "Item with this ID does not exist"
       });
     }
     
     res.json({
       success: true,
-      data: item,
-      message: "Menu item deleted successfully"
+      message: "Menu item deleted successfully",
+      data: item
     });
   } catch (error) {
     console.error("Error deleting menu item:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to delete menu item"
+      message: "Failed to delete menu item",
+      error: error.message
     });
   }
 });

@@ -15,19 +15,22 @@ export default function MenuPage() {
     const fetchMenuItems = async () => {
       try {
         setLoading(true)
-        const response = await apiCall("/menu")
+        const response = await apiCall("/menu/items")
+        
         if (response.success) {
           setMenuItems(response.data)
+          
           // Extract unique categories from menu items
           const uniqueCategories = {}
           response.data.forEach(item => {
             if (item.category) {
-              uniqueCategories[item.category._id] = item.category.name
+              uniqueCategories[item.category._id] = item.category.category_name
             }
           })
           setCategories(Object.entries(uniqueCategories).map(([id, name]) => ({ _id: id, name })))
+        } else {
+          setError(response.error || "Failed to load menu items")
         }
-        setError(null)
       } catch (err) {
         console.error("Error fetching menu items:", err)
         setError("Failed to load menu items. Please try again later.")
@@ -125,7 +128,7 @@ export default function MenuPage() {
                     </span>
                   </div>
                   {item.category && (
-                    <p className="text-sm text-gray-500 mt-1">{item.category.name}</p>
+                    <p className="text-sm text-gray-500 mt-1">{item.category.category_name}</p>
                   )}
                 </CardHeader>
                 <CardContent>
