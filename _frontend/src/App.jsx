@@ -24,11 +24,11 @@ function AppContent() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<MenuPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/blog" element={<BlogPage />} />
         
         {/* Protected routes - require user to be logged in */}
-        <Route path="/menu" element={<ProtectedRoute><MenuPage /></ProtectedRoute>} />
-        <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
-        <Route path="/blog" element={<ProtectedRoute><BlogPage /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         
         {/* Fallback */}
