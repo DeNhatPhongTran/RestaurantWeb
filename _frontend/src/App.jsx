@@ -1,8 +1,37 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ApiProvider, useApi } from './context/ApiContext';
+import Layout from './components/Layouts/Layout';
+import Home from './pages/Home/Home';
+import Menu from './pages/Menu';
+import Login from './pages/Login';
+import './styles/index.css';
+
+// Protected route wrapper
+function ProtectedRoute({ children }) {
+  const { user } = useApi()
+  return user ? children : <Navigate to="/login" replace />
+}
+
+function AppContent() {
+  return (
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<Login />}/>
+        </Routes>
+      </Layout>
+    </Router>
+  );
+}
+
 export default function App() {
   return (
-    <div>
-      <h1>Restaurant Web Frontend</h1>
-      <p>Welcome to Restaurant Management System</p>
-    </div>
-  )
+    <ApiProvider>
+      <AppContent />
+    </ApiProvider>
+  );
 }

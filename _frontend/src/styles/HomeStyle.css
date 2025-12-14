@@ -1,0 +1,594 @@
+/* Home Page Styles */
+
+:root {
+  --primary-color: #ee940d;
+  --secondary-color: #7a4f0d;
+  --accent-color: #f97316;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-light: #f9fafb;
+  --bg-white: #ffffff;
+  --border-radius: 12px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Section Base Styles */
+.section {
+  padding: 4rem 0;
+  background: var(--bg-white);
+}
+
+.section:nth-child(even) {
+  background: var(--bg-light);
+}
+
+.section__title {
+  font-size: 2.5rem;
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: 3rem;
+  font-weight: bold;
+
+  animation: slideInUp 0.8s ease;
+}
+
+/* Section 1 - Hero */
+.section1 {
+  background: radial-gradient(circle, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+
+  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/043/269/961/small_2x/open-flaming-charcoal-grill-with-various-food-items-cooking-on-it-showcasing-a-summer-grilling-barbecue-session-with-copy-space-photo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.section1__content {
+  max-width: 800px;
+}
+
+
+.section1__title {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  text-shadow:
+    -2px -2px 0 #000000,
+    2px -2px 0 #000000,
+    -2px 2px 0 #000000,
+    2px 2px 0 #000000;
+  animation: slideInDown 0.8s ease;
+  z-index: 1;
+}
+
+.section1__subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: white;
+  text-shadow:
+    -2px -2px 0 #000000,
+    2px -2px 0 #000000,
+    -2px 2px 0 #000000,
+    2px 2px 0 #000000;
+  animation: slideInUp 0.8s ease;
+}
+
+.section1__buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.section1__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 1;
+  transform: translate(100%, 0%);
+  /* căn giữa */
+
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(var(--slide-distance, -30px));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--slide-distance, 30px));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Buttons */
+.btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn__primary {
+  background: var(--accent-color);
+  color: white;
+}
+
+.btn__primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3);
+}
+
+.btn__secondary {
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+  padding: 0.7em 2.3em;
+  border-radius: 20px;
+  /* border: 3px solid #aa5200; */
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16), 0 3px 6px rgba (0, 0, 0, 0.1);
+  color: #ffffff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  z-index: 1;
+  background: #ff7b00;
+
+  animation: slideInUp 0.8s ease;
+
+}
+
+.btn__secondary::before {
+  transition: all 0.1s ease;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  opacity: 0;
+  content: '';
+  border-radius: 20px;
+  background-color: #f82905;
+  border: 3px solid #a71900;
+  z-index: -1;
+}
+
+.btn__secondary:hover,
+.btn__secondary:focus {
+  color: #ffffff;
+  transform: translateY(-3px);
+}
+
+.btn__secondary:hover::before,
+.btn__secondary:focus::before {
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transition: all 0.1s ease;
+}
+
+btn__secondary:active {
+  transform: scale(0.9)
+}
+
+/* Cards Grid */
+.cards__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease;
+}
+
+.card {
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card__image {
+  position: relative;
+  overflow: hidden;
+  height: 250px;
+}
+
+.card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card__image img {
+  transform: scale(1.1);
+}
+
+.card__badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent-color);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.card__body {
+  padding: 1.5rem;
+}
+
+.card__title {
+  font-size: 1.3rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.card__description {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.card__price {
+  font-size: 1.8rem;
+  color: var(--accent-color);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.card__button {
+  width: 100%;
+  padding: 0.8rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.card__button:hover {
+  background: var(--secondary-color);
+}
+
+/* Section 4 - Testimonials */
+.testimonials__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.testimonial__card {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid var(--accent-color);
+}
+
+.testimonial__stars {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial__comment {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.testimonial__name {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Section 5 - About */
+.section5__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.section5__text h2 {
+  font-size: 2.2rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.section5__text p {
+  color: var(--text-light);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.section5__image {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.section5__image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Section 6 - Chef */
+.chef__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+}
+
+.chef__image {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.chef__image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chef__info h3 {
+  font-size: 2rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.chef__title {
+  color: var(--accent-color);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.chef__bio {
+  color: var(--text-light);
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.chef__recommendation {
+  background: var(--bg-light);
+  padding: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+  border-radius: 8px;
+  color: var(--text-dark);
+  font-style: italic;
+}
+
+/* Section 7 - Newsletter */
+.section7 {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+}
+
+.section7 .section__title {
+  color: white;
+}
+
+.newsletter__content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.newsletter__content p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.newsletter__form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.newsletter__form input {
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  min-width: 300px;
+  font-size: 1rem;
+}
+
+.newsletter__form input::placeholder {
+  color: #999;
+}
+
+/* Footer */
+.footer {
+  background: var(--text-dark);
+  color: white;
+  padding: 3rem 0 0;
+}
+
+.footer__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer__section h3,
+.footer__section h4 {
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  font-weight: 600;
+
+}
+
+.footer__section p {
+  color: #d1d5db;
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+}
+
+.footer__section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer__section ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer__section a {
+  color: #d1d5db;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer__section a:hover {
+  color: var(--accent-color);
+}
+
+.footer__bottom {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__bottom p {
+  color: #d1d5db;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section {
+    padding: 2.5rem 0;
+  }
+
+  .section1__title {
+    font-size: 2.5rem;
+  }
+
+  .section1__subtitle {
+    font-size: 1.1rem;
+  }
+
+  .section1__buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .section__title {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .cards__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .section5__content,
+  .chef__content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .newsletter__form input {
+    min-width: 100%;
+  }
+
+  .footer__container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .section1__title {
+    font-size: 2rem;
+  }
+
+  .section1 {
+    min-height: 400px;
+  }
+
+  .section__title {
+    font-size: 1.5rem;
+  }
+
+  .card__image {
+    height: 200px;
+  }
+
+  .chef__info h3 {
+    font-size: 1.5rem;
+  }
+}
