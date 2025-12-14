@@ -1,13 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { ApiProvider, useApi } from './context/ApiContext'
-import { Navigation } from './components/Navigation'
-import LoginPage from './pages/LoginPage'
-import Home from './pages/Home'
-import ForgotPassword from './pages/ForgotPassword'
-import Profile from './pages/Profile'
-import MenuPage from './pages/Menu'
-import AboutPage from './pages/About'
-import BlogPage from './pages/Blog'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ApiProvider, useApi } from './context/ApiContext';
+import Layout from './components/Layouts/Layout';
+import Home from './pages/Home/Home';
+import Menu from './pages/Menu';
+import './styles/index.css';
+import {LoginForm} from './components/login-form';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {
@@ -18,24 +16,16 @@ function ProtectedRoute({ children }) {
 function AppContent() {
   return (
     <Router>
-      <Navigation />
-      <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<MenuPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        
-        {/* Protected routes - require user to be logged in */}
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/login" element={<LoginForm />}/>
+        </Routes>
+      </Layout>
     </Router>
-  )
+  );
 }
 
 export default function App() {
@@ -43,5 +33,5 @@ export default function App() {
     <ApiProvider>
       <AppContent />
     </ApiProvider>
-  )
+  );
 }

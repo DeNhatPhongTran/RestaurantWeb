@@ -1,21 +1,50 @@
-import React from 'react'
+import * as React from "react"
 
-export function Card({ children, className = '' }) {
-  return <div className={`bg-white rounded-xl p-4 shadow-sm ${className}`}>{children}</div>
-}
+import { cn } from "@/lib/utils"
 
-export function CardHeader({ children, className = '' }) {
-  return <div className={`mb-4 ${className}`}>{children}</div>
-}
+const Card = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)}
+    {...props} />
+))
+Card.displayName = "Card"
 
-export function CardContent({ children, className = '' }) {
-  return <div className={className}>{children}</div>
-}
+const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props} />
+))
+CardHeader.displayName = "CardHeader"
 
-export function CardTitle({ children, className = '' }) {
-  return <h3 className={`font-semibold text-lg ${className}`}>{children}</h3>
-}
+const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+    {...props} />
+))
+CardTitle.displayName = "CardTitle"
 
-export function CardDescription({ children, className = '' }) {
-  return <p className={`text-sm text-gray-600 ${className}`}>{children}</p>
-}
+const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm text-muted-foreground", className)}
+    {...props} />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props} />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
