@@ -34,7 +34,7 @@
   margin-bottom: 3rem;
   font-weight: bold;
 
-  animation: slideInUp 0.8s ease; 
+  animation: slideInUp 0.8s ease;
 }
 
 /* Section 1 - Hero */
@@ -47,6 +47,11 @@
   justify-content: center;
   text-align: center;
   overflow: hidden;
+
+  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/043/269/961/small_2x/open-flaming-charcoal-grill-with-various-food-items-cooking-on-it-showcasing-a-summer-grilling-barbecue-session-with-copy-space-photo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .section1__content {
@@ -58,6 +63,12 @@
   font-size: 4rem;
   margin-bottom: 1rem;
   font-weight: bold;
+  color: white;
+  text-shadow:
+    -1px -1px 0 #f87a05,
+     1px -1px 0 #f87a05,
+    -1px  1px 0 #f87a05,
+     1px  1px 0 #f87a05;
   animation: slideInDown 0.8s ease;
   z-index: 1;
 }
@@ -65,7 +76,12 @@
 .section1__subtitle {
   font-size: 1.5rem;
   margin-bottom: 2rem;
-  opacity: 0.95;
+  color: white;
+  text-shadow:
+    -1px -1px 0 #f87a05,
+     1px -1px 0 #f87a05,
+    -1px  1px 0 #f87a05,
+     1px  1px 0 #f87a05;
   animation: slideInUp 0.8s ease;
 }
 
@@ -83,9 +99,10 @@
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
-  z-index: 0; 
-  opacity: 1; 
-  transform: translate(100% , 0%); /* căn giữa */
+  z-index: 0;
+  opacity: 1;
+  transform: translate(100%, 0%);
+  /* căn giữa */
 
 }
 
@@ -94,6 +111,7 @@
     opacity: 0;
     transform: translateY(var(--slide-distance, -30px));
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -105,6 +123,7 @@
     opacity: 0;
     transform: translateY(var(--slide-distance, 30px));
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -145,7 +164,7 @@
   border: 3px solid #f87a05;
   border-radius: 40px;
   position: relative;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.16), 0 3px 6px rgba (0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16), 0 3px 6px rgba (0, 0, 0, 0.1);
   color: #f87a05;
   text-decoration: none;
   transition: all 0.3s ease;
@@ -156,7 +175,7 @@
 
 }
 
-.btn__secondary::before {      
+.btn__secondary::before {
   transition: all 0.5s ease;
   position: absolute;
   top: 0;
@@ -170,18 +189,21 @@
   z-index: -1;
 }
 
-.btn__secondary:hover, .btn__secondary:focus {
+.btn__secondary:hover,
+.btn__secondary:focus {
   color: white;
   transform: translateY(-3px);
 }
 
-.btn__secondary:hover::before, .btn__secondary:focus::before {
-  left: 0;   
+.btn__secondary:hover::before,
+.btn__secondary:focus::before {
+  left: 0;
   right: 0;
-  opacity: 1;                  
+  opacity: 1;
   transition: all 0.5s ease;
 }
-btn__secondary:active{
+
+btn__secondary:active {
   transform: scale(0.9)
 }
 
@@ -191,21 +213,21 @@ btn__secondary:active{
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
-  animation: slideInUp 0.8s ease; 
+  animation: slideInUp 0.8s ease;
 }
 
 .card {
   background: white;
   border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 .card__image {
@@ -289,7 +311,7 @@ btn__secondary:active{
   background: white;
   padding: 2rem;
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-left: 4px solid var(--accent-color);
 }
 
@@ -336,7 +358,7 @@ btn__secondary:active{
 .section5__image {
   border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .section5__image img {
@@ -359,7 +381,7 @@ btn__secondary:active{
 .chef__image {
   border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
 }
 
 .chef__image img {
@@ -486,10 +508,10 @@ btn__secondary:active{
 }
 
 .footer__bottom {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   padding: 1.5rem 2rem;
   text-align: center;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer__bottom p {
