@@ -7,7 +7,7 @@ export default function Section1() {
 
   return (
     <section className="section section1">
-      <div className="container">
+      <div className=".section1__container">
         <div className="section1__content">
           {/* <img src="https://static.vecteezy.com/system/resources/thumbnails/043/269/961/small_2x/open-flaming-charcoal-grill-with-various-food-items-cooking-on-it-showcasing-a-summer-grilling-barbecue-session-with-copy-space-photo.jpg" class="section1__image" alt="decor" /> */}
           <h1 className="section1__title">Chào mừng đến với TasteGood</h1>

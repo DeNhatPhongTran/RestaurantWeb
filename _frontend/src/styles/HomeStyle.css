@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  text-align: left;
   overflow: hidden;
 
   background-image: url('https://static.vecteezy.com/system/resources/thumbnails/043/269/961/small_2x/open-flaming-charcoal-grill-with-various-food-items-cooking-on-it-showcasing-a-summer-grilling-barbecue-session-with-copy-space-photo.jpg');
@@ -55,13 +55,21 @@
 }
 
 .section1__content {
-  max-width: 800px;
+  max-width: 1200px;
+  margin-left: 20px;
+
 }
 
+.section1__container {
+  max-width: 1200px;
+  padding: 0 2rem;
+
+}
 
 .section1__title {
   font-size: 4rem;
   margin-bottom: 1rem;
+  max-width: 1000px;
   font-weight: bold;
   color: rgb(255, 255, 255);
   text-shadow:
@@ -88,7 +96,7 @@
 .section1__buttons {
   display: flex;
   gap: 1rem;
-  justify-content: center;
+  justify-content: left;
   flex-wrap: wrap;
 }
 
@@ -162,14 +170,14 @@
   font-weight: bold;
   padding: 0.7em 2.3em;
   border-radius: 20px;
-  border: 0.2px solid #000000;
   position: relative;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16), 0 3px 6px rgba (0, 0, 0, 0.1);
   color: #ffffff;
   text-decoration: none;
   transition: all 0.3s ease;
   z-index: 1;
-  background: linear-gradient(45deg, #ff6f61, #ff8a5c);
+  background: #ff0000;
+  border: 3px solid #ff0000;
 
   animation: slideInUp 0.8s ease;
 
@@ -184,15 +192,15 @@
   bottom: 0;
   opacity: 0;
   content: '';
-  border-radius: 20px;
-  background: linear-gradient(45deg, #00bcd4, #8bc34a);
+  border-radius: 18px;
+  background: #ffffff;
 
   z-index: -1;
 }
 
 .btn__secondary:hover,
 .btn__secondary:focus {
-  color: #ffffff;
+  color: #ff0000;
   transform: translateY(-3px);
 }
 
