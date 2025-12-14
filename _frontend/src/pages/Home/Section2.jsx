@@ -26,7 +26,7 @@ export default function Section2() {
   return (
     <section className="section section2">
       <div className="container">
-        <h2 className="section__title">Vì sao nên lựa chọn chúng tôi?</h2>
+        <h2 className="section__title">Vì sao chúng tôi luôn là sự lựa chọn hàng đầu?</h2>
         <div className="cards__grid">
           {features.map((feature, idx) => (
             <Cards key={idx} {...feature} />

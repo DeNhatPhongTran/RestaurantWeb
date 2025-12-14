@@ -34,7 +34,7 @@ export default function Header() {
         <nav className={`header__nav ${mobileMenuOpen ? 'active' : ''}`}>
           <Link to="/" className="nav__link" onClick={closeMenu}>Trang chủ</Link>
           <Link to="/menu" className="nav__link" onClick={closeMenu}>Thực đơn</Link>
-          <a href="#about" className="nav__link" onClick={closeMenu}>Thông tin nhà hàng</a>
+          <a href="/reservation" className="nav__link" onClick={closeMenu}>Đặt bàn</a>
           <a href="#contact" className="nav__link" onClick={closeMenu}>Liên hệ</a>
           
           {user ? (
@@ -61,7 +61,7 @@ export default function Header() {
             </div>
           ) : (
             <Link to="/login" className="nav__btn-login" onClick={closeMenu}>
-              Đăng nhập
+              Nhân viên
             </Link>
           )}
         </nav>

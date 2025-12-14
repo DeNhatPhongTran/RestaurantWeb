@@ -4,8 +4,8 @@ import { ApiProvider, useApi } from './context/ApiContext';
 import Layout from './components/Layouts/Layout';
 import Home from './pages/Home/Home';
 import Menu from './pages/Menu';
+import Login from './pages/Login';
 import './styles/index.css';
-import {LoginForm} from './components/login-form';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {
@@ -21,7 +21,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/login" element={<LoginForm />}/>
+          <Route path="/login" element={<Login />}/>
         </Routes>
       </Layout>
     </Router>

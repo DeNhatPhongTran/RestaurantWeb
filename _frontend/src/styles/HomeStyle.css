@@ -1,8 +1,8 @@
 /* Home Page Styles */
 
 :root {
-  --primary-color: #667eea;
-  --secondary-color: #764ba2;
+  --primary-color: #ee940d;
+  --secondary-color: #7a4f0d;
   --accent-color: #f97316;
   --text-dark: #1f2937;
   --text-light: #6b7280;
@@ -33,28 +33,33 @@
   text-align: center;
   margin-bottom: 3rem;
   font-weight: bold;
+
+  animation: slideInUp 0.8s ease; 
 }
 
 /* Section 1 - Hero */
 .section1 {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: radial-gradient(circle, var(--primary-color) 0%, var(--secondary-color) 100%);
   color: white;
   min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  overflow: hidden;
 }
 
 .section1__content {
   max-width: 800px;
 }
 
+
 .section1__title {
   font-size: 4rem;
   margin-bottom: 1rem;
   font-weight: bold;
   animation: slideInDown 0.8s ease;
+  z-index: 1;
 }
 
 .section1__subtitle {
@@ -71,10 +76,23 @@
   flex-wrap: wrap;
 }
 
+.section1__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  z-index: 0; 
+  opacity: 1; 
+  transform: translate(100% , 0%); /* căn giữa */
+
+}
+
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(var(--slide-distance, -30px));
   }
   to {
     opacity: 1;
@@ -85,7 +103,7 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(var(--slide-distance, 30px));
   }
   to {
     opacity: 1;
@@ -117,13 +135,54 @@
 }
 
 .btn__secondary {
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+  padding: 0.7em 2em;
+  border: 3px solid #f87a05;
+  border-radius: 40px;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.16), 0 3px 6px rgba (0,0,0,0.1);
+  color: #f87a05;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  z-index: 1;
   background: white;
-  color: var(--primary-color);
+
+  animation: slideInUp 0.8s ease;
+
 }
 
-.btn__secondary:hover {
-  background: var(--bg-light);
+.btn__secondary::before {      
+  transition: all 0.5s ease;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  opacity: 0;
+  border-radius: 40px;
+  content: '';
+  background-color: #f87a05;
+  z-index: -1;
+}
+
+.btn__secondary:hover, .btn__secondary:focus {
+  color: white;
   transform: translateY(-3px);
+}
+
+.btn__secondary:hover::before, .btn__secondary:focus::before {
+  left: 0;   
+  right: 0;
+  opacity: 1;                  
+  transition: all 0.5s ease;
+}
+btn__secondary:active{
+  transform: scale(0.9)
 }
 
 /* Cards Grid */
@@ -132,6 +191,7 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
+  animation: slideInUp 0.8s ease; 
 }
 
 .card {
@@ -397,6 +457,7 @@
   color: var(--accent-color);
   margin-bottom: 1rem;
   font-weight: 600;
+
 }
 
 .footer__section p {

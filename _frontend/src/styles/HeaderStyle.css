@@ -1,6 +1,6 @@
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(0deg, #000000 0%, #16140f 100%);
   padding: 1rem 0;
   position: sticky;
   top: 0;
@@ -19,6 +19,7 @@
 
 .header__logo {
   flex: 1;
+  text-decoration: none;
 }
 
 .logo__text {
@@ -27,6 +28,7 @@
   font-weight: bold;
   margin: 0;
   letter-spacing: 1px;
+  text-decoration: none;
 }
 
 .header__nav {
@@ -48,24 +50,29 @@
 
 .nav__link:hover {
   opacity: 0.8;
+  transform: scale(1.05);
+  color: red;
 }
 
 .nav__btn-login {
-  background: white;
-  color: #667eea;
-  border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 25px;
+  color: #ffffff;
   cursor: pointer;
   font-weight: 600;
-  transition: transform 0.3s ease;
   text-decoration: none;
   display: inline-block;
   white-space: nowrap;
+
+  font-size: 16x;
+  text-align: center;
+  font-weight: 800px;
+  position: relative;
+  z-index: 1;
 }
+
 
 .nav__btn-login:hover {
   transform: scale(1.05);
+  color: red;
 }
 
 /* User Menu */

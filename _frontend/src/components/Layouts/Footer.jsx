@@ -1,6 +1,9 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Footer() {
+  const closeMenu = () => setMobileMenuOpen(false);
+
   return (
     <footer className="footer">
       <div className="footer__container">
@@ -12,9 +15,9 @@ export default function Footer() {
         <div className="footer__section">
           <h4>Liên kết nhanh</h4>
           <ul>
-            <li><a href="#home">Trang chủ</a></li>
-            <li><a href="#menu">Thực đơn</a></li>
-            <li><a href="#about">Thông tin nhà hàng</a></li>
+            <li><a href="/home">Trang chủ</a></li>
+            <li><a href="/menu">Thực đơn</a></li>
+            <li><a href="/reservation">Đặt bàn</a></li>
             <li><a href="#contact">Liên hệ</a></li>
           </ul>
         </div>
