@@ -139,3 +139,51 @@ export const mockOrderItems = [
     statusQuantities: { served: 0, ready: 2, 'in-progress': 0, 'not-sent': 0 },
   },
 ]
+
+// Mock order items for waiting order (all served or removed)
+export const mockWaitingOrderItems = [
+  {
+    id: 1,
+    name: 'Grilled Chicken',
+    image: '/images/food/wagyu_steak.jpg',
+    addOns: [],
+    note: '',
+    price: 280000,
+    quantity: 2,
+    cancelledQuantity: 0,
+    statusQuantities: { served: 2, ready: 0, 'in-progress': 0, 'not-sent': 0 },
+  },
+  {
+    id: 2,
+    name: 'Caesar Salad',
+    image: '/images/food/wagyu_steak.jpg',
+    addOns: [],
+    note: '',
+    price: 150000,
+    quantity: 1,
+    cancelledQuantity: 0,
+    statusQuantities: { served: 1, ready: 0, 'in-progress': 0, 'not-sent': 0 },
+  },
+  {
+    id: 3,
+    name: 'Orange Juice',
+    image: '/images/food/wagyu_steak.jpg',
+    addOns: [],
+    note: 'Fresh squeezed',
+    price: 95000,
+    quantity: 2,
+    cancelledQuantity: 0,
+    statusQuantities: { served: 2, ready: 0, 'in-progress': 0, 'not-sent': 0 },
+  },
+  {
+    id: 4,
+    name: 'French Fries',
+    image: '/images/food/wagyu_steak.jpg',
+    addOns: [],
+    note: '',
+    price: 65000,
+    quantity: 1,
+    cancelledQuantity: 0,
+    statusQuantities: { served: 1, ready: 0, 'in-progress': 0, 'not-sent': 0 },
+  },
+]

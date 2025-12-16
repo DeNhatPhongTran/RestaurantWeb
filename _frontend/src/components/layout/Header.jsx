@@ -4,7 +4,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import UserMenu from '../common/UserMenu'
 
-const Header = ({ onLogout }) => {
+const Header = ({ onLogout, userRole, onRoleSwitch }) => {
   const location = useLocation()
 
   const navItems = [
@@ -62,9 +62,11 @@ const Header = ({ onLogout }) => {
         </button>
         <UserMenu
           userName="Richardo"
-          userRole="Phục Vụ"
+          userRole={userRole === 'cashier' ? 'Thu Ngân' : 'Phục Vụ'}
           userInitial="R"
           onLogout={onLogout}
+          currentRole={userRole}
+          onRoleSwitch={onRoleSwitch}
         />
       </div>
     </header>

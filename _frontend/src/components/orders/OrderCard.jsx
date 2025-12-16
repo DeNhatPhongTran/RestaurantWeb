@@ -2,7 +2,7 @@ import { ChefHat, Clock as ClockIcon, CreditCard, Grid3x3, Receipt, UtensilsCros
 import React from 'react'
 import { Card, CardBody } from '../ui/Card'
 
-const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails }) => {
+const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails, userRole = 'waiter' }) => {
   // Status color mapping
   const statusColors = {
     'serving': {
@@ -79,11 +79,32 @@ const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails }) => 
             </button>
             <button
               onClick={() => onPaymentRequest?.(order)}
-              className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border border-secondary-300 hover:bg-primary-50 hover:border-primary-400 transition-all group bg-white"
-              title="Thanh Toán"
+              disabled={order.statusType === 'waiting' && userRole === 'waiter'}
+              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border transition-all group ${
+                order.statusType === 'waiting' && userRole === 'waiter'
+                  ? 'border-secondary-200 bg-secondary-50 cursor-not-allowed opacity-50'
+                  : 'border-secondary-300 hover:bg-primary-50 hover:border-primary-400 bg-white'
+              }`}
+              title={
+                order.statusType === 'waiting' && userRole === 'waiter'
+                  ? 'Đơn hàng đang chờ thanh toán'
+                  : userRole === 'cashier'
+                  ? 'Thanh Toán'
+                  : 'Yêu Cầu Thanh Toán'
+              }
             >
-              <CreditCard className="h-4 w-4 text-secondary-600 group-hover:text-primary-600 mb-0.5" />
-              <span className="text-xs text-secondary-700 group-hover:text-primary-600 font-medium whitespace-nowrap">Thanh Toán</span>
+              <CreditCard className={`h-4 w-4 mb-0.5 ${
+                order.statusType === 'waiting' && userRole === 'waiter'
+                  ? 'text-secondary-400' 
+                  : 'text-secondary-600 group-hover:text-primary-600'
+              }`} />
+              <span className={`text-xs font-medium whitespace-nowrap ${
+                order.statusType === 'waiting' && userRole === 'waiter'
+                  ? 'text-secondary-400'
+                  : 'text-secondary-700 group-hover:text-primary-600'
+              }`}>
+                {userRole === 'cashier' ? 'Thanh Toán' : 'YC Thanh Toán'}
+              </span>
             </button>
           </div>
         </div>

@@ -4,20 +4,22 @@ import SearchBar from '../components/common/SearchBar'
 import CreateOrderModal from '../components/orders/CreateOrderModal'
 import OrderCard from '../components/orders/OrderCard'
 import OrderDetailModal from '../components/orders/OrderDetailModal'
+import PaymentConfirmModal from '../components/orders/PaymentConfirmModal'
+import PaymentProcessModal from '../components/orders/PaymentProcessModal'
 import { Button } from '../components/ui/Button'
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs'
-import { mockOrders } from '../data'
+import { mockOrderItems, mockOrders, mockWaitingOrderItems } from '../data'
 
-const OrderListPage = () => {
+const OrderListPage = ({ userRole = 'waiter' }) => {
   const [activeTab, setActiveTab] = useState('all')
   const [selectedOrders, setSelectedOrders] = useState(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('time-desc')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
-
-  const orders = mockOrders
+  const [orders, setOrders] = useState(mockOrders)
 
   const tabCounts = {
     all: orders.length,
@@ -80,7 +82,44 @@ const OrderListPage = () => {
   }
 
   const handlePaymentRequest = (order) => {
-    console.log('Payment request:', order)
+    setSelectedOrder(order)
+    setIsPaymentModalOpen(true)
+  }
+
+  const handleConfirmPayment = (orderId) => {
+    console.log('Payment confirmed for order:', orderId)
+    // Update order status to waiting
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === orderId 
+          ? { ...order, statusType: 'waiting', status: 'Chờ Thanh Toán' }
+          : order
+      )
+    )
+    // Update selectedOrder if it's the one being updated
+    setSelectedOrder(prev => 
+      prev?.id === orderId 
+        ? { ...prev, statusType: 'waiting', status: 'Chờ Thanh Toán' }
+        : prev
+    )
+  }
+
+  const handleProcessPayment = (paymentData) => {
+    console.log('Payment processed:', paymentData)
+    // Update order status to completed
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === paymentData.orderId 
+          ? { ...order, statusType: 'completed', status: 'Hoàn Thành' }
+          : order
+      )
+    )
+    // Update selectedOrder if it's the one being updated
+    setSelectedOrder(prev => 
+      prev?.id === paymentData.orderId 
+        ? { ...prev, statusType: 'completed', status: 'Hoàn Thành' }
+        : prev
+    )
   }
 
   return (
@@ -120,30 +159,30 @@ const OrderListPage = () => {
           <TabsTrigger
             isActive={activeTab === 'all'}
             onClick={() => setActiveTab('all')}
-            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center gap-2"
+            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center"
           >
             <span className="text-xs md:text-sm lg:text-base">Tất Cả</span>
-            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-primary-500 text-white text-xs font-semibold">
+            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-primary-500 text-white text-xs font-semibold ml-2.5">
               {tabCounts.all}
             </span>
           </TabsTrigger>
           <TabsTrigger
             isActive={activeTab === 'serving'}
             onClick={() => setActiveTab('serving')}
-            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center gap-2"
+            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center"
           >
             <span className="text-xs md:text-sm lg:text-base whitespace-nowrap">Đang phục vụ</span>
-            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-primary-400 text-white text-xs font-semibold">
+            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-primary-400 text-white text-xs font-semibold ml-2.5">
               {tabCounts.serving}
             </span>
           </TabsTrigger>
           <TabsTrigger
             isActive={activeTab === 'waiting'}
             onClick={() => setActiveTab('waiting')}
-            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center gap-2"
+            className="px-3 md:px-3.5 lg:px-4 py-2 border-b-2 border-transparent flex items-center"
           >
             <span className="text-xs md:text-sm lg:text-base whitespace-nowrap">Chờ Thanh Toán</span>
-            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-warning-400 text-white text-xs font-semibold">
+            <span className="inline-flex items-center justify-center h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 rounded-full bg-warning-400 text-white text-xs font-semibold ml-2.5">
               {tabCounts.waiting}
             </span>
           </TabsTrigger>
@@ -175,6 +214,7 @@ const OrderListPage = () => {
               onViewDetails={handleViewDetails}
               onServeItems={handleServeItems}
               onPaymentRequest={handlePaymentRequest}
+              userRole={userRole}
             />
           ))
         ) : (
@@ -199,7 +239,39 @@ const OrderListPage = () => {
           setSelectedOrder(null)
         }}
         order={selectedOrder}
+        onOrderUpdate={(updatedOrder) => {
+          setOrders(prevOrders =>
+            prevOrders.map(order =>
+              order.id === updatedOrder.id ? updatedOrder : order
+            )
+          )
+          setSelectedOrder(updatedOrder)
+        }}
       />
+
+      {/* Payment Modal - Different for Cashier vs Waiter */}
+      {userRole === 'cashier' ? (
+        <PaymentProcessModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => {
+            setIsPaymentModalOpen(false)
+            setSelectedOrder(null)
+          }}
+          order={selectedOrder}
+          orderItems={selectedOrder?.statusType === 'waiting' ? mockWaitingOrderItems : mockOrderItems}
+          onProcessPayment={handleProcessPayment}
+        />
+      ) : (
+        <PaymentConfirmModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => {
+            setIsPaymentModalOpen(false)
+            setSelectedOrder(null)
+          }}
+          order={selectedOrder}
+          onConfirmPayment={handleConfirmPayment}
+        />
+      )}
     </div>
   )
 }

@@ -1,8 +1,7 @@
 import React from 'react'
 import { Avatar } from '../ui/Avatar'
-import clsx from 'clsx'
 
-const UserMenu = ({ userName, userRole, userInitial, onLogout }) => {
+const UserMenu = ({ userName, userRole, userInitial, onLogout, currentRole, onRoleSwitch }) => {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
@@ -19,13 +18,35 @@ const UserMenu = ({ userName, userRole, userInitial, onLogout }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg border border-secondary-200 shadow-lg">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg border border-secondary-200 shadow-lg py-1">
+          {currentRole === 'waiter' && (
+            <button
+              onClick={() => {
+                onRoleSwitch('cashier')
+                setIsOpen(false)
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
+            >
+              Login as Cashier
+            </button>
+          )}
+          {currentRole === 'cashier' && (
+            <button
+              onClick={() => {
+                onRoleSwitch('waiter')
+                setIsOpen(false)
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
+            >
+              Login as Waiter
+            </button>
+          )}
           <button
             onClick={() => {
               onLogout()
               setIsOpen(false)
             }}
-            className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
+            className="w-full px-4 py-2 text-left text-sm text-danger-600 hover:bg-danger-50 transition-colors"
           >
             Logout
           </button>

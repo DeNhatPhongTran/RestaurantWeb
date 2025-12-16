@@ -1,21 +1,32 @@
 import { ArrowRightLeft, Baby, Bell, CheckCircle, Clock, FileX, Plus, Send, Trash2, Users } from 'lucide-react'
-import React, { useState } from 'react'
-import { mockOrderItems } from '../../data'
+import React, { useEffect, useState } from 'react'
+import { mockOrderItems, mockWaitingOrderItems } from '../../data'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
 import Modal from '../ui/Modal'
 import DeleteItemConfirmModal from './DeleteItemConfirmModal'
 import EditOrderModal from './EditOrderModal'
+import PaymentConfirmModal from './PaymentConfirmModal'
 
-const OrderDetailModal = ({ isOpen, onClose, order }) => {
+const OrderDetailModal = ({ isOpen, onClose, order, onOrderUpdate }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState(null)
+  const [orderItems, setOrderItems] = useState([])
   
-  // Import mock order items data
-  const [orderItems, setOrderItems] = useState(mockOrderItems)
+  // Update items when order changes
+  useEffect(() => {
+    if (order) {
+      const initialItems = order.statusType === 'waiting' ? mockWaitingOrderItems : mockOrderItems
+      setOrderItems(initialItems.map(item => ({ ...item, cancelledQuantity: 0 })))
+    }
+  }, [order?.id, order?.statusType])
   
   if (!isOpen || !order) return null
+
+  // Check if order is in waiting status (payment requested)
+  const isWaitingPayment = order.statusType === 'waiting'
 
   const handleChangeTable = () => {
     console.log('Change table for order:', order.orderNumber)
@@ -38,28 +49,29 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
     // Find the item and update its quantities
     const updatedItems = orderItems.map(item => {
       if (item.id === itemId) {
+        // Calculate total deleted quantity
+        const totalDeletedQty = Object.values(deleteQuantities).reduce((sum, qty) => sum + qty, 0)
+        
         // Subtract the deleted quantities from status quantities
         const newStatusQuantities = { ...item.statusQuantities }
         Object.entries(deleteQuantities).forEach(([status, qty]) => {
           newStatusQuantities[status] -= qty
         })
         
-        // Calculate new total quantity
+        // Calculate new total quantity (remaining)
         const newTotalQty = Object.values(newStatusQuantities).reduce((sum, qty) => sum + qty, 0)
         
-        // If total quantity becomes 0, remove the item
-        if (newTotalQty === 0) {
-          return null
-        }
-        
+        // Track cancelled quantity
         return {
           ...item,
           statusQuantities: newStatusQuantities,
-          quantity: newTotalQty
+          quantity: newTotalQty,
+          cancelledQuantity: (item.cancelledQuantity || 0) + totalDeletedQty,
+          deleteReason
         }
       }
       return item
-    }).filter(item => item !== null)
+    })
     
     setOrderItems(updatedItems)
     setIsDeleteModalOpen(false)
@@ -245,10 +257,16 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                   size="md"
                   className="gap-2"
                   onClick={handleAddItem}
+                  disabled={isWaitingPayment}
                 >
                   <Plus className="h-4 w-4" />
                   Thêm Món
                 </Button>
+                {isWaitingPayment && (
+                  <span className="text-xs text-warning-600 self-center ml-2">
+                    Đơn hàng đang chờ thanh toán
+                  </span>
+                )}
               </div>
             </div>
 
@@ -257,7 +275,11 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
               <div className="space-y-3">
                 {orderItems
                   .sort((a, b) => {
-                    // Sort by most urgent status with quantity > 0
+                    // First, separate fully deleted items (quantity === 0) to the bottom
+                    if (a.quantity === 0 && b.quantity > 0) return 1
+                    if (a.quantity > 0 && b.quantity === 0) return -1
+                    
+                    // For items with quantity > 0, sort by most urgent status
                     const statusPriority = {
                       'ready': 1,
                       'in-progress': 2,
@@ -271,7 +293,8 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                   .map((item) => {
                   const primaryStatus = getPrimaryStatus(item.statusQuantities)
                   const statusStyle = statusStyles[primaryStatus]
-                  const borderColor = getBorderColor(item.statusQuantities)
+                  const isFullyDeleted = item.quantity === 0
+                  const borderColor = isFullyDeleted ? 'border-danger-500' : getBorderColor(item.statusQuantities)
                   return (
                     <div
                       key={item.id}
@@ -309,10 +332,20 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                             </Badge>
                           )}
                         </div>
-                        {/* Served count */}
-                        <span className="text-xs font-semibold text-success-700">
-                          Đã phục vụ: {item.statusQuantities.served}/{item.quantity}
-                        </span>
+                        <div className="flex flex-col items-end gap-0.5">
+                          {/* Served count */}
+                          {item.quantity > 0 && (
+                            <span className="text-xs font-semibold text-success-700">
+                              Đã phục vụ: {item.statusQuantities.served}/{item.quantity}
+                            </span>
+                          )}
+                          {/* Cancelled count */}
+                          {item.cancelledQuantity > 0 && (
+                            <span className="text-xs font-semibold text-danger-600">
+                              Đã huỷ: {item.cancelledQuantity}/{item.quantity + item.cancelledQuantity}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex gap-3 p-3 relative">
@@ -331,7 +364,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                         
                         {/* Item Info */}
                         <div className="flex-1 min-w-0 pr-10">
-                          <h4 className="font-semibold text-sm text-secondary-900 mb-1">
+                          <h4 className={`font-semibold text-sm mb-1 ${item.quantity === 0 ? 'text-danger-600 line-through' : 'text-secondary-900'}`}>
                             {item.name}
                           </h4>
                           {item.addOns && item.addOns.length > 0 && (
@@ -353,15 +386,17 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                           </div>
                         </div>
                         
-                        {/* Delete Button - Absolute Bottom Right */}
-                        <button
-                          onClick={() => handleDeleteItem(item)}
-                          className="absolute bottom-2 right-2 px-2 py-1 flex items-center gap-1.5 rounded-md border-danger-400 hover:bg-danger-50 transition-colors"
-                          title="Xóa món"
-                        >
-                          <span className="text-xs font-semibold text-danger-400">Huỷ</span>
-                          <Trash2 className="h-3.5 w-3.5 text-danger-400" />
-                        </button>
+                        {/* Delete Button - Absolute Bottom Right - Only show if not fully deleted and not waiting payment */}
+                        {item.quantity > 0 && !isWaitingPayment && (
+                          <button
+                            onClick={() => handleDeleteItem(item)}
+                            className="absolute bottom-2 right-2 px-2 py-1 flex items-center gap-1.5 rounded-md border-danger-400 hover:bg-danger-50 transition-colors"
+                            title="Xóa món"
+                          >
+                            <span className="text-xs font-semibold text-danger-400">Huỷ</span>
+                            <Trash2 className="h-3.5 w-3.5 text-danger-400" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   )
@@ -480,9 +515,10 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                 variant="primary"
                 size="md"
                 className="w-full"
-                onClick={onClose}
+                onClick={() => setIsPaymentModalOpen(true)}
+                disabled={isWaitingPayment}
               >
-                Yêu Cầu Thanh Toán
+                {isWaitingPayment ? 'Chờ Thanh Toán' : 'Yêu Cầu Thanh Toán'}
               </Button>
             </div>
           </div>
@@ -507,6 +543,22 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
       }}
       item={itemToDelete}
       onConfirmDelete={handleConfirmDelete}
+    />
+
+    {/* Payment Confirm Modal */}
+    <PaymentConfirmModal
+      isOpen={isPaymentModalOpen}
+      onClose={() => setIsPaymentModalOpen(false)}
+      order={order}
+      onConfirmPayment={(orderId) => {
+        console.log('Payment confirmed for order:', orderId)
+        // Update order status to waiting
+        const updatedOrder = { ...order, statusType: 'waiting', status: 'Chờ Thanh Toán' }
+        if (onOrderUpdate) {
+          onOrderUpdate(updatedOrder)
+        }
+        setIsPaymentModalOpen(false)
+      }}
     />
     </>
   )
