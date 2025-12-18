@@ -5,8 +5,6 @@ import Layout from './components/Layouts/Layout';
 import Home from './pages/Home/Home';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
-import './styles/index.css';
-
 // Protected route wrapper
 function ProtectedRoute({ children }) {
   const { user } = useApi()
