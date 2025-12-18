@@ -35,7 +35,7 @@ export function LoginForm({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="shadow-lg">
+      <Card className="border-0 bg-white/95 shadow-2xl ring-1 ring-orange-100/70 backdrop-blur">
         <CardHeader>
           <CardTitle className="text-2xl text-foreground">Welcome back</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -77,12 +77,12 @@ export function LoginForm({ className, ...props }) {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600" role="alert">
+              <p className="rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-600 ring-1 ring-red-100" role="alert">
                 {error}
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-amber-500 text-white hover:bg-amber-600" disabled={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </Button>
             <Button type="button" variant="outline" className="w-full" disabled>
