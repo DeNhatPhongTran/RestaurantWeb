@@ -3,10 +3,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export default function Reservation_mgmt() {
+export default function Dish_menu_mgmt() {
     const [dishes, setDishes] = useState([]);
-    const [filter, setFilter] = useState("");
+    const [filterName, setFilterName] = useState("");
+    const [filterCategory, setFilterCategory] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
     const [editDish, setEditDish] = useState(null);
     const [deleteDish, setDeleteDish] = useState(null);
 
@@ -19,31 +22,20 @@ export default function Reservation_mgmt() {
     const fetchAllData = async () => {
         const body = await fetch("/api/menu/list")
             .then(res => res.json());
-        /*const body = [
-            {
-                "_id": {
-                    "$oid": "6943cd4fcc4a5b3f1dbd1f21"
-                },
-                "category": {
-                    "$oid": "6943cd4fcc4a5b3f1dbd1f05"
-                },
-                "name": "Bánh sừng bò",
-                "price": 30000,
-                "image": "https://cdn.pixabay.com/photo/2014/12/15/13/40/croissants-569074_1280.jpg",
-                "status": "available",
-                "description": "Bánh sừng bò nướng mềm, thơm bơ.",
-            },
-            {
-                "_id": "69442eec705c858414b34e59",
-                "category": "69442eec705c858414b34e3b",
-                "name": "Gà rán giòn",
-                "price": 39000,
-                "image": "https://cdn.pixabay.com/photo/2019/09/26/18/23/republic-of-korea-4506696_1280.jpg",
-                "status": "available",
-                "description": "Gà chiên giòn, vàng đều.",
-                "__v": 0
-            },
-        ]*/
+        // const body = [
+        //     {
+        //         "_id": {
+        //             "$oid": "69464955c708090551699bcc"
+        //         },
+        //         "category": "Đồ uống",
+        //         "name": "Nước Cam Ép",
+        //         "price": 25000,
+        //         "image": "https://cdn2.fptshop.com.vn/unsafe/1080x0/filters:format(webp):quality(75)/Nuoc_ep_cam_0ae1447a8f.jpg",
+        //         "status": "Đang phục vụ",
+        //         "description": "Nước cam ép tươi, thơm ngon.",
+        //         "__v": 0
+        //     }
+        // ]
         setDishes(body);
     };
 
@@ -67,8 +59,8 @@ export default function Reservation_mgmt() {
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
             });
-            const data = await res.json();
             fetchAllData()
+            const data = await res.json();
             alert(`${res.status}: ${data.message}`)
         } catch (err) {
             console.error(err);
@@ -83,6 +75,7 @@ export default function Reservation_mgmt() {
             category: document.getElementById("editFormCategory").value,
             price: document.getElementById("editFormPrice").value,
             img: document.getElementById("editFormImg").value,
+            status: document.getElementById("editFormStatus").value,
             desc: document.getElementById("editFormDesc").value
         };
 
@@ -92,8 +85,8 @@ export default function Reservation_mgmt() {
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
             });
-            const data = await res.json();
             fetchAllData()
+            const data = await res.json();
             alert(`${res.status}: ${data.message}`)
             setEditDish(null)
         } catch (err) {
@@ -109,8 +102,8 @@ export default function Reservation_mgmt() {
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ id: deleteDish._id }),
             });
-            const data = await res.json();
             fetchAllData()
+            const data = await res.json();
             alert(`${res.status}: ${data.message}`)
             setDeleteDish(null) // đóng cửa sổ pop up
         } catch (err) {
@@ -127,16 +120,43 @@ export default function Reservation_mgmt() {
                 <div className="p-4">
                     {/* Bộ lọc + nút refresh */}
                     <div className="flex items-center gap-2 mb-4">
-                        <Input
-                            placeholder="Lọc theo tên..."
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
+                        <Input placeholder="Lọc theo tên..."
+                            className="w-60"
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
                         />
+                        <Select value={filterCategory} onValueChange={setFilterCategory} >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Lọc theo phân loại" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value=" ">Tất cả loại</SelectItem>
+                                <SelectItem value="Món khai vị">Món khai vị</SelectItem>
+                                <SelectItem value="Món chính">Món chính</SelectItem>
+                                <SelectItem value="Món súp">Món súp</SelectItem>
+                                <SelectItem value="Món tráng miệng">Món tráng miệng</SelectItem>
+                                <SelectItem value="Đồ uống">Đồ uống</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={filterStatus} onValueChange={setFilterStatus} >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Lọc theo trạng thái" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="Đang phục vụ">Đang phục vụ</SelectItem>
+                                <SelectItem value="Dừng phục vụ">Dừng phục vụ</SelectItem>
+                            </SelectContent>
+                        </Select>
+
                         <Button onClick={() => fetchAllData()}>Làm mới</Button>
                     </div>
 
                     <div className="grid grid-cols-5 gap-2">
-                        {dishes.filter((d) => d.name.toLowerCase().includes(filter.toLowerCase()))
+                        {dishes.filter((d) => d.name.toLowerCase().includes(filterName.toLowerCase()) &&
+                            d.category.includes(filterCategory) &&
+                            d.status.includes(filterStatus)
+                        )
                             .map((dish) => {
                                 return (
                                     <Card key={dish._id} className="overflow-hidden">
@@ -168,16 +188,27 @@ export default function Reservation_mgmt() {
                                 <DialogTitle>Chỉnh sửa thông tin món ăn</DialogTitle>
                             </DialogHeader>
                             {editDish && (
-                                <div className="space-y-2 text-sm">
-                                    <label>Tên món</label>
+                                <div className="space-y-2 text-sm grid grid-cols-2 items-center">
+                                    <label>Tên món:</label>
                                     <Input id="editFormDishName" defaultValue={editDish.name} />
-                                    <label>Phân loại</label>
-                                    <Input id="editFormCategory" defaultValue={editDish.category} />
-                                    <label>Giá</label>
-                                    <Input id="editFormPrice" defaultValue={editDish.price} />
-                                    <label>Hình ảnh (URL)</label>
+                                    <label>Phân loại:</label>
+                                    <select id="editFormCategory" defaultValue={editDish.category} className="block border rounded-xl p-2" >
+                                        <option value="Món khai vị">Món khai vị</option>
+                                        <option value="Món chính">Món chính</option>
+                                        <option value="Món súp">Món súp</option>
+                                        <option value="Món tráng miệng">Món tráng miệng</option>
+                                        <option value="Đồ uống">Đồ uống</option>
+                                    </select>
+                                    <label htmlFor="editFormPrice">Giá:</label>
+                                    <Input id="editFormPrice" type="number" defaultValue={editDish.price} />
+                                    <label>Hình ảnh (URL):</label>
                                     <Input id="editFormImg" defaultValue={editDish.image} />
-                                    <label>Mô tả</label>
+                                    <label htmlFor="editFormStatus">Trạng thái:</label>
+                                    <select id="editFormStatus" defaultValue={editDish.status} className="block border rounded-xl p-2" >
+                                        <option value="Đang phục vụ">Đang phục vụ</option>
+                                        <option value="Dừng phục vụ">Dừng phục vụ</option>
+                                    </select>
+                                    <label>Mô tả:</label>
                                     <Input id="editFormDesc" defaultValue={editDish.description} />
                                     <Button onClick={() => sendEditDish()}>Lưu</Button>
                                 </div>
@@ -207,14 +238,20 @@ export default function Reservation_mgmt() {
             </div>
 
             {/* RIGHT */}
-            <Card className="p-6">
+            <Card className="p-6 h-[470px]">
                 <h2 className="text-xl font-bold">Thông tin tạo món ăn mới</h2>
                 <div className="flex flex-col gap-1 text-sm">
-                    <label htmlFor="newName">Tên món:</label>
+                    <label htmlFor="newDishName">Tên món:</label>
                     <input id="newDishName" type="text" className="border rounded-xl p-2" />
 
                     <label htmlFor="newDishCategory">Phân loại:</label>
-                    <input id="newDishCategory" type="text" className="border rounded-xl p-2" />
+                    <select id="newDishCategory" className="border rounded-xl p-2" >
+                        <option value="Món khai vị">Món khai vị</option>
+                        <option value="Món chính">Món chính</option>
+                        <option value="Món súp">Món súp</option>
+                        <option value="Món tráng miệng">Món tráng miệng</option>
+                        <option value="Đồ uống">Đồ uống</option>
+                    </select>
 
                     <label htmlFor="newDishPrice">Giá:</label>
                     <input id="newDishPrice" type="number" className="border rounded-xl p-2" />

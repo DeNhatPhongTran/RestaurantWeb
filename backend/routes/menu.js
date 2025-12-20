@@ -17,7 +17,7 @@ router.get("/list", async (req, res) => {
 
 router.post("/edit", async (req, res) => {
     try {
-        const {id, name, category, price, img, desc} = req.body;
+        const {id, name, category, price, img, status, desc} = req.body;
         const updatedDish = await Menu_item.findByIdAndUpdate(
             id,
             {
@@ -25,6 +25,7 @@ router.post("/edit", async (req, res) => {
                 category,
                 price,
                 image: img,
+                status,
                 description: desc,
             },
             { new: true } // trả về document sau khi update

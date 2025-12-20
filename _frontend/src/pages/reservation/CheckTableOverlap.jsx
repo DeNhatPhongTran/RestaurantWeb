@@ -22,7 +22,7 @@ export default function CheckTableOverlap() {
 
     const handleCheck = async () => {
         if (!fromDate || !fromTime || !toDate || !toTime) {
-            alert("Vui lòng chọn đầy đủ From / To");
+            alert("Vui lòng chọn đầy đủ khoảng thời gian cần kiểm tra");
             return;
         }
 
@@ -44,7 +44,7 @@ export default function CheckTableOverlap() {
             setTables(data.availableTables || []);
         } catch (err) {
             console.error(err);
-            alert("Lỗi khi gọi API");
+            alert("Lỗi kết nối với server");
         } finally {
             setLoading(false);
         }
@@ -52,18 +52,18 @@ export default function CheckTableOverlap() {
 
     return (
         <Card className="mt-4">
-            <CardContent className="space-y-4 p-6 pt-1 items-center">
+            <CardContent className="space-y-4 p-6 pt-1">
                 <h2 className="text-xl font-bold">Kiểm tra bàn trống</h2>
 
                 {/* FROM */}
-                <div className="grid grid-cols-3 gap-1 pr-40">
+                <div className="items-center grid grid-cols-3 gap-1 pr-40">
                     <p>Thời gian bắt đầu: </p>
                     <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} />
                     <Input type="time" value={fromTime} onChange={e => setFromTime(e.target.value)} />
                 </div>
 
                 {/* TO */}
-                <div className="grid grid-cols-3 gap-1 pr-40">
+                <div className="items-center grid grid-cols-3 gap-1 pr-40">
                     <p>Thời gian kết thúc: </p>
                     <Input type="date" value={toDate} onChange={e => setToDate(e.target.value)} />
                     <Input type="time" value={toTime} onChange={e => setToTime(e.target.value)} />
@@ -86,7 +86,7 @@ export default function CheckTableOverlap() {
                             key={table._id}
                             className="flex justify-between border rounded-lg p-3"
                         >
-                            <span>Bàn {table.name} - {table.capacity} người</span>
+                            <span>Bàn {table.name} - {table.capacity} chỗ</span>
                         </div>
                     ))}
                 </div>

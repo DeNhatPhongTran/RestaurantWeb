@@ -6,7 +6,7 @@ const reservationSchema = new mongoose.Schema({
     guest_count: { type: Number, default: 0 },
     datetime_checkin: { type: Date, required: true },
     datetime_out: {type: Date, required:true},
-    status: { type: String, enum: ["pending", "confirmed", "checked-in","cancelled", "finished", "no-show"], default: "pending" },
+    status: { type: String, enum: ["pending", "confirmed", "checked-in","cancelled", "finished", "no-show"], default: "confirmed" },
     created_at: { type: Date, default: Date.now }
     // 1-N: 1 Reservation có nhiều Tables (Tables.reservation)
     // 1-N: 1 Reservation có nhiều OrderItems (OrderItems.reservation)

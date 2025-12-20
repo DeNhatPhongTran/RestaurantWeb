@@ -75,7 +75,7 @@ export async function add_init() {
         { category: "Món khai vị", name: 'Đậu hũ chiên', price: 28000, image: 'https://cdn.pixabay.com/photo/2018/02/20/08/17/meals-3167100_1280.jpg', status: 'Đang phục vụ', description: 'Đậu hũ chiên giòn ăn kèm nước tương.' },
         { category: "Món khai vị", name: 'Tôm tempura chiên', price: 55000, image: 'https://cdn.pixabay.com/photo/2019/11/25/15/24/fry-4652305_1280.jpg', status: 'Đang phục vụ', description: 'Tôm tẩm bột chiên kiểu Nhật.' },
         { category: "Món khai vị", name: 'Khoai tây chiên múi cau', price: 32000, image: 'https://cdn.pixabay.com/photo/2021/10/11/13/47/potatoes-6700762_1280.jpg', status: 'Đang phục vụ', description: 'Khoai tây múi cau chiên giòn.' },
-        { category: "Món khai vị", name: 'Salad trộn rau củ', price: 40000, image: 'https://cdn.pixabay.com/photo/2021/12/20/20/07/salad-6883857_1280.jpg', status: 'Đang phục vụ', description: 'Salad rau trộn dầu giấm.' },
+        { category: "Món khai vị", name: 'Salad trộn rau củ', price: 40000, image: 'https://cdn.pixabay.com/photo/2021/12/20/20/07/salad-6883857_1280.jpg', status: 'Dừng phục vụ', description: 'Salad rau trộn dầu giấm.' },
 
         // =======================
         // Soups
@@ -104,7 +104,7 @@ export async function add_init() {
         { category: "Món chính", name: 'Pizza', price: 120000, image: 'https://cdn.pixabay.com/photo/2016/02/16/07/39/pizza-1202775_1280.jpg', status: 'Đang phục vụ', description: 'Pizza nhiều loại topping tươi ngon.' },
         { category: "Món chính", name: 'Pierogy', price: 75000, image: 'https://icdn.dantri.com.vn/thumb_w/960/2018/4/2/photo-9-15226284975761689082985.jpg', status: 'Đang phục vụ', description: 'Pierogy kiểu Ba Lan nhân khoai tây và phô mai.' },
         { category: "Món chính", name: 'Shakshuka', price: 65000, image: 'https://icdn.dantri.com.vn/thumb_w/960/2018/4/2/photo-18-15226284979821050748844.jpg', status: 'Đang phục vụ', description: 'Shakshuka trứng sốt cà chua, cay nhẹ.' },
-        { category: "Món chính", name: 'Chilaquiles', price: 70000, image: 'https://icdn.dantri.com.vn/thumb_w/960/2018/4/2/photo-4-1522628497881615465890.jpg', status: 'Đang phục vụ', description: 'Chilaquiles món ăn sáng Mexico với sốt đỏ và phô mai.' },
+        { category: "Món chính", name: 'Chilaquiles', price: 70000, image: 'https://icdn.dantri.com.vn/thumb_w/960/2018/4/2/photo-4-1522628497881615465890.jpg', status: 'Dừng phục vụ', description: 'Chilaquiles món ăn sáng Mexico với sốt đỏ và phô mai.' },
 
         // =======================
         // Desserts

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -8,7 +9,9 @@ import CheckTableOverlap from "./CheckTableOverlap";
 
 export default function Reservation_mgmt() {
     const [data, setData] = useState([]);
-    const [filter, setFilter] = useState("");
+    const [filterName, setFilterName] = useState("");
+    const [filterTable, setFilterTable] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
     const [editBooking, setEditBooking] = useState(null); // đơn booking đang được chọn để chuẩn bị edit
     const [deleteBooking, setDeleteBooking] = useState(null); // đơn booking đang được chọn để chuẩn bị delete
 
@@ -22,13 +25,24 @@ export default function Reservation_mgmt() {
         const body = await fetch("/api/reservations/list")
             .then(res => res.json());
         setData(body);
-        /*const mockdata = [
-            {
-                _id: 1, customer_name: 'Huy', customer_phone: "0123",
-                guest_count: 6, datetime_checkin: Date(Date.now()), status: "confirmed"
-            },
-        ]
-        setData(mockdata)*/
+        // const mockdata = [
+        //     { "tables": [{"name": "B0"}],
+        //         "_id": {
+        //             "$oid": "69464955c708090551699bf4"
+        //         },
+        //         "customer_name": "Jane Smith",
+        //         "customer_phone": "0987654322",
+        //         "guest_count": 2,
+        //         "datetime_checkin": "2025-12-20T08:59:33.590Z",
+        //         "datetime_out": "2025-12-20T09:59:33.590Z",
+        //         "status": "confirmed",
+        //         "created_at": {
+        //             "$date": "2025-12-20T06:59:33.591Z"
+        //         },
+        //         "__v": 0
+        //     }
+        // ]
+        setData(mockdata)
     };
 
     const combineDateTime = (dateStr, timeStr) => {
@@ -70,10 +84,11 @@ export default function Reservation_mgmt() {
                 body: JSON.stringify(payload),
             });
             fetchAllData()
-            alert("Tạo đặt bàn thành công!");
+            const data = await res.json();
+            alert(`${res.status}: ${data.message}`)
         } catch (err) {
             console.error(err);
-            alert("Tạo đặt bàn thất bại!");
+            alert("Lỗi kết nối");
         }
     }
 
@@ -101,11 +116,12 @@ export default function Reservation_mgmt() {
             });
 
             fetchAllData()
-            alert("Cập nhật thành công!");
+            const data = await res.json();
+            alert(`${res.status}: ${data.message}`)
             setEditBooking(null)
         } catch (err) {
             console.error(err);
-            alert("Cập nhật thất bại!");
+            alert("Lỗi kết nối");
         }
     };
 
@@ -118,7 +134,8 @@ export default function Reservation_mgmt() {
             });
 
             fetchAllData()
-            alert("Xóa thành công!");
+            const data = await res.json();
+            alert(`${res.status}: ${data.message}`)
             setDeleteBooking(null)
         } catch (err) {
             console.error(err);
@@ -128,19 +145,37 @@ export default function Reservation_mgmt() {
 
     return (
         <div className="w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-3">
-            
+
             {/* LEFT */}
             <div className="lg:col-span-2">
                 <Card className="p-6">
                     <h2 className="text-2xl font-bold">Danh sách đặt bàn tại nhà hàng</h2>
                     <div className="p-4 pt-1">
                         {/* Bộ lọc + nút refresh */}
-                        <div className="flex items-center gap-2 mb-4">
-                            <Input
-                                placeholder="Lọc theo tên..."
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
+                        <div className="flex gap-2 mb-4">
+                            <Input placeholder="Lọc theo tên bàn..."
+                                className="w-50"
+                                value={filterTable}
+                                onChange={(e) => setFilterTable(e.target.value)}
                             />
+                            <Input placeholder="Lọc theo tên khách..."
+                                className="w-60"
+                                value={filterName}
+                                onChange={(e) => setFilterName(e.target.value)}
+                            />
+                            <Select value={filterStatus} onValueChange={setFilterStatus} >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Lọc theo trạng thái" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="n">Tất cả trạng thái</SelectItem>
+                                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                                    <SelectItem value="checked-in">Checked-in</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="finished">Finished</SelectItem>
+                                    <SelectItem value="no-show">No-show</SelectItem>
+                                </SelectContent>
+                            </Select>
                             <Button onClick={() => fetchAllData()}>Làm mới</Button>
                         </div>
 
@@ -149,25 +184,28 @@ export default function Reservation_mgmt() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="border border-gray-300">Bàn</TableHead>
-                                    <TableHead className="border border-gray-300">Tên</TableHead>
+                                    <TableHead className="border border-gray-300">Tên khách</TableHead>
                                     <TableHead className="border border-gray-300">SĐT</TableHead>
                                     <TableHead className="border border-gray-300">Số khách</TableHead>
                                     <TableHead className="border border-gray-300">Thời gian đến</TableHead>
                                     <TableHead className="border border-gray-300">Thời gian về dự kiến</TableHead>
                                     <TableHead className="border border-gray-300">Trạng thái</TableHead>
-                                    <TableHead className="border border-gray-300">Hành động</TableHead>
+                                    <TableHead className="border border-gray-300"></TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data.filter((b) => b.customer_name.toLowerCase().includes(filter.toLowerCase()))
+                                {data.filter((b) => b.customer_name.toLowerCase().includes(filterName.toLowerCase()) &&
+                                    b.tables[0].name.includes(filterTable) &&
+                                    b.status.toLowerCase().includes(filterStatus.toLowerCase())
+                                )
                                     .map((booking) => (
                                         <TableRow key={booking._id}>
                                             <TableCell className="border border-gray-300">{booking.tables[0]["name"]}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.customer_name}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.customer_phone}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.guest_count}</TableCell>
-                                            <TableCell className="border border-gray-300">{new Date(booking.datetime_checkin).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' })}</TableCell>
-                                            <TableCell className="border border-gray-300">{new Date(booking.datetime_out).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' })}</TableCell>
+                                            <TableCell className="border border-gray-300">{new Date(booking.datetime_checkin).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' })} </TableCell>
+                                            <TableCell className="border border-gray-300">{new Date(booking.datetime_out).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', dateStyle: 'short', timeStyle: 'short' })} </TableCell>
                                             <TableCell className="border border-gray-300">{booking.status}</TableCell>
                                             <TableCell className="border border-gray-300 flex gap-2">
                                                 <Button variant="outline" onClick={() => setEditBooking(booking)}>Sửa</Button>
@@ -185,23 +223,29 @@ export default function Reservation_mgmt() {
                                     <DialogTitle>Chỉnh sửa đơn đặt bàn</DialogTitle>
                                 </DialogHeader>
                                 {editBooking && (
-                                    <div className="space-y-2">
-                                        <label>Bàn được đặt</label>
+                                    <div className="space-y-2 grid grid-cols-2 items-center">
+                                        <label className="text-sm">Bàn được đặt:</label>
                                         <Input id="editFormTable" defaultValue={editBooking.tables[0]["name"]} />
-                                        <label>Tên khách đặt</label>
+                                        <label className="text-sm">Tên khách đặt:</label>
                                         <Input id="editFormName" defaultValue={editBooking.customer_name} />
-                                        <label>Số điện thoại</label>
+                                        <label className="text-sm">Số điện thoại:</label>
                                         <Input id="editFormPhone" defaultValue={editBooking.customer_phone} />
-                                        <label>Số khách</label>
+                                        <label className="text-sm">Số khách:</label>
                                         <Input id="editFormCount" defaultValue={editBooking.guest_count} />
-                                        <label>Ngày</label>
+                                        <label className="text-sm">Ngày:</label>
                                         <Input id="editFormDate" type="date" defaultValue={new Date(editBooking.datetime_checkin).toISOString().split('T')[0]} />
-                                        <label>Giờ đến</label>
+                                        <label className="text-sm">Giờ đến:</label>
                                         <Input id="editFormInClockTime" type="time" defaultValue={new Date(editBooking.datetime_checkin).toTimeString().slice(0, 5)} />
-                                        <label>Giờ về dự kiến</label>
+                                        <label className="text-sm">Giờ về dự kiến:</label>
                                         <Input id="editFormOutClockTime" type="time" defaultValue={new Date(editBooking.datetime_out).toTimeString().slice(0, 5)} />
-                                        <label>Trạng thái</label>
-                                        <Input id="editFormStatus" defaultValue={editBooking.status} />
+                                        <label className="text-sm">Trạng thái:</label>
+                                        <select id="editFormStatus" defaultValue={editBooking.status} className="block border text-sm rounded-xl p-2">
+                                            <option value="confirmed">Confirmed</option>
+                                            <option value="checked-in">Checked-in</option>
+                                            <option value="cancelled">Cancelled</option>
+                                            <option value="finished">Finished</option>
+                                            <option value="no-show">No-show</option>
+                                        </select>
                                         <Button onClick={() => sendEdit()}>Lưu</Button>
                                     </div>
                                 )}
@@ -232,7 +276,7 @@ export default function Reservation_mgmt() {
             </div>
 
             {/* RIGHT */}
-            <Card className="p-6">
+            <Card className="p-6 max-h-[600px]">
                 <h2 className="text-xl font-bold">Thông tin tạo đặt bàn mới</h2>
                 <div className="flex flex-col gap-2 text-sm">
                     <label htmlFor="newName">Tên khách đặt:</label>

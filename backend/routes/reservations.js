@@ -74,11 +74,11 @@ router.post("/edit", async (req, res) => {
         );
 
         const edit_table_obj = await Table.findOne({name: edit_table_name})
-        const res_tab_obj = await Restaurant_Table.findOne({restaurantId: reservation_id}) // 1 bàn-nhiều đơn
+        const res_tab_obj = await Reservation_Table.findOne({reservationId: reservation_id}) // 1 bàn-nhiều đơn
         const updatedResTab = await Reservation_Table.findByIdAndUpdate(
             res_tab_obj._id,
             {
-                restaurantId: restaurant_id,
+                reservationId: reservation_id,
                 tableId: edit_table_obj._id
             }
         )
@@ -86,10 +86,10 @@ router.post("/edit", async (req, res) => {
         if (!updatedRes) {
             return res.status(404).json({ message: "Không tìm thấy reservation" });
         }
-        res.json({ message: "Cập nhật thành công", data: updatedRes });
+        res.status(200).json({ message: "Cập nhật thành công", data: updatedRes });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Có lỗi khi cập nhật" });
+        res.status(500).json({ message: "Lỗi phía server" });
     }
 });
 
@@ -103,9 +103,9 @@ router.post("/delete", async (req, res) => {
         if (!deletedReservation) {
             return res.status(404).json({ message: "Không tìm thấy đơn đặt bàn cần xóa" });
         }
-        res.status(200).json({ message: "Backend Server: Xóa thành công", deletedReservation });
+        res.status(200).json({ message: "Xóa thành công", deletedReservation });
     } catch (error) {
-        res.status(500).json({ message: "Backend Server: Lỗi khi xóa", error: error.message });
+        res.status(500).json({ message: "Lỗi phía server", error: error.message });
     }
 });
 
@@ -141,10 +141,9 @@ router.post("/create", async (req, res) => {
             reservationId: newReservation._id,
             tableId: table._id
         })
-
-        res.status(201).json({ message: "Backend Server: Tạo mới thành công", newReservation });
+        res.status(201).json({ message: "Tạo mới thành công", newReservation });
     } catch (error) {
-        res.status(500).json({ message: "Backend Server: Lỗi khi tạo mới", error: error.message });
+        res.status(500).json({ message: "Lỗi phía server", error: error.message });
     }
 })
 
@@ -176,7 +175,7 @@ router.post("/overlap_check", async (req, res) => {
         _id: { $nin: busyTableIds }
     });
 
-    res.json({ fromDate, toDate, overlapTables, availableTables });
+    res.status(200).json({ fromDate, toDate, overlapTables, availableTables });
 })
 
 export default router
