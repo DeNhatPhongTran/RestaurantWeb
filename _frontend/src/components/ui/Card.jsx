@@ -40,5 +40,22 @@ const CardFooter = React.forwardRef(({ className, children, ...props }, ref) => 
 
 CardFooter.displayName = 'CardFooter'
 
-export { Card, CardBody, CardFooter, CardHeader }
+const CardContent = CardBody
+CardContent.displayName = 'CardContent'
+
+const CardTitle = React.forwardRef(({ className, children, ...props }, ref) => (
+  <h2 className={clsx('text-lg font-semibold text-secondary-900', className)} ref={ref} {...props}>
+    {children}
+  </h2>
+))
+CardTitle.displayName = 'CardTitle'
+
+const CardDescription = React.forwardRef(({ className, children, ...props }, ref) => (
+  <p className={clsx('text-sm text-secondary-600', className)} ref={ref} {...props}>
+    {children}
+  </p>
+))
+CardDescription.displayName = 'CardDescription'
+
+export { Card, CardBody, CardFooter, CardHeader, CardContent, CardTitle, CardDescription }
 

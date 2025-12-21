@@ -19,7 +19,7 @@ export default function LoginPage() {
           </p>
           <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl bg-white/85 p-4 text-left shadow-lg ring-1 ring-orange-100 backdrop-blur">
-              <p className="text-sm font-semibold text-amber-700">Tổng quan về đặt phòng</p>
+              <p className="text-sm font-semibold text-amber-700">Tổng quan về đặt bàn</p>
               <p className="text-sm text-muted-foreground">Xem trạng thái đặt chỗ và yêu cầu đặc biệt trong tích tắc.</p>
             </div>
             <div className="rounded-2xl bg-white/85 p-4 text-left shadow-lg ring-1 ring-orange-100 backdrop-blur">

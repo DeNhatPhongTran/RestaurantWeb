@@ -7,10 +7,9 @@ export function ApiProvider({ children }) {
     const saved = localStorage.getItem('apiUrl')
     if (saved) return saved
     
-    // Default: empty string for relative paths (/api/...)
-    // Nginx will proxy /api/* to backend:5000
-    // User can override with 🔌 API button for custom backends
-    return ''
+    // Default: http://localhost:5000 for backend server
+    // When deployed, update to match your backend URL
+    return 'http://localhost:5000'
   })
   const [token, setToken] = useState(() => {
     return localStorage.getItem('token') || null

@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, ChevronLeft, Clock, Edit2, Grid3x3, List, Minus, MoreVertical, Plus, Search, ShoppingCart, Trash2, X } from 'lucide-react'
+import { ArrowRight, ChevronDown, ChevronLeft, Clock, Edit2, LayoutGrid, List, Minus, MoreVertical, Plus, Search, ShoppingCart, Trash2, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { mockCategories, mockMenuItems } from '../../data'
 import { Button } from '../ui/Button'
@@ -435,7 +435,7 @@ const CreateOrderModal = ({ isOpen, onClose }) => {
                         }`}
                         title="Chế độ lưới"
                       >
-                        <Grid3x3 className="h-4 w-4" />
+                        <LayoutGrid className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setViewMode('list')}
@@ -592,7 +592,7 @@ const CreateOrderModal = ({ isOpen, onClose }) => {
                       }) && (
                         <div className="text-center py-8">
                           <div className="text-secondary-400 mb-2">
-                            <Grid3x3 className="h-12 w-12 mx-auto" />
+                            <LayoutGrid className="h-12 w-12 mx-auto" />
                           </div>
                           <p className="text-secondary-600 font-medium">Không có bàn phù hợp</p>
                           <p className="text-sm text-secondary-500 mt-1">Không có bàn trống phù hợp cho {peopleCount} người</p>
@@ -743,7 +743,7 @@ const CreateOrderModal = ({ isOpen, onClose }) => {
               {/* Menu Header */}
               <div className="px-4 py-3 border-b border-secondary-200">
                 <div className="flex items-center gap-2 mb-3">
-                  <Grid3x3 className="h-4 w-4 text-secondary-700" />
+                  <LayoutGrid className="h-4 w-4 text-secondary-700" />
                   <h3 className="text-base font-bold text-secondary-900">Danh Sách Món</h3>
                 </div>
 

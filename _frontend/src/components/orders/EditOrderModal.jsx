@@ -1,4 +1,4 @@
-import { Edit2, Grid3x3, Minus, MoreVertical, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react'
+import { Edit2, LayoutGrid, Minus, MoreVertical, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { mockCategories, mockMenuItems } from '../../data'
 import { Button } from '../ui/Button'
@@ -236,7 +236,7 @@ const EditOrderModal = ({ isOpen, onClose, orderItems: initialOrderItems, orderN
               {/* Menu Header */}
               <div className="px-4 py-3 border-b border-secondary-200">
                 <div className="flex items-center gap-2 mb-3">
-                  <Grid3x3 className="h-4 w-4 text-secondary-700" />
+                  <LayoutGrid className="h-4 w-4 text-secondary-700" />
                   <h3 className="text-base font-bold text-secondary-900">Danh Sách Món</h3>
                 </div>
 

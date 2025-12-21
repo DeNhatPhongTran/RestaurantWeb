@@ -26,16 +26,23 @@ export default function Section3() {
       setLoading(true);
       const response = await apiCall('/api/menu/items');
       
-      if (response.success) {
+      if (response.success && response.data) {
         // Get all items and shuffle them
-        const itemsArray = Array.isArray(response.data.data) ? response.data.data : [];
+        const itemsArray = Array.isArray(response.data.data) ? response.data.data : (Array.isArray(response.data) ? response.data : []);
+        
+        if (itemsArray.length === 0) {
+          console.warn('No menu items found');
+          setSpecialDishes([]);
+          return;
+        }
+        
         const shuffledItems = shuffleArray(itemsArray);
         
         const dishes = shuffledItems.slice(0, 8).map(item => ({
-          title: item.name,
-          description: item.description,
-          price: item.price,
-          image: item.image,
+          title: item.name || 'Unknown',
+          description: item.description || '',
+          price: item.price || 0,
+          image: item.image || '',
         }));
         setSpecialDishes(dishes);
       } else {

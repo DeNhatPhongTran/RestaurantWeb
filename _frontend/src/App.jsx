@@ -1,47 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ApiProvider, useApi } from './context/ApiContext';
-import Layout from './components/Layouts/Layout';
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/Layouts/Header';
+import Footer from './components/Layouts/Footer';
 import Home from './pages/Home/Home';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
-import Header from './components/layout/Header'
-import MainLayout from './components/layout/MainLayout'
 import OrderListPage from './pages/OrderListPage'
 import './styles/globals.css'
 
-// Protected route wrapper
-function ProtectedRoute({ children }) {
-  const { user } = useApi()
-  return user ? children : <Navigate to="/login" replace />
-}
+function AppContent({ userRole, handleLogout, handleRoleSwitch }) {
+  const { user } = useApi();
 
-function AppContent() {
   return (
     <Router>
-      <div className="flex flex-col h-screen overflow-hidden">
-        <Header onLogout={handleLogout} userRole={userRole} onRoleSwitch={handleRoleSwitch} />
-        <MainLayout>
-          <Routes>
+      <div className="flex h-screen flex-col">
+        {/* Header - Always visible */}
+        <Header />
+        
+        {/* Main Layout with optional Sidebar */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar - Only show when logged in */}
+          {user && <Sidebar userRole={userRole} onLogout={handleLogout} />}
 
-          </Routes>
-        </MainLayout>
+          {/* Main Content */}
+          <div className="flex-1 flex flex-col overflow-auto">
+            <main className="flex-1 overflow-y-auto">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/orders" element={user ? <OrderListPage userRole={userRole} /> : <Navigate to="/login" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+          </div>
+        </div>
       </div>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/orders" element={<OrderListPage userRole={userRole} />} />
-          <Route path="/" element={<OrderListPage userRole={userRole} />} />
-          <Route path="*" element={<Navigate to="/orders" replace />} />
-        </Routes>
-      </Layout>
     </Router>
   );
 }
-
 
 export default function App() {
   const [userRole, setUserRole] = useState('waiter') // 'waiter' or 'cashier'
@@ -58,8 +57,7 @@ export default function App() {
 
   return (
     <ApiProvider>
-      <AppContent />
+      <AppContent userRole={userRole} handleLogout={handleLogout} handleRoleSwitch={handleRoleSwitch} />
     </ApiProvider>
   );
-
 }

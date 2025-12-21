@@ -1,4 +1,4 @@
-import { ChefHat, Clock as ClockIcon, CreditCard, Grid3x3, Receipt, UtensilsCrossed } from 'lucide-react'
+import { ChefHat, Clock as ClockIcon, CreditCard, LayoutGrid, Receipt, UtensilsCrossed } from 'lucide-react'
 import React from 'react'
 import { Card, CardBody } from '../ui/Card'
 
@@ -66,7 +66,7 @@ const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails, userR
               className="flex flex-col items-center justify-center py-1.5 px-1 rounded-lg border border-secondary-300 hover:bg-primary-50 hover:border-primary-400 transition-all group bg-white"
               title="Xem Chi Tiết"
             >
-              <Grid3x3 className="h-4 w-4 text-secondary-600 group-hover:text-primary-600 mb-0.5" />
+              <LayoutGrid className="h-4 w-4 text-secondary-600 group-hover:text-primary-600 mb-0.5" />
               <span className="text-xs text-secondary-700 group-hover:text-primary-600 font-medium whitespace-nowrap">Chi Tiết</span>
             </button>
             <button

@@ -166,4 +166,7 @@ html, body, #root { height: 100%; margin: 0; font-family: -apple-system, BlinkMa
     border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground; } }
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}

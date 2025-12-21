@@ -6,7 +6,7 @@ import OrderCard from '../components/orders/OrderCard'
 import OrderDetailModal from '../components/orders/OrderDetailModal'
 import PaymentConfirmModal from '../components/orders/PaymentConfirmModal'
 import PaymentProcessModal from '../components/orders/PaymentProcessModal'
-import { Button } from '../components/ui/Button'
+import { Button } from '../components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs'
 import { mockOrderItems, mockOrders, mockWaitingOrderItems } from '../data'
 
