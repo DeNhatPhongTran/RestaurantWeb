@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { add_init } from "./init_data/init_db.js";
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/restaurantDB";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27018/restaurantDB";
 
 export const connectDB = async () => {
   try {
@@ -15,7 +15,7 @@ export const connectDB = async () => {
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log("Collections found:", collections.map(c => c.name));
 
-    // await add_init();
+    await add_init();
   } catch (err) {
     console.error(" MongoDB connection failed:", err.message);
     process.exit(1);
