@@ -163,7 +163,7 @@ html, body, #root { height: 100%; margin: 0; font-family: -apple-system, BlinkMa
 
 @layer base {
   * {
-    @apply border-border; }
+    border-color: hsl(var(--border));
+  }
   body {
     @apply bg-background text-foreground; } }
-

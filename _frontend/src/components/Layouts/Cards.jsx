@@ -12,8 +12,8 @@ export default function Cards({ title, description, image, price, badge }) {
       <div className="card__body">
         <h3 className="card__title">{title}</h3>
         {description && <p className="card__description">{description}</p>}
-        {price && <p className="card__price">{price.toFixed(0)} VNĐ</p>}
-        {/* <button className="card__button">Xem thêm</button> */}
+        {price && <p className="card__price">{price.toFixed(0)} VND</p>}
+        {/* <button className="card__button">Xem thA¦m</button> */}
       </div>
     </div>
   );
