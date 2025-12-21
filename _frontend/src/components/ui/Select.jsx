@@ -1,9 +1,9 @@
 import React from 'react'
 import clsx from 'clsx'
 
-const Input = React.forwardRef(
-  ({ className, type = 'text', placeholder, ...props }, ref) => (
-    <input
+const Select = React.forwardRef(
+  ({ className, children, ...props }, ref) => (
+    <select
       className={clsx(
         'w-full rounded-md border border-secondary-300 bg-white px-3 py-2 text-base',
         'placeholder:text-secondary-500',
@@ -12,13 +12,13 @@ const Input = React.forwardRef(
         className
       )}
       ref={ref}
-      type={type}
-      placeholder={placeholder}
       {...props}
-    />
+    >
+      {children}
+    </select>
   )
 )
 
-Input.displayName = 'Input'
+Select.displayName = 'Select'
 
-export { Input }
+export { Select }
