@@ -3,6 +3,14 @@ import { useApi } from '../context/ApiContext';
 import Cards from '../components/Layouts/Cards';
 import '../styles/MenuStyle.css';
 
+const categoryTranslation = {
+  'Appetizers': 'Khai Vị',
+  'Soups': 'Súp',
+  'Main Dishes': 'Món Chính',
+  'Desserts': 'Tráng Miệng',
+  'Drinks': 'Đồ Uống'
+};
+
 export default function Menu() {
   const { apiCall } = useApi();
   const [menuItems, setMenuItems] = useState([]);
@@ -30,16 +38,17 @@ export default function Menu() {
           
           const cats = Object.entries(uniqueCategories).map(([id, name]) => ({
             _id: id,
-            name
+            name,
+            viName: categoryTranslation[name] || name
           }));
           setCategories(cats);
           setError(null);
         } else {
-          setError(response.error || 'Failed to load menu');
+          setError(response.error || 'Không thể tải thực đơn');
         }
       } catch (err) {
         console.error('Error fetching menu:', err);
-        setError('Failed to load menu items');
+        setError('Không thể tải các mục thực đơn');
       } finally {
         setLoading(false);
       }
@@ -55,22 +64,13 @@ export default function Menu() {
   if (loading) {
     return (
       <div className="menu-page">
-        <div className="menu__header">
-          <h1>Thực đơn</h1>
-          <p>Thưởng thức những món ăn hấp dẫn</p>
-        </div>
-        <div className="loading">Đang tải thực đơn ...</div>
+        <div className="loading">Đang tải thực đơn...</div>
       </div>
     );
   }
 
   return (
     <div className="menu-page">
-      <div className="menu__header">
-        <h1>Thực đơn</h1>
-        <p>Thưởng thức những món ăn hấp dẫn</p>
-      </div>
-
       {error && (
         <div className="menu__error">
           <p>{error}</p>
@@ -85,7 +85,7 @@ export default function Menu() {
               className={`filter__btn ${selectedCategory === 'all' ? 'active' : ''}`}
               onClick={() => setSelectedCategory('all')}
             >
-              Tất cả món ăn
+              Tất cả
             </button>
             {categories.map(cat => (
               <button
@@ -93,7 +93,7 @@ export default function Menu() {
                 className={`filter__btn ${selectedCategory === cat._id ? 'active' : ''}`}
                 onClick={() => setSelectedCategory(cat._id)}
               >
-                {cat.name}
+                {cat.viName}
               </button>
             ))}
           </div>
@@ -101,7 +101,7 @@ export default function Menu() {
 
         {/* Menu Items Grid */}
         {filteredItems.length > 0 ? (
-          <div className="menu__grid">
+          <div className="menu__grid" key={`${selectedCategory}-${filteredItems.length}`}>
             {filteredItems.map(item => (
               <Cards
                 key={item._id}

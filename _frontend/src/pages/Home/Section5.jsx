@@ -6,21 +6,21 @@ export default function Section5() {
       <div className="container">
         <div className="section5__content">
           <div className="section5__text">
-            <h2>About Our Restaurant</h2>
+            <h2>Về Nhà Hàng TasteGood</h2>
             <p>
-              FoodHub is dedicated to bringing you the finest culinary experiences 
-              with fresh ingredients and authentic recipes. Our team of expert chefs 
-              work tirelessly to ensure every meal is prepared with love and care.
+              TasteGood cam kết mang đến những trải nghiệm ẩm thực tốt nhất 
+              với nguyên liệu tươi và các công thức xác thực. Đội ngũ đầu bếp chuyên nghiệp 
+              của chúng tôi luôn nỗ lực để đảm bảo mỗi bữa ăn được chế biến với tình yêu và tâm huyết.
             </p>
             <p>
-              Since our establishment, we have been committed to delivering not just 
-              food, but an unforgettable dining experience to our valued customers.
+              Kể từ khi thành lập, chúng tôi đã cam kết cung cấp không chỉ là thức ăn, 
+              mà là một trải nghiệm ăn uống không thể quên cho các khách hàng quý giá của chúng tôi.
             </p>
-            <button className="btn btn__primary">Read More</button>
+            <button className="btn btn__primary">Đọc Thêm</button>
           </div>
           <div className="section5__image">
             <img 
-              src="https://cdn.pixabay.com/photo/2016/11/21/12/42/kitchen-1645434_1280.jpg" 
+              src="https://gubistronomy.com/wp-content/uploads/2023/05/nhung-dieu-can-biet-ve-nha-hang-sao-michelin-8.jpg" 
               alt="Restaurant"
             />
           </div>

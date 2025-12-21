@@ -48,13 +48,13 @@ export default function Header() {
               {userMenuOpen && (
                 <div className="user__dropdown">
                   <Link to="/profile" className="dropdown__item" onClick={closeMenu}>
-                    Profile
+                    Hồ Sơ
                   </Link>
                   <button 
                     className="dropdown__item logout"
                     onClick={handleLogout}
                   >
-                    Logout
+                    Đăng Xuất
                   </button>
                 </div>
               )}

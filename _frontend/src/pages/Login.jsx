@@ -9,26 +9,26 @@ export default function LoginPage() {
       <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 px-6 py-16 lg:flex-row lg:items-start lg:gap-14">
         <div className="flex-1 space-y-6 text-center lg:text-left">
           <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 shadow-sm ring-1 ring-orange-100">
-            TasteGood Team
+            Đội TasteGood
           </span>
           <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
-            Manage TasteGood with ease
+            Quản lý TasteGood dễ dàng
           </h1>
           <p className="text-lg text-muted-foreground">
-            Sign in to track reservations, refresh menus, and support guests in seconds.
+            Đăng nhập để theo dõi các đặt phòng, cập nhật thực đơn và hỗ trợ khách hàng trong vài giây.
           </p>
           <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-2xl bg-white/85 p-4 text-left shadow-lg ring-1 ring-orange-100 backdrop-blur">
-              <p className="text-sm font-semibold text-amber-700">Reservation overview</p>
-              <p className="text-sm text-muted-foreground">See booking status and special requests at a glance.</p>
+              <p className="text-sm font-semibold text-amber-700">Tổng quan về đặt phòng</p>
+              <p className="text-sm text-muted-foreground">Xem trạng thái đặt chỗ và yêu cầu đặc biệt trong tích tắc.</p>
             </div>
             <div className="rounded-2xl bg-white/85 p-4 text-left shadow-lg ring-1 ring-orange-100 backdrop-blur">
-              <p className="text-sm font-semibold text-amber-700">Menu control</p>
-              <p className="text-sm text-muted-foreground">Update dishes and promos without interrupting service.</p>
+              <p className="text-sm font-semibold text-amber-700">Kiểm soát thực đơn</p>
+              <p className="text-sm text-muted-foreground">Cập nhật các món ăn và khuyến mãi mà không làm gián đoạn dịch vụ.</p>
             </div>
             <div className="rounded-2xl bg-white/85 p-4 text-left shadow-lg ring-1 ring-orange-100 backdrop-blur sm:col-span-2">
-              <p className="text-sm font-semibold text-amber-700">Team-ready</p>
-              <p className="text-sm text-muted-foreground">Built for staff logins with quick error feedback and guided help.</p>
+              <p className="text-sm font-semibold text-amber-700">Sẵn sàng cho nhóm</p>
+              <p className="text-sm text-muted-foreground">Được xây dựng để nhân viên đăng nhập với phản hồi lỗi nhanh và hướng dẫn hữu ích.</p>
             </div>
           </div>
         </div>

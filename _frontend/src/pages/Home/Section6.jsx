@@ -4,25 +4,25 @@ export default function Section6() {
   return (
     <section className="section section6">
       <div className="container">
-        <h2 className="section__title">Chef's Special Recommendation</h2>
+        <h2 className="section__title">Gợi Ý Đặc Biệt Từ Đầu Bếp</h2>
         <div className="chef__content">
           <div className="chef__image">
             <img 
-              src="https://cdn.pixabay.com/photo/2015/01/19/13/51/chef-604662_1280.jpg" 
+              src="https://cdn-bnklg.nitrocdn.com/WQiharaAoSUWjdmYdQaoZKLXawgJIPOR/assets/images/source/rev-e752b2c/www.upmenu.com/wp-content/uploads/2023/10/executive-chef-job-description-cover-photo-768x548.jpg.webp" 
               alt="Chef"
             />
           </div>
           <div className="chef__info">
-            <h3>Chef Marco Rossi</h3>
-            <p className="chef__title">Head Chef & Co-founder</p>
+            <h3>Đầu Bếp Marco Rossi</h3>
+            <p className="chef__title">Giám Đốc Bếp</p>
             <p className="chef__bio">
-              With over 20 years of experience in international cuisine, 
-              Chef Marco brings passion and expertise to every dish. His signature 
-              style blends traditional flavors with modern techniques.
+              Với hơn 20 năm kinh nghiệm trong ẩm thực quốc tế, 
+              Đầu Bếp Marco mang niềm đam mê và chuyên môn vào mỗi món ăn. Phong cách chữ ký của anh 
+              kết hợp các hương vị truyền thống với kỹ thuật hiện đại.
             </p>
             <p className="chef__recommendation">
-              "This week, I especially recommend our Truffle Risotto with Pan-seared 
-              Scallops. It's a perfect blend of elegance and comfort."
+              "Tuần này, tôi đặc biệt giới thiệu món Risotto Nấm Truffle với Sò Dredge được nấu chín vừa. 
+              Đó là sự kết hợp hoàn hảo của sự sang trọng và sự thoải mái."
             </p>
           </div>
         </div>

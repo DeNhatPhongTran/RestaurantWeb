@@ -18,6 +18,34 @@ const router = express.Router();
 // IMPORTANT: Specific routes MUST come BEFORE parameterized routes (:id)
 // Order: /categories → /items/by-category/:categoryId → /items/:id
 
+// GET /api/menu/random - Get 6 random menu items (SPECIAL ROUTE - FIRST)
+router.get("/random", async (req, res) => {
+  try {
+    const items = await MenuItem.find()
+      .populate("category", "category_name")
+      .select("_id name price image description status category")
+      .lean()
+      .exec();
+    
+    // Shuffle and get first 6 items
+    let randomItems = items.sort(() => 0.5 - Math.random()).slice(0, 6);
+    
+    res.json({
+      success: true,
+      message: "Random menu items fetched successfully",
+      data: randomItems,
+      count: randomItems.length
+    });
+  } catch (error) {
+    console.error("Error fetching random menu items:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch random menu items",
+      error: error.message
+    });
+  }
+});
+
 // GET /api/menu/categories - Get all categories
 router.get("/categories", async (req, res) => {
   try {
@@ -35,29 +63,6 @@ router.get("/categories", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch categories",
-      error: error.message
-    });
-  }
-});
-
-// GET /api/menu/items/by-category/:categoryId - Get items by category (BEFORE /:id)
-router.get("/items/by-category/:categoryId", async (req, res) => {
-  try {
-    const items = await MenuItem.find({ category: req.params.categoryId })
-      .populate("category", "category_name")
-      .select("_id name price image description status category");
-    
-    res.json({
-      success: true,
-      message: "Menu items by category fetched successfully",
-      data: items,
-      count: items.length
-    });
-  } catch (error) {
-    console.error("Error fetching menu items by category:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch menu items by category",
       error: error.message
     });
   }

@@ -232,6 +232,9 @@ btn__secondary:active {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card:hover {
@@ -242,7 +245,7 @@ btn__secondary:active {
 .card__image {
   position: relative;
   overflow: hidden;
-  height: 250px;
+  height:250px;
 }
 
 .card__image img {
@@ -270,6 +273,14 @@ btn__secondary:active {
 
 .card__body {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 50%;
+  justify-content: space-between;
+}
+
+.card__content {
+  flex-grow: 1;
 }
 
 .card__title {
@@ -284,13 +295,17 @@ btn__secondary:active {
   font-size: 0.95rem;
   margin-bottom: 1rem;
   line-height: 1.5;
+  min-height: 3rem;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card__price {
   font-size: 1.8rem;
   color: var(--accent-color);
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-top: rem;
+  margin-bottom: 0;
 }
 
 .card__button {

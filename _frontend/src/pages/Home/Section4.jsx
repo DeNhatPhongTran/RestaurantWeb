@@ -3,18 +3,18 @@ import React from 'react';
 export default function Section4() {
   const testimonials = [
     {
-      name: 'John Doe',
-      comment: 'TasteGood delivers on time and the dishes stay flavorful, even for takeout.',
+      name: 'Nguyễn Văn A',
+      comment: 'TasteGood giao hàng đúng giờ và các món ăn vẫn ngon, thậm chí khi mang về.',
       rating: 5
     },
     {
-      name: 'Jane Smith',
-      comment: 'Beautiful space, attentive staff, and refined flavors. We will be back soon.',
+      name: 'Trần Thị B',
+      comment: 'Không gian đẹp, nhân viên tư tế, hương vị tinh tế. Chúng tôi sẽ quay lại sớm.',
       rating: 5
     },
     {
-      name: 'Mike Johnson',
-      comment: 'Great mix of Asian and Western dishes at a fair price, with consistent quality.',
+      name: 'Phạm Minh C',
+      comment: 'Sự pha trộn tuyệt vời giữa ẩm thực châu Á và phương Tây, giá cả hợp lý, chất lượng nhất quán.',
       rating: 4
     }
   ];
@@ -22,7 +22,7 @@ export default function Section4() {
   return (
     <section className="section section4">
       <div className="container">
-        <h2 className="section__title">What our guests say</h2>
+        <h2 className="section__title">Khách Hàng Nói Gì Về TasteGood</h2>
         <div className="testimonials__grid">
           {testimonials.map((testimonial, idx) => (
             <div key={idx} className="testimonial__card">

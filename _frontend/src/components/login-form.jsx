@@ -30,22 +30,22 @@ export function LoginForm({ className, ...props }) {
       return;
     }
 
-    setError(result.error || "Login failed. Please try again.");
+    setError(result.error || "Đăng nhập thất bại. Vui lòng thử lại.");
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="border-0 bg-white/95 shadow-2xl ring-1 ring-orange-100/70 backdrop-blur">
         <CardHeader>
-          <CardTitle className="text-2xl text-foreground">Welcome back</CardTitle>
+          <CardTitle className="text-2xl text-foreground">Chào mừng quay lại</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Sign in to manage TasteGood reservations and menu updates.
+            Đăng nhập để quản lý các đặt phòng tại TasteGood và cập nhật thực đơn.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Tên người dùng</Label>
               <Input
                 id="username"
                 type="text"
@@ -58,12 +58,12 @@ export function LoginForm({ className, ...props }) {
             </div>
             <div className="space-y-2">
               <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Mật khẩu</Label>
                 <a
                   href="#"
                   className="ml-auto inline-block text-sm text-primary underline-offset-4 hover:underline"
                 >
-                  Forgot password?
+                  Quên mật khẩu?
                 </a>
               </div>
               <Input
@@ -83,16 +83,16 @@ export function LoginForm({ className, ...props }) {
             )}
 
             <Button type="submit" className="w-full bg-amber-500 text-white hover:bg-amber-600" disabled={loading}>
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
             <Button type="button" variant="outline" className="w-full" disabled>
-              Sign in with Google (coming soon)
+              Đăng nhập bằng Google (sắp có)
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?
+            Chưa có tài khoản?
             <a href="#" className="ml-1 font-medium text-primary underline-offset-4 hover:underline">
-              Contact your administrator
+              Liên hệ quản trị viên
             </a>
           </div>
         </CardContent>
