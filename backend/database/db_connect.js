@@ -15,7 +15,7 @@ export const connectDB = async () => {
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log("Collections found:", collections.map(c => c.name));
 
-    // await add_init();
+    await add_init();
   } catch (err) {
     console.error(" MongoDB connection failed:", err.message);
     process.exit(1);

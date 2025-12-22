@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ApiProvider, useApi } from './context/ApiContext';
 import Layout from './components/Layouts/Layout';
 import Home from './pages/Home/Home';
-import Menu from './pages/Menu';
+import Menu from './pages/Menu'; //
 import Login from './pages/Login';
+import Dish_menu_mgmt from './pages/dish_menu/Dish_menu_mgmt';
+import Reservation_mgmt from './pages/reservation/Reservation_mgmt';
 import './styles/index.css';
 
 // Protected route wrapper
@@ -22,6 +24,8 @@ function AppContent() {
           <Route path="/menu" element={<Menu />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/login" element={<Login />}/>
+          <Route path="/reservation" element={<Reservation_mgmt />} />
+          <Route path="/dish_menu" element={<Dish_menu_mgmt />} />
         </Routes>
       </Layout>
     </Router>

@@ -3,6 +3,8 @@ import cors from "cors";
 import { connectDB } from "./database/db_connect.js";
 import authRoutes from "./routes/auth.js";
 import menuRoutes from "./routes/menu.js";
+import reservationsRoute from './routes/reservations.js'
+import dishMenuRoute from './routes/dish_menu.js'
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
+app.use('/api/reservations', reservationsRoute)
+app.use('/api/dish_menu', dishMenuRoute)
 
 // Error handling
 app.use((err, req, res, next) => {

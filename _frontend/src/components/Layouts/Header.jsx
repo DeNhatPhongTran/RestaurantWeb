@@ -34,7 +34,8 @@ export default function Header() {
         <nav className={`header__nav ${mobileMenuOpen ? 'active' : ''}`}>
           <Link to="/" className="nav__link" onClick={closeMenu}>Trang chủ</Link>
           <Link to="/menu" className="nav__link" onClick={closeMenu}>Thực đơn</Link>
-          <a href="/reservation" className="nav__link" onClick={closeMenu}>Đặt bàn</a>
+          <a href="/reservation" className="nav__link" onClick={closeMenu}>QL đặt bàn</a>
+          <a href="/dish_menu" className="nav__link" onClick={closeMenu}>QL thực đơn</a>
           <a href="#contact" className="nav__link" onClick={closeMenu}>Liên hệ</a>
           
           {user ? (
