@@ -42,9 +42,11 @@ export default function CheckTableOverlap() {
 
             const data = await res.json();
             setTables(data.availableTables || []);
+            if(res.status != 200)
+                alert(`${res.status}: ${data.message}`)
         } catch (err) {
             console.error(err);
-            alert("Lỗi kết nối với server");
+            alert("Lỗi kết nối");
         } finally {
             setLoading(false);
         }
@@ -74,9 +76,9 @@ export default function CheckTableOverlap() {
                 </Button>
 
                 {/* RESULT */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-4 gap-2">
                     {tables.length === 0 && !loading && (
-                        <p className="text-sm text-muted-foreground col-span-3">
+                        <p className="text-sm text-muted-foreground">
                             Không có bàn trống
                         </p>
                     )}

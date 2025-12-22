@@ -21,7 +21,7 @@ router.get("/list", async (req, res) => {
             },
             {
                 $lookup: {
-                    from: "tables",     
+                    from: "tables",
                     localField: "reservationTables.tableId",
                     foreignField: "_id",
                     as: "tables"
@@ -32,7 +32,7 @@ router.get("/list", async (req, res) => {
                     tables: { name: 1 },
                     customer_name: 1,
                     customer_phone: 1,
-                    guest_count: 1, 
+                    guest_count: 1,
                     datetime_checkin: 1,
                     datetime_out: 1,
                     status: 1,
@@ -73,8 +73,8 @@ router.post("/edit", async (req, res) => {
             { new: true } // trả về document sau khi update
         );
 
-        const edit_table_obj = await Table.findOne({name: edit_table_name})
-        const res_tab_obj = await Reservation_Table.findOne({reservationId: reservation_id}) // 1 bàn-nhiều đơn
+        const edit_table_obj = await Table.findOne({ name: edit_table_name })
+        const res_tab_obj = await Reservation_Table.findOne({ reservationId: reservation_id }) // 1 bàn-nhiều đơn
         const updatedResTab = await Reservation_Table.findByIdAndUpdate(
             res_tab_obj._id,
             {
@@ -148,34 +148,39 @@ router.post("/create", async (req, res) => {
 })
 
 router.post("/overlap_check", async (req, res) => {
-    const { from, to } = req.body;
+    try {
+        const { from, to } = req.body;
 
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
-    console.log(fromDate, toDate)
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+        console.log(fromDate, toDate)
 
-    const overlappedReservations = await Reservation.find({
-        status: { $nin: ["cancelled", "finished", "no-show"] },
-        datetime_checkin: { $lt: toDate },
-        datetime_out: { $gt: fromDate }
-    }).select("_id");
+        const overlappedReservations = await Reservation.find({
+            status: { $nin: ["cancelled", "finished", "no-show"] },
+            datetime_checkin: { $lt: toDate },
+            datetime_out: { $gt: fromDate }
+        }).select("_id");
 
-    const overlapReservationIds = overlappedReservations.map(r => r._id);
+        const overlapReservationIds = overlappedReservations.map(r => r._id);
 
-    const busyTables = await Reservation_Table.find({
-        reservationId: { $in: overlapReservationIds }
-    }).select("tableId");
+        const busyTables = await Reservation_Table.find({
+            reservationId: { $in: overlapReservationIds }
+        }).select("tableId");
 
-    const busyTableIds = busyTables.map(t => t.tableId);
+        const busyTableIds = busyTables.map(t => t.tableId);
 
-    const overlapTables = await Table.find({
-        _id: { $in: busyTableIds }
-    })
-    const availableTables = await Table.find({
-        _id: { $nin: busyTableIds }
-    });
+        const overlapTables = await Table.find({
+            _id: { $in: busyTableIds }
+        })
+        const availableTables = await Table.find({
+            _id: { $nin: busyTableIds }
+        });
 
-    res.status(200).json({ fromDate, toDate, overlapTables, availableTables });
+        res.status(200).json({ fromDate, toDate, overlapTables, availableTables });
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Lỗi phía server" })
+    }
 })
 
 export default router

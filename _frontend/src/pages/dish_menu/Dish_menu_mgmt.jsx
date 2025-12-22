@@ -13,29 +13,27 @@ export default function Dish_menu_mgmt() {
     const [editDish, setEditDish] = useState(null);
     const [deleteDish, setDeleteDish] = useState(null);
 
-    // Auto refresh khi load lần đầu
     useEffect(() => {
         console.log("Log: Refresh lần đầu")
         fetchAllData();
     }, []);
 
     const fetchAllData = async () => {
-        const body = await fetch("/api/menu/list")
-            .then(res => res.json());
-        // const body = [
-        //     {
-        //         "_id": {
-        //             "$oid": "69464955c708090551699bcc"
-        //         },
-        //         "category": "Đồ uống",
-        //         "name": "Nước Cam Ép",
-        //         "price": 25000,
-        //         "image": "https://cdn2.fptshop.com.vn/unsafe/1080x0/filters:format(webp):quality(75)/Nuoc_ep_cam_0ae1447a8f.jpg",
-        //         "status": "Đang phục vụ",
-        //         "description": "Nước cam ép tươi, thơm ngon.",
-        //         "__v": 0
-        //     }
-        // ]
+        // const body = await fetch("/api/dish_menu/list")
+        //     .then(res => res.json());
+        const body = [
+            {
+                "_id": {
+                    "$oid": "69464955c708090551699bcc"
+                },
+                "category": "Đồ uống",
+                "name": "Nước Cam Ép",
+                "price": 25000,
+                "image": "https://cdn2.fptshop.com.vn/unsafe/1080x0/filters:format(webp):quality(75)/Nuoc_ep_cam_0ae1447a8f.jpg",
+                "status": "Đang phục vụ",
+                "description": "Nước cam ép tươi, thơm ngon.",
+            }
+        ]
         setDishes(body);
     };
 
@@ -54,7 +52,7 @@ export default function Dish_menu_mgmt() {
         const payload = { name, category, price, img, descript };
 
         try {
-            const res = await fetch("/api/menu/create", {
+            const res = await fetch("/api/dish_menu/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -80,7 +78,7 @@ export default function Dish_menu_mgmt() {
         };
 
         try {
-            const res = await fetch("/api/menu/edit", {
+            const res = await fetch("/api/dish_menu/edit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -97,7 +95,7 @@ export default function Dish_menu_mgmt() {
 
     const confirmDelete = async () => {
         try {
-            const res = await fetch("/api/menu/delete", {
+            const res = await fetch("/api/dish_menu/delete", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ id: deleteDish._id }),
@@ -119,7 +117,7 @@ export default function Dish_menu_mgmt() {
                 <h2 className="text-2xl font-bold">Danh sách các món ăn</h2>
                 <div className="p-4">
                     {/* Bộ lọc + nút refresh */}
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-2">
                         <Input placeholder="Lọc theo tên..."
                             className="w-60"
                             value={filterName}
@@ -152,33 +150,38 @@ export default function Dish_menu_mgmt() {
                         <Button onClick={() => fetchAllData()}>Làm mới</Button>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-2">
+                    <p className="text-sm text-muted-foreground mb-2">
+                        Có {dishes.filter((d) => d.name.toLowerCase().includes(filterName.toLowerCase()) &&
+                            d.category.includes(filterCategory) &&
+                            d.status.includes(filterStatus)).length} món
+                    </p>
+
+                    <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
                         {dishes.filter((d) => d.name.toLowerCase().includes(filterName.toLowerCase()) &&
                             d.category.includes(filterCategory) &&
                             d.status.includes(filterStatus)
-                        )
-                            .map((dish) => {
-                                return (
-                                    <Card key={dish._id} className="overflow-hidden">
-                                        <img src={dish.image} alt={dish.name} className="h-32 object-cover" />
-                                        <CardContent className="p-3 pt-0">
-                                            <div className="font-medium">{dish.name}</div>
-                                            <div>({dish.status})</div>
-                                            <div className="text-sm text-muted-foreground">
-                                                {dish.price.toLocaleString()}đ
-                                            </div>
-                                            <div className="flex justify-between">
-                                                <Button size="sm" variant="outline"
-                                                    onClick={() => setEditDish(dish)}
-                                                >Sửa</Button>
-                                                <Button size="sm" variant="destructive"
-                                                    onClick={() => setDeleteDish(dish)}
-                                                >Xóa</Button>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                )
-                            })}
+                        ).map((dish) => {
+                            return (
+                                <Card key={dish._id} className="overflow-hidden">
+                                    <img src={dish.image} alt={dish.name} className="h-32 object-cover" />
+                                    <CardContent className="p-3 pt-0">
+                                        <div className="font-medium">{dish.name}</div>
+                                        <div>({dish.status})</div>
+                                        <div className="text-sm text-muted-foreground">
+                                            {dish.price.toLocaleString()}đ
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <Button size="sm" variant="outline"
+                                                onClick={() => setEditDish(dish)}
+                                            >Sửa</Button>
+                                            <Button size="sm" variant="destructive"
+                                                onClick={() => setDeleteDish(dish)}
+                                            >Xóa</Button>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )
+                        })}
                     </div>
 
                     {/* Popup Edit */}

@@ -139,15 +139,15 @@ export default function Reservation_mgmt() {
             setDeleteBooking(null)
         } catch (err) {
             console.error(err);
-            alert("Xóa thất bại!");
+            alert("Lỗi đường truyền");
         }
     };
 
     return (
-        <div className="w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="w-full p-6 grid grid-cols-1 lg:grid-cols-4 gap-3">
 
             {/* LEFT */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
                 <Card className="p-6">
                     <h2 className="text-2xl font-bold">Danh sách đặt bàn tại nhà hàng</h2>
                     <div className="p-4 pt-1">
@@ -292,7 +292,7 @@ export default function Reservation_mgmt() {
                     <input id="newInDate" type="date" className="border rounded-xl p-2" />
 
                     <label>Giờ:</label>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                         <input id="newInClockTime" type="time" className="border rounded-xl p-2" />
                         <p>đến</p>
                         <input id="newOutClockTime" type="time" className="border rounded-xl p-2" />

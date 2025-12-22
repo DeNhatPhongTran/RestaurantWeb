@@ -1,7 +1,7 @@
 import express from "express";
 import { connectDB } from "./database/db_connect.js";
 import reservationsRoute from './routes/reservations.js'
-import menuRoute from './routes/menu.js'
+import dishMenuRoute from './routes/dish_menu.js'
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/reservations', reservationsRoute)
-app.use('/api/menu', menuRoute)
+app.use('/api/dish_menu', dishMenuRoute)
 
 // Error handling
 app.use((err, req, res, next) => {
