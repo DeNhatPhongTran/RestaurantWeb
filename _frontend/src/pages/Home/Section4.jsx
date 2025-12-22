@@ -3,17 +3,17 @@ import React from 'react';
 export default function Section4() {
   const testimonials = [
     {
-      name: 'Nguyễn Văn A',
+      name: 'Công Phượng',
       comment: 'TasteGood giao hàng đúng giờ và các món ăn vẫn ngon, thậm chí khi mang về.',
       rating: 5
     },
     {
-      name: 'Trần Thị B',
-      comment: 'Không gian đẹp, nhân viên tư tế, hương vị tinh tế. Chúng tôi sẽ quay lại sớm.',
+      name: 'Ánh Viên',
+      comment: 'Không gian đẹp, nhân viên tử tế, hương vị tinh tế. Chúng tôi sẽ quay lại sớm đấy.',
       rating: 5
     },
     {
-      name: 'Phạm Minh C',
+      name: 'Quang Hải',
       comment: 'Sự pha trộn tuyệt vời giữa ẩm thực châu Á và phương Tây, giá cả hợp lý, chất lượng nhất quán.',
       rating: 4
     }

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ApiProvider, useApi } from './context/ApiContext';
 import Sidebar from './components/layout/Sidebar';
 import Header from './components/Layouts/Header';
-import Footer from './components/Layouts/Footer';
 import Home from './pages/Home/Home';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
@@ -61,5 +60,3 @@ export default function App() {
     </ApiProvider>
   );
 }
-
-export default App;

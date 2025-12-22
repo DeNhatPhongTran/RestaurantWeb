@@ -1,6 +1,6 @@
 import React from 'react'
 import { Skeleton } from '../ui/Skeleton'
-import { CardBody } from '../ui/Card'
+import { CardContent } from '../ui/card'
 
 const TableSkeleton = ({ rows = 5, columns = 5 }) => {
   return (

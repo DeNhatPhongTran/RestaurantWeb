@@ -1,6 +1,6 @@
 import { ChefHat, Clock as ClockIcon, CreditCard, LayoutGrid, Receipt, UtensilsCrossed } from 'lucide-react'
 import React from 'react'
-import { Card, CardBody } from '../ui/Card'
+import { Card, CardContent } from '../ui/card'
 
 const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails, userRole = 'waiter' }) => {
   // Status color mapping
@@ -23,7 +23,7 @@ const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails, userR
 
   return (
     <Card className={`overflow-hidden hover:shadow-lg transition-shadow w-full ${statusStyle.border}`}>
-      <CardBody className="p-0">
+      <CardContent className="p-0">
         {/* Header - Order Info */}
         <div className="px-2 py-1.5 bg-secondary-50 border-b border-secondary-200">
           <div className="flex items-center justify-between mb-0.5">
@@ -108,7 +108,7 @@ const OrderCard = ({ order, onServeItems, onPaymentRequest, onViewDetails, userR
             </button>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   )
 }

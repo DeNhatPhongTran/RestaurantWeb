@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import these
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/Avatar"; // Import these
 
 export default function Profile() {
   const [user, setUser] = useState(null);

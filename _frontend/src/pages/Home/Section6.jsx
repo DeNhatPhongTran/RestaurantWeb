@@ -14,7 +14,7 @@ export default function Section6() {
           </div>
           <div className="chef__info">
             <h3>Đầu Bếp Marco Rossi</h3>
-            <p className="chef__title">Giám Đốc Bếp</p>
+            <p className="chef__title">Chuyên gia ẩm thực</p>
             <p className="chef__bio">
               Với hơn 20 năm kinh nghiệm trong ẩm thực quốc tế, 
               Đầu Bếp Marco mang niềm đam mê và chuyên môn vào mỗi món ăn. Phong cách chữ ký của anh 
