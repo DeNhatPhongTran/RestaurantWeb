@@ -19,21 +19,21 @@ export default function Dish_menu_mgmt() {
     }, []);
 
     const fetchAllData = async () => {
-        // const body = await fetch("/api/dish_menu/list")
-        //     .then(res => res.json());
-        const body = [
-            {
-                "_id": {
-                    "$oid": "69464955c708090551699bcc"
-                },
-                "category": "Đồ uống",
-                "name": "Nước Cam Ép",
-                "price": 25000,
-                "image": "https://cdn2.fptshop.com.vn/unsafe/1080x0/filters:format(webp):quality(75)/Nuoc_ep_cam_0ae1447a8f.jpg",
-                "status": "Đang phục vụ",
-                "description": "Nước cam ép tươi, thơm ngon.",
-            }
-        ]
+        const body = await fetch("/api/dish_menu/list")
+            .then(res => res.json());
+        // const body = [
+        //     {
+        //         "_id": {
+        //             "$oid": "69464955c708090551699bcc"
+        //         },
+        //         "category": "Đồ uống",
+        //         "name": "Nước Cam Ép",
+        //         "price": 25000,
+        //         "image": "https://cdn2.fptshop.com.vn/unsafe/1080x0/filters:format(webp):quality(75)/Nuoc_ep_cam_0ae1447a8f.jpg",
+        //         "status": "Đang phục vụ",
+        //         "description": "Nước cam ép tươi, thơm ngon.",
+        //     }
+        // ]
         setDishes(body);
     };
 
