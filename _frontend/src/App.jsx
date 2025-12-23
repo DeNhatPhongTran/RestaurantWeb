@@ -7,6 +7,8 @@ import Home from './pages/Home/Home';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
 import OrderListPage from './pages/OrderListPage'
+import Dish_menu_mgmt from './pages/dish_menu/Dish_menu_mgmt';
+import Reservation_mgmt from './pages/reservation/Reservation_mgmt';
 import './styles/globals.css'
 
 function AppContent({ userRole, handleLogout, handleRoleSwitch }) {
@@ -31,14 +33,14 @@ function AppContent({ userRole, handleLogout, handleRoleSwitch }) {
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/orders" element={user ? <OrderListPage userRole={userRole} /> : <Navigate to="/login" replace />} />
+                <Route path="/reservation" element={<Reservation_mgmt />} />
+                <Route path="/dish_menu" element={<Dish_menu_mgmt />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>
           </div>
         </div>
       </div>
-    </Router>
-  );
 }
 
 export default function App() {

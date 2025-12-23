@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import CheckTableOverlap from "./CheckTableOverlap";
 
@@ -42,7 +42,7 @@ export default function Reservation_mgmt() {
         //         "__v": 0
         //     }
         // ]
-        setData(mockdata)
+        // setData(mockdata)
     };
 
     const combineDateTime = (dateStr, timeStr) => {
@@ -139,32 +139,32 @@ export default function Reservation_mgmt() {
             setDeleteBooking(null)
         } catch (err) {
             console.error(err);
-            alert("Xóa thất bại!");
+            alert("Lỗi đường truyền");
         }
     };
 
     return (
-        <div className="w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="w-full p-6 grid grid-cols-1 lg:grid-cols-4 gap-3">
 
             {/* LEFT */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
                 <Card className="p-6">
                     <h2 className="text-2xl font-bold">Danh sách đặt bàn tại nhà hàng</h2>
                     <div className="p-4 pt-1">
                         {/* Bộ lọc + nút refresh */}
                         <div className="flex gap-2 mb-4">
                             <Input placeholder="Lọc theo tên bàn..."
-                                className="w-50"
+                                className="w-40"
                                 value={filterTable}
                                 onChange={(e) => setFilterTable(e.target.value)}
                             />
                             <Input placeholder="Lọc theo tên khách..."
-                                className="w-60"
+                                className="w-40"
                                 value={filterName}
                                 onChange={(e) => setFilterName(e.target.value)}
                             />
                             <Select value={filterStatus} onValueChange={setFilterStatus} >
-                                <SelectTrigger>
+                                <SelectTrigger className="w-50">
                                     <SelectValue placeholder="Lọc theo trạng thái" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -218,7 +218,7 @@ export default function Reservation_mgmt() {
 
                         {/* Popup Edit */}
                         <Dialog open={!!editBooking} onOpenChange={() => setEditBooking(null)}>
-                            <DialogContent>
+                            <DialogContent className="z-[100]">
                                 <DialogHeader>
                                     <DialogTitle>Chỉnh sửa đơn đặt bàn</DialogTitle>
                                 </DialogHeader>
@@ -278,7 +278,7 @@ export default function Reservation_mgmt() {
             {/* RIGHT */}
             <Card className="p-6 max-h-[600px]">
                 <h2 className="text-xl font-bold">Thông tin tạo đặt bàn mới</h2>
-                <div className="flex flex-col gap-2 text-sm">
+                <div className="flex flex-col gap-2 text-sm pt-4">
                     <label htmlFor="newName">Tên khách đặt:</label>
                     <input id="newName" type="text" className="border rounded-xl p-2" />
 
@@ -292,7 +292,7 @@ export default function Reservation_mgmt() {
                     <input id="newInDate" type="date" className="border rounded-xl p-2" />
 
                     <label>Giờ:</label>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                         <input id="newInClockTime" type="time" className="border rounded-xl p-2" />
                         <p>đến</p>
                         <input id="newOutClockTime" type="time" className="border rounded-xl p-2" />

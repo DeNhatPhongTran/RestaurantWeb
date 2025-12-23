@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/Button"; // B b
+import { Input } from "@/components/ui/Input";
+import { Card, CardContent } from "@/components/ui/Card";
 
 export default function CheckTableOverlap() {
     const [fromDate, setFromDate] = useState("");
@@ -42,9 +42,11 @@ export default function CheckTableOverlap() {
 
             const data = await res.json();
             setTables(data.availableTables || []);
+            if(res.status != 200)
+                alert(`${res.status}: ${data.message}`)
         } catch (err) {
             console.error(err);
-            alert("Lỗi kết nối với server");
+            alert("Lỗi kết nối");
         } finally {
             setLoading(false);
         }
@@ -52,7 +54,7 @@ export default function CheckTableOverlap() {
 
     return (
         <Card className="mt-4">
-            <CardContent className="space-y-4 p-6 pt-1">
+            <CardContent className="space-y-4 p-6 pt-6">
                 <h2 className="text-xl font-bold">Kiểm tra bàn trống</h2>
 
                 {/* FROM */}
@@ -74,9 +76,9 @@ export default function CheckTableOverlap() {
                 </Button>
 
                 {/* RESULT */}
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-5 gap-2">
                     {tables.length === 0 && !loading && (
-                        <p className="text-sm text-muted-foreground col-span-3">
+                        <p className="text-sm text-muted-foreground">
                             Không có bàn trống
                         </p>
                     )}
@@ -86,7 +88,7 @@ export default function CheckTableOverlap() {
                             key={table._id}
                             className="flex justify-between border rounded-lg p-3"
                         >
-                            <span>Bàn {table.name} - {table.capacity} chỗ</span>
+                            <span>Bàn <strong>{table.name}</strong> - {table.capacity} chỗ</span>
                         </div>
                     ))}
                 </div>
