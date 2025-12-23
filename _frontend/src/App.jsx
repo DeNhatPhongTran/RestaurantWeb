@@ -41,6 +41,8 @@ function AppContent({ userRole, handleLogout, handleRoleSwitch }) {
           </div>
         </div>
       </div>
+    </Router>
+  );
 }
 
 export default function App() {
