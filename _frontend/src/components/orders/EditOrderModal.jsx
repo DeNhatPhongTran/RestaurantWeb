@@ -1,7 +1,7 @@
 import { Edit2, LayoutGrid, Minus, MoreVertical, Plus, Search, ShoppingCart, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { mockCategories, mockMenuItems } from '../../data'
-import { Button } from '../ui/Button'
+import { Button } from '../ui/button'
 import Modal from '../ui/Modal'
 import AddItemModal from './AddItemModal'
 

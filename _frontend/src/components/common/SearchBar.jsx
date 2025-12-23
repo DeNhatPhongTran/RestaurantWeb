@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input } from '../ui/Input'
+import { Input } from '../ui/input'
 import { Search } from 'lucide-react'
 
 const SearchBar = ({ placeholder = 'Search...', onSearch, onChange }) => {

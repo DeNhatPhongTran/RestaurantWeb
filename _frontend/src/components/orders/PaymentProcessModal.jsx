@@ -4,8 +4,8 @@ import { findCustomer } from '../../data'
 import { formatCurrency } from '../../utils'
 import { ModalHeader } from '../common'
 import { Avatar } from '../ui/Avatar'
-import { Button } from '../ui/Button'
-import { Tabs, TabsList, TabsTrigger } from '../ui/Tabs'
+import { Button } from '../ui/button'
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
 import PaymentSuccessModal from './PaymentSuccessModal'
   // Reset cash input when switching to cash tab
   

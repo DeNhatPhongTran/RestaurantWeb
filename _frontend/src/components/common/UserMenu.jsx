@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar } from '../ui/Avatar'
+import { Avatar } from '../ui/avatar'
 
 const UserMenu = ({ userName, userRole, userInitial, onLogout, currentRole, onRoleSwitch }) => {
   const [isOpen, setIsOpen] = React.useState(false)

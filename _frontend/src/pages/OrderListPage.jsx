@@ -7,7 +7,7 @@ import OrderDetailModal from '../components/orders/OrderDetailModal'
 import PaymentConfirmModal from '../components/orders/PaymentConfirmModal'
 import PaymentProcessModal from '../components/orders/PaymentProcessModal'
 import { Button } from '../components/ui/button'
-import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs'
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { mockOrderItems, mockOrders, mockWaitingOrderItems } from '../data'
 
 const OrderListPage = ({ userRole = 'waiter' }) => {

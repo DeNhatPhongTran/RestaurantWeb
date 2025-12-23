@@ -1,7 +1,7 @@
 import { CheckCircle } from 'lucide-react'
 import React from 'react'
 import { formatCurrency } from '../../utils'
-import { Button } from '../ui/Button'
+import { Button } from '../ui/button'
 
 const PaymentSuccessModal = ({ isOpen, onClose, paymentInfo, onPrintBill }) => {
   if (!isOpen || !paymentInfo) return null

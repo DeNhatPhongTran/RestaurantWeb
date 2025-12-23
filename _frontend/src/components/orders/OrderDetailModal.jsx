@@ -2,7 +2,7 @@ import { ArrowRightLeft, Baby, Bell, CheckCircle, Clock, FileX, Plus, Send, Tras
 import React, { useEffect, useState } from 'react'
 import { mockOrderItems, mockWaitingOrderItems } from '../../data'
 import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
+import { Button } from '../ui/button'
 import Modal from '../ui/Modal'
 import DeleteItemConfirmModal from './DeleteItemConfirmModal'
 import EditOrderModal from './EditOrderModal'

@@ -2,7 +2,7 @@ import { ShoppingCart } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import ModalHeader from '../common/ModalHeader'
 import QuantitySelector from '../common/QuantitySelector'
-import { Button } from '../ui/Button'
+import { Button } from '../ui/button'
 
 const AddItemModal = ({ isOpen, onClose, item, onAddToCart, editMode = false, existingItem = null }) => {
   const [quantity, setQuantity] = useState(editMode && existingItem ? existingItem.quantity : 1)

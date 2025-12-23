@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { DELETE_REASONS, ITEM_STATUS_COLORS, ITEM_STATUS_LABELS } from '../../constants/orderConstants'
 import ModalHeader from '../common/ModalHeader'
 import QuantitySelector from '../common/QuantitySelector'
-import { Button } from '../ui/Button'
+import { Button } from '../ui/button'
 
 const DeleteItemConfirmModal = ({ isOpen, onClose, item, onConfirmDelete }) => {
   const [deleteQuantities, setDeleteQuantities] = useState({
