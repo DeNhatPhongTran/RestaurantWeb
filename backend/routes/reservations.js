@@ -5,6 +5,29 @@ import Reservation_Table from "../database/schema/reservation_table_schema.js";
 
 const router = express.Router()
 
+const isOverlap = async (editResId, tableName, datetimeIn, datetimeOut) => {
+    const overlappedReservationObj = await Reservation.find({
+        _id: {$nin: [editResId]}, // nếu editing
+        status: { $nin: ["cancelled", "finished", "no-show"] },
+        datetime_checkin: { $lt: datetimeOut },
+        datetime_out: { $gt: datetimeIn }
+    }).select("_id");
+    const overlapReservationIds = overlappedReservationObj.map(r => r._id);
+    if (overlapReservationIds.length === 0) return false;
+
+    const busyResTables = await Reservation_Table.find({
+        reservationId: { $in: overlapReservationIds }
+    }).select("tableId");
+    const busyTableIds = busyResTables.map(t => t.tableId);
+
+    const busyTableObjs = await Table.find({
+        _id: { $in: busyTableIds}
+    }).select("name")
+    const busyTableNames = busyTableObjs.map(t => t.name)
+
+    return (busyTableNames.includes(tableName))
+}
+
 // API lấy danh sách đơn đặt bàn
 router.get("/list", async (req, res) => {
     try {
@@ -42,6 +65,7 @@ router.get("/list", async (req, res) => {
 
         res.json(reservations_list);
     } catch (err) {
+        console.log(err)
         res.status(500).json({ error: "Lỗi server" });
     }
 });
@@ -59,6 +83,9 @@ router.post("/edit", async (req, res) => {
             status,
             edit_table_name
         } = req.body;
+
+        if(await isOverlap(reservation_id, edit_table_name, datetime_checkin, datetime_out))
+            return res.status(409).json({message: `Bàn ${edit_table_name} đã được đặt trước trong khoảng thời gian này.`})
 
         const updatedRes = await Reservation.findByIdAndUpdate(
             reservation_id,
@@ -105,6 +132,7 @@ router.post("/delete", async (req, res) => {
         }
         res.status(200).json({ message: "Xóa thành công", deletedReservation });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: "Lỗi phía server", error: error.message });
     }
 });
@@ -112,8 +140,6 @@ router.post("/delete", async (req, res) => {
 // API tạo đơn đặt bàn mới
 router.post("/create", async (req, res) => {
     try {
-        // todo: check trùng
-
         const {
             customer_name,
             customer_phone,
@@ -123,6 +149,9 @@ router.post("/create", async (req, res) => {
             assignTableName,
             status
         } = req.body
+
+        if(await isOverlap(null, assignTableName, datetime_checkin, datetime_out))
+            return res.status(409).json({message: `Bàn ${assignTableName} đã được đặt trước trong khoảng thời gian này.`})
 
         const newReservation = await Reservation.create({
             customer_name,
@@ -143,6 +172,7 @@ router.post("/create", async (req, res) => {
         })
         res.status(201).json({ message: "Tạo mới thành công", newReservation });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: "Lỗi phía server", error: error.message });
     }
 })
