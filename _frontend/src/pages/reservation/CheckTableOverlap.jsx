@@ -26,8 +26,8 @@ export default function CheckTableOverlap() {
             return;
         }
 
-        const from = combineDateTime(fromDate, fromTime) //`${fromDate}T${fromTime}:00`;
-        const to = combineDateTime(toDate, toTime) //`${toDate}T${toTime}:00`;
+        const from = combineDateTime(fromDate, fromTime) 
+        const to = combineDateTime(toDate, toTime) 
 
         setLoading(true);
 
