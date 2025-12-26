@@ -1,13 +1,20 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '@/context/ApiContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import these
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Profile() {
   const { user, logout } = useApi();
   const navigate = useNavigate();
+
+  const role_translate = {
+  manager: "Quản lý",
+  waiter: "Phục vụ",
+  chef: "Đầu bếp",
+  cashier: "Thu ngân",
+};
+
 
   if (!user) return <div className="p-10">Loading...</div>;
 
@@ -38,7 +45,7 @@ export default function Profile() {
           <div className="bg-slate-100 p-4 rounded-md flex justify-between items-center">
             <div>
               <p className="text-xs text-gray-500 uppercase font-bold">ID</p>
-              <p className="font-mono font-bold text-xl text-blue-600">
+              <p className="font-mono font-bold text-xl text-orange-600">
                 {user.customId || 'N/A'}
               </p>
             </div>
@@ -51,14 +58,15 @@ export default function Profile() {
 
           <div>
             <p className="text-sm text-gray-500">Chức vụ</p>
-            <p className="uppercase font-bold text-blue-600">{user.role}</p>
+            <p className="uppercase font-bold text-orange-600">{role_translate[user.role?.role_name]}</p>
           </div>
 
           <div className="pt-4 flex flex-col gap-2">
-            <Button variant="outline" onClick={() => navigate('/reset-password')}>
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white" variant="outline" onClick={() => navigate('/reset_password')}>
               Thay đổi mật khẩu
             </Button>
-            <Button variant="destructive" onClick={async () => {
+            <Button className=" gap-2 text-red-600 hover:bg-red-600 hover:text-white"
+            variant="outline" onClick={async () => {
               await logout();
               navigate('/');
             }}>

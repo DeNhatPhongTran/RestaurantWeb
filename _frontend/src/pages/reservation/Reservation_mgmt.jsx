@@ -196,13 +196,16 @@ export default function Reservation_mgmt() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data.filter((b) => b.customer_name.toLowerCase().includes(filterName.toLowerCase()) &&
-                                    b.tables[0].name.includes(filterTable) &&
-                                    b.status.toLowerCase().includes(filterStatus.toLowerCase())
-                                )
+                                {data
+                                    .filter(b => b.tables && b.tables.length > 0)
+                                    .filter(b =>
+                                        b.customer_name.toLowerCase().includes(filterName.toLowerCase()) &&
+                                        b.tables[0].name.includes(filterTable) &&
+                                        b.status.toLowerCase().includes(filterStatus.toLowerCase())
+                                    )
                                     .map((booking) => (
                                         <TableRow key={booking._id}>
-                                            <TableCell className="border border-gray-300">{booking.tables[0]["name"]}</TableCell>
+                                            <TableCell className="border border-gray-300">{booking.tables?.[0]?.["name"] || "Chưa gán bàn"}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.customer_name}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.customer_phone}</TableCell>
                                             <TableCell className="border border-gray-300">{booking.guest_count}</TableCell>

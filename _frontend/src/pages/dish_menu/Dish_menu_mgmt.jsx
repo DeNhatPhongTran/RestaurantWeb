@@ -149,7 +149,7 @@ export default function Dish_menu_mgmt() {
                             </SelectContent>
                         </Select>
 
-                        <Button onClick={() => fetchAllData()}>Làm mới</Button>
+                        <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => fetchAllData()}>Làm mới</Button>
                     </div>
 
                     <p className="text-sm text-muted-foreground mb-2">
@@ -243,7 +243,7 @@ export default function Dish_menu_mgmt() {
             </div>
 
             {/* RIGHT */}
-            <Card className="p-6 h-[470px]">
+            <Card className="p-6 h-[500px]">
                 <h2 className="text-xl font-bold">Thông tin tạo món ăn mới</h2>
                 <div className="flex flex-col gap-1 text-sm pt-4">
                     <label htmlFor="newDishName">Tên món:</label>
@@ -265,8 +265,8 @@ export default function Dish_menu_mgmt() {
                     <input id="newDishImg" type="text" className="border rounded-xl p-2" />
 
                     <label htmlFor="newDishDescipt">Mô tả:</label>
-                    <input id="newDishDescript" type="text" className="border rounded-xl p-2" />
-                    <Button onClick={() => createNewDish()}>Tạo</Button>
+                    <input id="newDishDescript" type="text" className="border rounded-xl p-2 " />
+                    <Button className="mt-4 bg-orange-500 hover:bg-orange-600 text-white" onClick={() => createNewDish()}>Tạo</Button>
                 </div>
             </Card>
         </div>

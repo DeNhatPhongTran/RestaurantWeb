@@ -15,6 +15,7 @@ import {
   Users,
   UtensilsCrossed,
   Bell,
+  Contact,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -148,13 +149,15 @@ const RoleSidebar = ({ onLogout = null, hiddenMenuItems = false }) => {
       {/* Footer - User Info & Logout */}
       <SidebarFooter>
         <div className="px-2 py-3 border-t border-sidebar-border">
-          <div className="text-xm font-semibold text-center text-black-800 mb-2">Dành cho nhân viên</div>
+          <div className="text-xm font-semibold text-center text-black-800 mb-2">
+            Dành cho nhân viên
+          </div>
 
           {isGuest ? (
             <Button
               variant="default"
               size="sm"
-              className="w-full bg-orange-500 justify-center gap-2 text-black-1000 hover:text-white-700 hover:bg-orange-700"
+              className="w-full bg-orange-500 justify-center gap-2 text-black hover:bg-orange-600"
               onClick={handleLoginRedirect}
             >
               <LogIn className="h-4 w-4" />
@@ -162,14 +165,31 @@ const RoleSidebar = ({ onLogout = null, hiddenMenuItems = false }) => {
             </Button>
           ) : (
             <>
-              <div className="text-xs text-gray-600 mb-2 mt-2">
-                <p className="font-semibold truncate">{userInfo?.fullname}</p>
-                <p className="text-gray-500">{userInfo?.phone || ''}</p>
+              <div className="flex items-center gap-2 mb-3">
+                <Button
+                  size="icon"
+                  className="bg-orange-500 hover:bg-orange-600 text-white shrink-0"
+                  onClick={() => navigate("/profile")}
+                >
+                  <Contact className="h-4 w-4" />
+                </Button>
+
+                {/* User info */}
+                <div className="text-xs text-gray-600 min-w-0">
+                  <p className="font-semibold truncate">
+                    {userInfo?.fullname}
+                  </p>
+                  <p className="text-gray-500 truncate">
+                    {userInfo?.phone || ""}
+                  </p>
+                </div>
               </div>
+
+              {/* Logout */}
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="w-full justify-start gap-2 text-red-600 hover:text-gray-50 hover:bg-red-500"
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4" />

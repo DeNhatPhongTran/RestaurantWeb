@@ -24,6 +24,9 @@ import Login from './pages/Login';
 import OrderListPage from './pages/OrderListPage';
 import DishMenuMgmt from './pages/dish_menu/Dish_menu_mgmt';
 import ReservationMgmt from './pages/reservation/Reservation_mgmt';
+import Profile from './pages/Profile';
+import ResetPassword from './pages/ResetPassword'
+
 
 import './styles/globals.css';
 
@@ -133,11 +136,34 @@ function AppContent() {
               />
 
               <Route
-                path="/invoices"
+                path="/profile"
                 element={
                   <RouteGuard>
-                    <ProtectedRoute requiredRoles={['manager']}>
-                      <DishMenuMgmt />
+                    <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
+                      <Profile />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+
+              <Route
+                path="/staff"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
+                      <Profile />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+              <Route
+                path="/reset_password"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
+                      <ResetPassword />
                     </ProtectedRoute>
                   </RouteGuard>
                 }

@@ -109,8 +109,8 @@ export default function ResetPassword() {
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button className="w-full" onClick={handleChangePassword}>Cập nhật</Button>
-            <Button variant="outline" onClick={() => navigate('/profile')}>Quay lại</Button>
+            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white" onClick={handleChangePassword}>Cập nhật</Button>
+            <Button className = "bg-blue-500 hover:bg-blue-600 text-white" variant="outline" onClick={() => navigate('/profile')}>Quay lại</Button>
           </div>
 
         </CardContent>

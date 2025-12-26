@@ -17,7 +17,7 @@ export const ROLE_PERMISSIONS = {
       { icon: 'Calendar', label: 'Đặt Bàn', href: '/reservations' },
       { icon: 'FileText', label: 'Hóa Đơn', href: '/invoices' },
       { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
-      { icon: 'Package', label: 'Quản Lý Menu', href: '/menu-management' },
+      { icon: 'UtensilsCrossed', label: 'Quản Lý Menu', href: '/dish_menu' },
       { icon: 'BarChart', label: 'Thống Kê', href: '/analytics' },
     ],
     allowedRoutes: [
@@ -28,8 +28,10 @@ export const ROLE_PERMISSIONS = {
       '/reservations',
       '/invoices',
       '/history',
-      '/menu-management',
+      '/dish_menu',
       '/analytics',
+      '/profile',
+      '/reset_password',
     ],
   },
 
