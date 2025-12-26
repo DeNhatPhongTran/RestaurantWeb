@@ -132,6 +132,17 @@ function AppContent() {
                 }
               />
 
+              <Route
+                path="/invoices"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['manager']}>
+                      <DishMenuMgmt />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
               {/* FALLBACK */}
               <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>

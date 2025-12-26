@@ -9,6 +9,7 @@ import {
   File,
   FileText,
   LogOut,
+  LogIn,
   Package,
   Store,
   Users,
@@ -94,15 +95,14 @@ const RoleSidebar = ({ onLogout = null, hiddenMenuItems = false }) => {
     <Sidebar>
       {/* Header */}
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-4">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
-            🍽️
-          </div>
+        <div className="flex items-center gap-2 px-2 py-2 mt-2">
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-800">Restaurant</span>
+            <span className="text-xl font-semibold text-black-1000">Restaurant Page</span>
             <span className="text-xs text-gray-500">{permission?.label}</span>
           </div>
         </div>
+        <div className="px-2 border-t border-sidebar-border"> </div>
+
       </SidebarHeader>
 
       <SidebarSeparator />
@@ -148,11 +148,23 @@ const RoleSidebar = ({ onLogout = null, hiddenMenuItems = false }) => {
       {/* Footer - User Info & Logout */}
       <SidebarFooter>
         <div className="px-2 py-3 border-t border-sidebar-border">
-          {navItems.length === 0 && !hiddenMenuItems ? null : (
+          <div className="text-xm font-semibold text-center text-black-800 mb-2">Dành cho nhân viên</div>
+
+          {isGuest ? (
+            <Button
+              variant="default"
+              size="sm"
+              className="w-full bg-orange-500 justify-center gap-2 text-black-1000 hover:text-white-700 hover:bg-orange-700"
+              onClick={handleLoginRedirect}
+            >
+              <LogIn className="h-4 w-4" />
+              Đăng nhập
+            </Button>
+          ) : (
             <>
-              <div className="text-xs text-gray-600 mb-2">
+              <div className="text-xs text-gray-600 mb-2 mt-2">
                 <p className="font-semibold truncate">{userInfo?.fullname}</p>
-                <p className="text-gray-500">{userInfo?.phone || 'N/A'}</p>
+                <p className="text-gray-500">{userInfo?.phone || ''}</p>
               </div>
               <Button
                 variant="outline"

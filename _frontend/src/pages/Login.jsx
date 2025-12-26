@@ -23,7 +23,7 @@ export default function LoginPage() {
       if (response.data.success) {
         localStorage.setItem('userInfo', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
-        
+
         const role = response.data.user.role?.role_name;
         console.log('User role:', role);
         navigate('/home');
@@ -40,8 +40,8 @@ export default function LoginPage() {
   };
 
   const handleGuestLogin = () => {
-    localStorage.setItem('userInfo', JSON.stringify({ 
-      role: { role_name: 'guest' } 
+    localStorage.setItem('userInfo', JSON.stringify({
+      role: { role_name: 'guest' }
     }));
     navigate('/home');
   };
@@ -76,29 +76,42 @@ export default function LoginPage() {
               <p className="text-sm text-muted-foreground">Được xây dựng để nhân viên đăng nhập với phản hồi lỗi nhanh và hướng dẫn hữu ích.</p>
             </div>
           </div>
-
-          {/* Guest login section */}
-          <div className="mt-8 rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 p-6 border border-green-200">
-            <p className="text-sm font-semibold text-green-700 mb-2">👤 Bạn là Khách?</p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Đi đến trang chủ với vai trò khách để xem thực đơn, đặt bàn và tìm hiểu thêm về nhà hàng.
-            </p>
-            <button
-              onClick={handleGuestLogin}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
-            >
-              Tiếp tục với tư cách Khách
-            </button>
-          </div>
         </div>
 
-        <div className="flex-1">
-          <LoginForm 
-            className="w-full max-w-md"
-            onLogin={handleLogin}
-            error={error}
-            loading={loading}
-          />
+        <div className="flex-1 flex justify-center mt-16">
+          <div className="w-full max-w-md space-y-6">
+
+            {/* Login */}
+            <LoginForm
+              onLogin={handleLogin}
+              error={error}
+              loading={loading}
+            />
+
+            {/* <div className="flex items-center gap-3">
+              <div className="flex-1 border-t border-gray-200" />
+              <span className="text-xs text-muted-foreground">hoặc</span>
+              <div className="flex-1 border-t border-gray-200 shadow-lg"  />
+            </div>
+
+            <div className="rounded-2xl bg-white p-6 border border-gray-200 text-center shadow-md">
+              <p className="text-sm font-semibold text-gray-800 mb-2">
+                👤 Bạn là Khách?
+              </p>
+
+              <p className="text-sm text-gray-600 mb-4">
+                Đi đến trang chủ với vai trò khách để xem thực đơn, đặt bàn và tìm hiểu thêm về nhà hàng.
+              </p>
+
+              <button
+                onClick={handleGuestLogin}
+                className="w-full rounded-lg bg-gray-600 py-2 text-white font-medium hover:bg-gray-700 transition-colors"
+              >
+                Tiếp tục với tư cách Khách
+              </button>
+            </div> */}
+
+          </div>
         </div>
       </div>
     </div>

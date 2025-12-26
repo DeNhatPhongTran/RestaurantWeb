@@ -35,10 +35,10 @@ export function LoginForm({ className = '', onLogin = null, error: externalError
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-0 bg-white/95 shadow-2xl ring-1 ring-orange-100/70 backdrop-blur">
+      <Card className="border-0 bg-white shadow-2xl ring-1 ring-gray-200">
         <CardHeader>
-          <CardTitle className="text-2xl text-foreground">Chào mừng quay lại</CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardTitle className="text-2xl text-foreground text-center">Chào mừng quay lại</CardTitle>
+          <CardDescription className="text-muted-foreground text-center">
             Đăng nhập để quản lý các đặt phòng tại TasteGood và cập nhật thực đơn.
           </CardDescription>
         </CardHeader>
@@ -60,12 +60,12 @@ export function LoginForm({ className = '', onLogin = null, error: externalError
             <div className="space-y-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Mật khẩu</Label>
-                <a
+                {/* <a
                   href="/forgot-password"
                   className="ml-auto inline-block text-sm text-primary underline-offset-4 hover:underline"
                 >
                   Quên mật khẩu?
-                </a>
+                </a> */}
               </div>
               <Input
                 id="password"
@@ -85,12 +85,12 @@ export function LoginForm({ className = '', onLogin = null, error: externalError
             )}
 
             <Button type="submit" className="w-full bg-amber-500 text-white hover:bg-amber-600" disabled={isLoading}>
-              {isLoading ? "⏳ Đang đăng nhập..." : "🔓 Đăng nhập"}
+              {isLoading ? "⏳ Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Chưa có tài khoản?{' '}
-            <a href="/contact" className="ml-1 font-medium text-primary underline-offset-4 hover:underline">
+            <a href="/contact"   className="ml-1 font-medium text-red-600 underline-offset-4 hover:underline hover:text-red-700">
               Liên hệ quản lý nhà hàng
             </a>
           </div>
