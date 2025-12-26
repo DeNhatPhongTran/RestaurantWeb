@@ -5,6 +5,11 @@ import authRoutes from "./routes/auth.js";
 import menuRoutes from "./routes/menu.js";
 import reservationsRoute from './routes/reservations.js'
 import dishMenuRoute from './routes/dish_menu.js'
+import tablesRoute from './routes/tables.js'
+import orderItemsRoute from './routes/orderitems.js'
+import invoicesRoute from './routes/invoices.js'
+import leaveRequestsRoute from './routes/leaverequests.js'
+import rolesRoute from './routes/roles.js'
 
 const app = express();
 
@@ -23,6 +28,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use('/api/reservations', reservationsRoute)
 app.use('/api/dish_menu', dishMenuRoute)
+app.use('/api/tables', tablesRoute)
+app.use('/api/orderitems', orderItemsRoute)
+app.use('/api/invoices', invoicesRoute)
+app.use('/api/leaverequests', leaveRequestsRoute)
+app.use('/api/roles', rolesRoute)
 
 // Error handling
 app.use((err, req, res, next) => {

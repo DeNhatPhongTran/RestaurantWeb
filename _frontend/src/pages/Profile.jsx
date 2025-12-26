@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApi } from '@/context/ApiContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Import these
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
+  const { user, logout } = useApi();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const data = localStorage.getItem('userInfo');
-    if (!data) navigate('/');
-    else setUser(JSON.parse(data));
-  }, []);
 
   if (!user) return <div className="p-10">Loading...</div>;
 
@@ -63,8 +58,8 @@ export default function Profile() {
             <Button variant="outline" onClick={() => navigate('/reset-password')}>
               Thay đổi mật khẩu
             </Button>
-            <Button variant="destructive" onClick={() => {
-              localStorage.removeItem('userInfo');
+            <Button variant="destructive" onClick={async () => {
+              await logout();
               navigate('/');
             }}>
               Đăng xuất

@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useApi } from "@/context/ApiContext";
 import { Button } from "@/components/ui/button"; // B b
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function CheckTableOverlap() {
+    const { apiUrl } = useApi();
     const [fromDate, setFromDate] = useState("");
     const [fromTime, setFromTime] = useState("");
     const [toDate, setToDate] = useState("");
@@ -32,7 +34,7 @@ export default function CheckTableOverlap() {
         setLoading(true);
 
         try {
-            const res = await fetch("/api/reservations/overlap_check", {
+            const res = await fetch(`${apiUrl}/api/reservations/overlap_check`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

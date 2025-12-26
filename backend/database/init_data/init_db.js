@@ -13,6 +13,8 @@ import OrderItem from "../schema/order_item_schema.js";
 import Invoice from "../schema/invoice_schema.js";
 import LeaveRequest from "../schema/leave_request_schema.js";
 import Reservation_Table from "../schema/reservation_table_schema.js";
+import bcrypt from 'bcryptjs'
+
 
 export async function add_init() {
     // 1. Roles
@@ -32,29 +34,35 @@ export async function add_init() {
     }
 
     // 2. Categories
-    const categoryNames = ["Món khai vị", "Món súp", "Món chính", "Món tráng miệng", "Đồ uống"];
-    const categoryMap = {};
-    for (let c of categoryNames) {
-        let cat = await Category.findOne({ category_name: c });
-        if (!cat) {
-            cat = await Category.create({ category_name: c });
-            console.log(`Category ${c} added`);
-        }
-        //categoryMap[c] = cat._id;
-    }
+    // const categoryNames = ["Món khai vị", "Món súp", "Món chính", "Món tráng miệng", "Đồ uống"];
+    // const categoryMap = {};
+    // for (let c of categoryNames) {
+    //     let cat = await Category.findOne({ category_name: c });
+    //     if (!cat) {
+    //         cat = await Category.create({ category_name: c });
+    //         console.log(`Category ${c} added`);
+    //     }
+    //     //categoryMap[c] = cat._id;
+    // }
 
     // 3. Users (with roles)
     const usersData = [
-        { fullname: "Manager One", username: "manager1", password_hash: "123", role: roleMap.manager, phone: "0123456789" },
-        { fullname: "Waiter One", username: "waiter1", password_hash: "123", role: roleMap.waiter, phone: "0987654321" },
-        { fullname: "Chef One", username: "chef1", password_hash: "123", role: roleMap.chef, phone: "0912345678" },
-        { fullname: "Cashier One", username: "cashier1", password_hash: "123", role: roleMap.cashier, phone: "0918765432" }
+        { fullname: "Manager One", username: "manager0", password_hash: "123", role: roleMap.manager, phone: "0123456789" },
+        { fullname: "Waiter One", username: "waiter0", password_hash: "123", role: roleMap.waiter, phone: "0987654321" },
+        { fullname: "Chef One", username: "chef0", password_hash: "123", role: roleMap.chef, phone: "0912345678" },
+        { fullname: "Cashier One", username: "cashier0", password_hash: "123", role: roleMap.cashier, phone: "0918765432" }
     ];
     const userMap = {};
     for (let userData of usersData) {
         const exists = await User.findOne({ username: userData.username });
         if (!exists) {
-            const user = await User.create(userData);
+            const hashedPassword = await bcrypt.hash(userData.password_hash, 10);
+
+            const user = await User.create({
+                ...userData,
+                password_hash: hashedPassword
+            });
+
             console.log(`User ${userData.username} added`);
             userMap[userData.username] = user._id;
         } else {

@@ -48,7 +48,7 @@ export function ApiProvider({ children }) {
     if (token) {
       verifyToken()
     }
-  }, [apiUrl])
+  }, [token, apiUrl])
 
   const apiCall = async (endpoint, options = {}) => {
     const headers = {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useApi } from "@/context/ApiContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import CheckTableOverlap from "./CheckTableOverlap";
 
 export default function Reservation_mgmt() {
+    const { apiUrl } = useApi();
     const [data, setData] = useState([]);
     const [filterName, setFilterName] = useState("");
     const [filterTable, setFilterTable] = useState("");
@@ -19,10 +21,10 @@ export default function Reservation_mgmt() {
     useEffect(() => {
         console.log("log: Refresh lần đầu")
         fetchAllData();
-    }, []);
+    }, [apiUrl]);
 
     const fetchAllData = async () => {
-        const body = await fetch("/api/reservations/list")
+        const body = await fetch(`${apiUrl}/api/reservations/list`)
             .then(res => res.json());
         setData(body);
         // const mockdata = [
@@ -78,7 +80,7 @@ export default function Reservation_mgmt() {
         };
 
         try {
-            const res = await fetch("/api/reservations/create", {
+            const res = await fetch(`${apiUrl}/api/reservations/create`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -109,7 +111,7 @@ export default function Reservation_mgmt() {
         };
 
         try {
-            const res = await fetch("/api/reservations/edit", {
+            const res = await fetch(`${apiUrl}/api/reservations/edit`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -127,7 +129,7 @@ export default function Reservation_mgmt() {
 
     const confirmDelete = async () => {
         try {
-            const res = await fetch("/api/reservations/delete", {
+            const res = await fetch(`${apiUrl}/api/reservations/delete`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ id: deleteBooking._id }),

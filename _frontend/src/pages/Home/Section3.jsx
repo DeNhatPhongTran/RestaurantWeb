@@ -19,7 +19,7 @@ export default function Section3() {
 
   useEffect(() => {
     fetchDishes();
-  }, []);
+  }, [apiCall]);
 
   const fetchDishes = async () => {
     try {

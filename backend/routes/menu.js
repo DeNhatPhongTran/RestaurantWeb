@@ -1,6 +1,7 @@
 import express from "express";
 import MenuItem from "../database/schema/menu_item_schema.js";
 import Category from "../database/schema/category_schema.js";
+import { verifyToken } from "./auth.js";
 
 const router = express.Router();
 
@@ -225,6 +226,139 @@ router.delete("/items/:id", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete menu item",
+      error: error.message
+    });
+  }
+});
+
+// ============================================================================
+// CATEGORY MANAGEMENT ROUTES
+// ============================================================================
+
+// POST /api/menu/categories - Create new category (requires token)
+router.post("/categories", verifyToken, async (req, res) => {
+  try {
+    const { category_name } = req.body;
+    
+    // Validate required fields
+    if (!category_name) {
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        error: "category_name is required"
+      });
+    }
+    
+    // Check if category already exists
+    const existingCategory = await Category.findOne({ category_name });
+    if (existingCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Category already exists"
+      });
+    }
+    
+    const newCategory = new Category({ category_name });
+    await newCategory.save();
+    
+    res.status(201).json({
+      success: true,
+      message: "Category created successfully",
+      data: newCategory
+    });
+  } catch (error) {
+    console.error("Error creating category:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create category",
+      error: error.message
+    });
+  }
+});
+
+// PUT /api/menu/categories/:id - Update category (requires token)
+router.put("/categories/:id", verifyToken, async (req, res) => {
+  try {
+    const { category_name } = req.body;
+    
+    if (!category_name) {
+      return res.status(400).json({
+        success: false,
+        message: "category_name is required"
+      });
+    }
+    
+    // Check if new category_name already exists
+    const existingCategory = await Category.findOne({ 
+      category_name, 
+      _id: { $ne: req.params.id } 
+    });
+    if (existingCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Category name already exists"
+      });
+    }
+    
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      { category_name },
+      { new: true, runValidators: true }
+    );
+    
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found"
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: "Category updated successfully",
+      data: category
+    });
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update category",
+      error: error.message
+    });
+  }
+});
+
+// DELETE /api/menu/categories/:id - Delete category (requires token)
+router.delete("/categories/:id", verifyToken, async (req, res) => {
+  try {
+    // Check if any menu items use this category
+    const itemsWithCategory = await MenuItem.find({ category: req.params.id }).count();
+    if (itemsWithCategory > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete category. ${itemsWithCategory} menu item(s) assigned to this category.`
+      });
+    }
+    
+    const category = await Category.findByIdAndDelete(req.params.id);
+    
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found"
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: "Category deleted successfully",
+      data: category
+    });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete category",
       error: error.message
     });
   }

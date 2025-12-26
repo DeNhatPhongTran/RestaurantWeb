@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useApi } from '@/context/ApiContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,15 +10,8 @@ export default function ResetPassword() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [user, setUser] = useState(null);
+  const { user, logout, apiUrl } = useApi();
   const navigate = useNavigate();
-
-  // Ensure user is logged in
-  useEffect(() => {
-    const data = localStorage.getItem('userInfo');
-    if (!data) navigate('/');
-    else setUser(JSON.parse(data));
-  }, []);
 
   const handleChangePassword = async () => {
     // 1. Client-side Validation
@@ -53,16 +46,22 @@ export default function ResetPassword() {
 
     try {
       // 2. Send to Backend
-      const res = await axios.post('http://localhost:5000/api/change-password', {
-        userId: user._id,
-        oldPassword,
-        newPassword
-      });
-      //res.data.message
-      alert("Thay đổi mật khẩu thành công!");
-      // Optional: Clear storage and force re-login with new password
-      localStorage.removeItem('userInfo');
-      navigate('/');
+      const res = await fetch(`${apiUrl}/api/auth/me`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          oldPassword,
+          newPassword
+        })
+      }).then(r => r.json());
+      
+      if (res.success) {
+        alert("Thay đổi mật khẩu thành công!");
+        await logout();
+        navigate('/login');
+      } else {
+        alert(res.message || 'Update failed');
+      }
       
     } catch (error) {
       // Handle "Incorrect old password" error

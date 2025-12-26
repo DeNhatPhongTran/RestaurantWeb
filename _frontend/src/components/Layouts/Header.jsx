@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../../context/ApiContext';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+
 import '../../styles/HeaderStyle.css';
 
 export default function Header() {
@@ -20,11 +22,14 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header__container">
+        <SidebarTrigger
+          className="bg-orange-600 text-black hover:bg-red-700 mr-4"
+        />
         <Link to="/" className="header__logo" onClick={closeMenu}>
           <h1 className="logo__text">TasteGood</h1>
         </Link>
 
-        <button 
+        <button
           className="header__toggle"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
@@ -34,11 +39,11 @@ export default function Header() {
         <nav className={`header__nav ${mobileMenuOpen ? 'active' : ''}`}>
           <Link to="/" className="nav__link" onClick={closeMenu}>Trang chủ</Link>
           <Link to="/menu" className="nav__link" onClick={closeMenu}>Thực đơn</Link>
-          <a href="/reservation" className="nav__link" onClick={closeMenu}>QL đặt bàn</a>
+          {/* <a href="/reservation" className="nav__link" onClick={closeMenu}>QL đặt bàn</a>
           <a href="/dish_menu" className="nav__link" onClick={closeMenu}>QL thực đơn</a>
-          <a href="#contact" className="nav__link" onClick={closeMenu}>Liên hệ</a>
-          
-          {user ? (
+          <a href="#contact" className="nav__link" onClick={closeMenu}>Liên hệ</a> */}
+
+          {/* {user ? (
             <div className="nav__user-menu">
               <button 
                 className="nav__user-btn"
@@ -64,7 +69,7 @@ export default function Header() {
             <Link to="/login" className="nav__btn-login" onClick={closeMenu}>
               Nhân viên
             </Link>
-          )}
+          )} */}
         </nav>
       </div>
     </header>

@@ -57,14 +57,13 @@
 .nav__btn-login {
   color: #ffffff;
   cursor: pointer;
-  font-weight: 600;
   text-decoration: none;
   display: inline-block;
   white-space: nowrap;
 
-  font-size: 16x;
+  font-size: 16px;
   text-align: center;
-  font-weight: 800px;
+  font-weight: 800;
   position: relative;
   z-index: 1;
 }
@@ -82,7 +81,7 @@
 
 .nav__user-btn {
   background: white;
-  color: #667eea;
+  color: #1a202c;
   border: none;
   padding: 0.6rem 1.5rem;
   border-radius: 25px;

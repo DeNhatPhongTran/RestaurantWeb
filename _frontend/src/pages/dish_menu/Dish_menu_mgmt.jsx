@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useApi } from "@/context/ApiContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function Dish_menu_mgmt() {
+    const { apiUrl } = useApi();
     const [dishes, setDishes] = useState([]);
     const [filterName, setFilterName] = useState("");
     const [filterCategory, setFilterCategory] = useState("");
@@ -16,10 +18,10 @@ export default function Dish_menu_mgmt() {
     useEffect(() => {
         console.log("Log: Refresh lần đầu")
         fetchAllData();
-    }, []);
+    }, [apiUrl]);
 
     const fetchAllData = async () => {
-        const body = await fetch("/api/dish_menu/list")
+        const body = await fetch(`${apiUrl}/api/dish_menu/list`)
             .then(res => res.json());
         // const body = [
         //     {
@@ -52,7 +54,7 @@ export default function Dish_menu_mgmt() {
         const payload = { name, category, price, img, descript };
 
         try {
-            const res = await fetch("/api/dish_menu/create", {
+            const res = await fetch(`${apiUrl}/api/dish_menu/create`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -78,7 +80,7 @@ export default function Dish_menu_mgmt() {
         };
 
         try {
-            const res = await fetch("/api/dish_menu/edit", {
+            const res = await fetch(`${apiUrl}/api/dish_menu/edit`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify(payload),
@@ -95,7 +97,7 @@ export default function Dish_menu_mgmt() {
 
     const confirmDelete = async () => {
         try {
-            const res = await fetch("/api/dish_menu/delete", {
+            const res = await fetch(`${apiUrl}/api/dish_menu/delete`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ id: deleteDish._id }),

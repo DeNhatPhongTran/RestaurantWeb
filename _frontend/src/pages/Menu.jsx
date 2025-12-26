@@ -55,7 +55,7 @@ export default function Menu() {
     };
 
     fetchMenuItems();
-  }, []);
+  }, [apiCall]);
 
   const filteredItems = selectedCategory === 'all'
     ? menuItems

@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useApi } from "@/context/ApiContext";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,24 +11,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm({ className, ...props }) {
-  const navigate = useNavigate();
-  const { login, loading } = useApi();
+export function LoginForm({ className = '', onLogin = null, error: externalError = '', loading: externalLoading = false, ...props }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
+
+  const isLoading = externalLoading || false;
+  const displayError = externalError || localError;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError("");
+    setLocalError("");
 
-    const result = await login(username.trim(), password);
-    if (result.success) {
-      navigate("/");
+    if (!username.trim() || !password.trim()) {
+      setLocalError("Vui lòng nhập tên đăng nhập và mật khẩu");
       return;
     }
 
-    setError(result.error || "Đăng nhập thất bại. Vui lòng thử lại.");
+    if (onLogin) {
+      await onLogin(username, password);
+    }
   };
 
   return (
@@ -49,18 +49,19 @@ export function LoginForm({ className, ...props }) {
               <Input
                 id="username"
                 type="text"
-                placeholder="staff.tastegood"
+                placeholder="manager1"
                 autoComplete="username"
                 required
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Mật khẩu</Label>
                 <a
-                  href="#"
+                  href="/forgot-password"
                   className="ml-auto inline-block text-sm text-primary underline-offset-4 hover:underline"
                 >
                   Quên mật khẩu?
@@ -73,26 +74,24 @@ export function LoginForm({ className, ...props }) {
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                disabled={isLoading}
               />
             </div>
 
-            {error && (
+            {displayError && (
               <p className="rounded-md bg-red-50 px-3 py-2 text-sm font-medium text-red-600 ring-1 ring-red-100" role="alert">
-                {error}
+                {displayError}
               </p>
             )}
 
-            <Button type="submit" className="w-full bg-amber-500 text-white hover:bg-amber-600" disabled={loading}>
-              {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-            </Button>
-            <Button type="button" variant="outline" className="w-full" disabled>
-              Đăng nhập bằng Google (sắp có)
+            <Button type="submit" className="w-full bg-amber-500 text-white hover:bg-amber-600" disabled={isLoading}>
+              {isLoading ? "⏳ Đang đăng nhập..." : "🔓 Đăng nhập"}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
-            Chưa có tài khoản?
-            <a href="#" className="ml-1 font-medium text-primary underline-offset-4 hover:underline">
-              Liên hệ quản trị viên
+            Chưa có tài khoản?{' '}
+            <a href="/contact" className="ml-1 font-medium text-primary underline-offset-4 hover:underline">
+              Liên hệ quản lý nhà hàng
             </a>
           </div>
         </CardContent>
