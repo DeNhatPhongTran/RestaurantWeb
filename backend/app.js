@@ -4,13 +4,14 @@ import { connectDB } from "./database/db_connect.js";
 import authRoutes from "./routes/auth.js";
 import menuRoutes from "./routes/menu.js";
 import reservationsRoute from './routes/reservations.js'
+import reservationsInvoicesRoute from './routes/reservations-invoices.js'
 import dishMenuRoute from './routes/dish_menu.js'
 import tablesRoute from './routes/tables.js'
 import orderItemsRoute from './routes/orderitems.js'
 import invoicesRoute from './routes/invoices.js'
 import leaveRequestsRoute from './routes/leaverequests.js'
 import rolesRoute from './routes/roles.js'
-
+import reservationsTablesRoute from './routes/reservations-tables.js'
 const app = express();
 
 // Middleware
@@ -27,6 +28,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
 app.use('/api/reservations', reservationsRoute)
+app.use('/api/reservations-invoices', reservationsInvoicesRoute)
+app.use('/api/reservations-tables', reservationsTablesRoute)
 app.use('/api/dish_menu', dishMenuRoute)
 app.use('/api/tables', tablesRoute)
 app.use('/api/orderitems', orderItemsRoute)

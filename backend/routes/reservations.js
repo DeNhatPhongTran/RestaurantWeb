@@ -1,38 +1,63 @@
-import express from 'express'
-import Reservation from '../database/schema/reservation_schema.js'
-import Table from '../database/schema/table_schema.js'
-import Reservation_Table from "../database/schema/reservation_table_schema.js";
+import express from "express";
+import Reservation from "../database/schema/reservation_schema.js";
+import Table from "../database/schema/table_schema.js";
+import ReservationTable from "../database/schema/reservation_table_schema.js";
 
-const router = express.Router()
+const router = express.Router();
 
-const isOverlap = async (editResId, tableName, datetimeIn, datetimeOut) => {
-    const overlappedReservationObj = await Reservation.find({
-        _id: {$nin: [editResId]}, // nếu editing
+/**
+ * =====================================================
+ * HELPER: normalize tableIds (BẮT BUỘC)
+ * =====================================================
+ */
+const normalizeTableIds = (tableIds = []) => {
+    return tableIds
+        .filter(id => id)              // loại null / undefined
+        .map(id => id.toString());     // đảm bảo ObjectId hợp lệ
+};
+
+/**
+ * =====================================================
+ * HELPER: check overlap cho N bàn
+ * =====================================================
+ */
+const isOverlap = async (
+    excludeReservationId,
+    tableIds,
+    datetimeIn,
+    datetimeOut
+) => {
+    const query = {
         status: { $nin: ["cancelled", "finished", "no-show"] },
-        datetime_checkin: { $lt: datetimeOut },
-        datetime_out: { $gt: datetimeIn }
-    }).select("_id");
-    const overlapReservationIds = overlappedReservationObj.map(r => r._id);
-    if (overlapReservationIds.length === 0) return false;
+        datetime_checkin: { $lt: new Date(datetimeOut) },
+        datetime_out: { $gt: new Date(datetimeIn) }
+    };
 
-    const busyResTables = await Reservation_Table.find({
-        reservationId: { $in: overlapReservationIds }
-    }).select("tableId");
-    const busyTableIds = busyResTables.map(t => t.tableId);
+    if (excludeReservationId) {
+        query._id = { $ne: excludeReservationId };
+    }
 
-    const busyTableObjs = await Table.find({
-        _id: { $in: busyTableIds}
-    }).select("name")
-    const busyTableNames = busyTableObjs.map(t => t.name)
+    const overlappedReservations = await Reservation.find(query).select("_id");
+    if (!overlappedReservations.length) return false;
 
-    return (busyTableNames.includes(tableName))
-}
+    const overlapIds = overlappedReservations.map(r => r._id);
 
-// API lấy danh sách đơn đặt bàn
+    const busy = await ReservationTable.find({
+        reservationId: { $in: overlapIds },
+        tableId: { $in: tableIds }
+    });
+
+    return busy.length > 0;
+};
+
+/**
+ * =====================================================
+ * GET LIST
+ * =====================================================
+ */
 router.get("/list", async (req, res) => {
     try {
-        //const reservations_list = await Reservation.find().sort({ created_at: -1 });
-        const reservations_list = await Reservation.aggregate([
+        const reservations = await Reservation.aggregate([
             { $sort: { created_at: -1 } },
             {
                 $lookup: {
@@ -52,25 +77,93 @@ router.get("/list", async (req, res) => {
             },
             {
                 $project: {
-                    tables: { name: 1 },
                     customer_name: 1,
                     customer_phone: 1,
                     guest_count: 1,
                     datetime_checkin: 1,
                     datetime_out: 1,
                     status: 1,
+                    tables: { _id: 1, name: 1, capacity: 1 }
                 }
             }
         ]);
 
-        res.json(reservations_list);
+        res.json(reservations);
+        console.log(res.json(reservations));
     } catch (err) {
-        console.log(err)
-        res.status(500).json({ error: "Lỗi server" });
+        console.error("LIST ERROR:", err);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
-// API chỉnh sửa thông tin đơn đặt bàn
+/**
+ * =====================================================
+ * CREATE (N TABLES)
+ * =====================================================
+ */
+router.post("/create", async (req, res) => {
+    try {
+        const {
+            customer_name,
+            customer_phone,
+            guest_count,
+            datetime_checkin,
+            datetime_out,
+            status = "confirmed",
+            tableIds
+        } = req.body;
+
+        const cleanTableIds = normalizeTableIds(tableIds);
+
+        if (!cleanTableIds.length) {
+            return res.status(400).json({ message: "Phải chọn ít nhất 1 bàn hợp lệ" });
+        }
+
+        const overlapped = await isOverlap(
+            null,
+            cleanTableIds,
+            datetime_checkin,
+            datetime_out
+        );
+
+        if (overlapped) {
+            return res.status(409).json({
+                message: "Có bàn đã được đặt trong khoảng thời gian này"
+            });
+        }
+
+        const reservation = await Reservation.create({
+            customer_name,
+            customer_phone,
+            guest_count,
+            datetime_checkin,
+            datetime_out,
+            status
+        });
+
+        await ReservationTable.insertMany(
+            cleanTableIds.map(tableId => ({
+                reservationId: reservation._id,
+                tableId
+            }))
+        );
+
+        res.status(201).json({
+            success: true,
+            message: "Tạo mới thành công",
+            data: reservation
+        });
+    } catch (err) {
+        console.error("CREATE ERROR:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+/**
+ * =====================================================
+ * EDIT (N TABLES)
+ * =====================================================
+ */
 router.post("/edit", async (req, res) => {
     try {
         const {
@@ -81,13 +174,29 @@ router.post("/edit", async (req, res) => {
             datetime_checkin,
             datetime_out,
             status,
-            edit_table_name
+            tableIds
         } = req.body;
 
-        if(await isOverlap(reservation_id, edit_table_name, datetime_checkin, datetime_out))
-            return res.status(409).json({message: `Bàn ${edit_table_name} đã được đặt trước trong khoảng thời gian này.`})
+        const cleanTableIds = normalizeTableIds(tableIds);
 
-        const updatedRes = await Reservation.findByIdAndUpdate(
+        if (!cleanTableIds.length) {
+            return res.status(400).json({ message: "Danh sách bàn không hợp lệ" });
+        }
+
+        const overlapped = await isOverlap(
+            reservation_id,
+            cleanTableIds,
+            datetime_checkin,
+            datetime_out
+        );
+
+        if (overlapped) {
+            return res.status(409).json({
+                message: "Có bàn đã được đặt trong khoảng thời gian này"
+            });
+        }
+
+        const reservation = await Reservation.findByIdAndUpdate(
             reservation_id,
             {
                 customer_name,
@@ -95,122 +204,90 @@ router.post("/edit", async (req, res) => {
                 guest_count,
                 datetime_checkin,
                 datetime_out,
-                status,
+                status
             },
-            { new: true } // trả về document sau khi update
+            { new: true }
         );
 
-        const edit_table_obj = await Table.findOne({ name: edit_table_name })
-        const res_tab_obj = await Reservation_Table.findOne({ reservationId: reservation_id }) // 1 bàn-nhiều đơn
-        const updatedResTab = await Reservation_Table.findByIdAndUpdate(
-            res_tab_obj._id,
-            {
-                reservationId: reservation_id,
-                tableId: edit_table_obj._id
-            }
-        )
-
-        if (!updatedRes) {
+        if (!reservation) {
             return res.status(404).json({ message: "Không tìm thấy reservation" });
         }
-        res.status(200).json({ message: "Cập nhật thành công", data: updatedRes });
+
+        await ReservationTable.deleteMany({ reservationId: reservation_id });
+
+        await ReservationTable.insertMany(
+            cleanTableIds.map(tableId => ({
+                reservationId: reservation_id,
+                tableId
+            }))
+        );
+
+        res.json({
+            success: true,
+            message: "Cập nhật thành công",
+            data: reservation
+        });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Lỗi phía server" });
+        console.error("EDIT ERROR:", err);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
-// API xóa đơn đặt bàn
+/**
+ * =====================================================
+ * DELETE
+ * =====================================================
+ */
 router.post("/delete", async (req, res) => {
     try {
         const { id } = req.body;
-        const deletedReservation = await Reservation.findByIdAndDelete(id);
-        await Reservation_Table.deleteOne({ reservationId: id }); // 1 bàn-nhiều đơn
 
-        if (!deletedReservation) {
-            return res.status(404).json({ message: "Không tìm thấy đơn đặt bàn cần xóa" });
-        }
-        res.status(200).json({ message: "Xóa thành công", deletedReservation });
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Lỗi phía server", error: error.message });
+        await Reservation.findByIdAndDelete(id);
+        await ReservationTable.deleteMany({ reservationId: id });
+
+        res.json({ success: true, message: "Xóa thành công" });
+    } catch (err) {
+        console.error("DELETE ERROR:", err);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
-// API tạo đơn đặt bàn mới
-router.post("/create", async (req, res) => {
-    try {
-        const {
-            customer_name,
-            customer_phone,
-            guest_count,
-            datetime_checkin,
-            datetime_out,
-            assignTableName,
-            status
-        } = req.body
-
-        if(await isOverlap(null, assignTableName, datetime_checkin, datetime_out))
-            return res.status(409).json({message: `Bàn ${assignTableName} đã được đặt trước trong khoảng thời gian này.`})
-
-        const newReservation = await Reservation.create({
-            customer_name,
-            customer_phone,
-            guest_count,
-            datetime_checkin,
-            datetime_out,
-            status
-        });
-
-        const table = await Table.findOne({ name: assignTableName });
-        if (!table) {
-            return res.status(404).json({ message: "Table not found" });
-        }
-        const newResTab = await Reservation_Table.create({
-            reservationId: newReservation._id,
-            tableId: table._id
-        })
-        res.status(201).json({ message: "Tạo mới thành công", newReservation });
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Lỗi phía server", error: error.message });
-    }
-})
-
+/**
+ * =====================================================
+ * OVERLAP CHECK (MULTI)
+ * =====================================================
+ */
 router.post("/overlap_check", async (req, res) => {
     try {
-        const { from, to } = req.body;
+        const { from, to, exclude_reservation_id } = req.body;
 
-        const fromDate = new Date(from);
-        const toDate = new Date(to);
-        console.log(fromDate, toDate)
-
-        const overlappedReservations = await Reservation.find({
+        const query = {
             status: { $nin: ["cancelled", "finished", "no-show"] },
-            datetime_checkin: { $lt: toDate },
-            datetime_out: { $gt: fromDate }
-        }).select("_id");
+            datetime_checkin: { $lt: new Date(to) },
+            datetime_out: { $gt: new Date(from) }
+        };
 
-        const overlapReservationIds = overlappedReservations.map(r => r._id);
+        if (exclude_reservation_id) {
+            query._id = { $ne: exclude_reservation_id };
+        }
 
-        const busyTables = await Reservation_Table.find({
-            reservationId: { $in: overlapReservationIds }
+        const overlappedReservations = await Reservation.find(query).select("_id");
+        const overlapIds = overlappedReservations.map(r => r._id);
+
+        const busyMappings = await ReservationTable.find({
+            reservationId: { $in: overlapIds }
         }).select("tableId");
 
-        const busyTableIds = busyTables.map(t => t.tableId);
+        const busyTableIds = busyMappings.map(b => b.tableId);
 
-        const overlapTables = await Table.find({
-            _id: { $in: busyTableIds }
-        })
-        const availableTables = await Table.find({
-            _id: { $nin: busyTableIds }
-        });
+        const overlapTables = await Table.find({ _id: { $in: busyTableIds } });
+        const availableTables = await Table.find({ _id: { $nin: busyTableIds } });
 
-        res.status(200).json({ fromDate, toDate, overlapTables, availableTables });
+        res.json({ overlapTables, availableTables });
     } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: "Lỗi phía server" })
+        console.error("OVERLAP CHECK ERROR:", err);
+        res.status(500).json({ message: "Server error" });
     }
-})
+});
 
-export default router
+export default router;

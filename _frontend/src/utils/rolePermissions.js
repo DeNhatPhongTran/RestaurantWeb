@@ -32,6 +32,7 @@ export const ROLE_PERMISSIONS = {
       '/analytics',
       '/profile',
       '/reset_password',
+      '/tables'
     ],
   },
 

@@ -24,9 +24,11 @@ import Login from './pages/Login';
 import OrderListPage from './pages/OrderListPage';
 import DishMenuMgmt from './pages/dish_menu/Dish_menu_mgmt';
 import ReservationMgmt from './pages/reservation/Reservation_mgmt';
+import ReservationsPage from './pages/ReservationsPage';
 import Profile from './pages/Profile';
 import ResetPassword from './pages/ResetPassword'
 import StaffManagement from './pages/StaffManagement'
+import TableManagement from './pages/TableManagement';
 
 
 import './styles/globals.css';
@@ -118,8 +120,8 @@ function AppContent() {
                 path="/reservations"
                 element={
                   <RouteGuard>
-                    <ProtectedRoute>
-                      <ReservationMgmt />
+                    <ProtectedRoute requiredRoles={['waiter']}>
+                      <ReservationsPage />
                     </ProtectedRoute>
                   </RouteGuard>
                 }
@@ -165,6 +167,17 @@ function AppContent() {
                   <RouteGuard>
                     <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
                       <ResetPassword />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+              <Route
+                path="/tables"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
+                      <TableManagement />
                     </ProtectedRoute>
                   </RouteGuard>
                 }

@@ -138,21 +138,31 @@ export async function add_init() {
         }
     }
 
-    // 5. Tables
+    // 5. Tables (A1-A20 [2-4 chỗ], B1-B12 [4-6 chỗ], C1-C8 [2-4 chỗ])
     const existingTables = await Table.countDocuments();
     if (existingTables === 0) {
-        for (let i = 1; i <= 10; i++) {
-            await Table.create({ name: `B${i}`, capacity: 4, currentStatus: "empty"/*, reservation: null*/ });
-            console.log(`Table B${i} added`);
+        // Floor A: 20 tables with 2-4 capacity
+        for (let i = 1; i <= 20; i++) {
+            const capacity = i <= 10 ? 2 : 4; // First 10 tables = 2 seats, next 10 = 4 seats
+            await Table.create({ name: `A${i}`, capacity: capacity, currentStatus: "empty" });
+            console.log(`Table A${i} added (capacity: ${capacity})`);
         }
-        for (let i = 11; i <= 12; i++) {
-            await Table.create({ name: `B${i}`, capacity: 6, currentStatus: "empty"/*, reservation: null*/ });
-            console.log(`Table B${i} added`);
+        
+        // Floor B: 12 tables with 4-6 capacity
+        for (let i = 1; i <= 12; i++) {
+            const capacity = i <= 6 ? 4 : 6; // First 6 tables = 4 seats, next 6 = 6 seats
+            await Table.create({ name: `B${i}`, capacity: capacity, currentStatus: "empty" });
+            console.log(`Table B${i} added (capacity: ${capacity})`);
         }
-        for (let i = 13; i <= 14; i++) {
-            await Table.create({ name: `B${i}`, capacity: 8, currentStatus: "empty"/*, reservation: null*/ });
-            console.log(`Table B${i} added`);
+        
+        // Floor C: 8 tables with 2-4 capacity
+        for (let i = 1; i <= 8; i++) {
+            const capacity = i <= 4 ? 2 : 4; // First 4 tables = 2 seats, next 4 = 4 seats
+            await Table.create({ name: `C${i}`, capacity: capacity, currentStatus: "empty" });
+            console.log(`Table C${i} added (capacity: ${capacity})`);
         }
+        
+        console.log("Total 40 tables added successfully!");
     }
 
     // 6. Reservations, OrderItems, and Invoices

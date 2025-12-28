@@ -9,7 +9,7 @@ import DeleteUserConfirmModal from '../components/staff/DeleteUserConfirmModal'
 import UserCard from '../components/staff/UserCard'
 import { useApi } from '../context/ApiContext'
 
-const StaffManagement = () => {
+const StaffManagement = ({userRole}) => {
   const { apiCall, token } = useApi()
   const [users, setUsers] = useState([])
   const [roles, setRoles] = useState([])

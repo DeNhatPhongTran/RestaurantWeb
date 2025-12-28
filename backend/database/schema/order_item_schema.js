@@ -6,7 +6,9 @@ const orderItemSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   note: { type: String },
   status: { type: String, enum: ["waiting","cooking","cooked"], default: "waiting" },
-  price_at_time: { type: Number, required: true }
+  serving_status: { type: String, enum: ["served", "unserved"], default: "unserved" }, // Trạng thái phục vụ
+  price_at_time: { type: Number, required: true },
+  ordered_at: { type: Date, default: Date.now } // Thời gian đặt món
 });
 
 export default mongoose.model("OrderItem", orderItemSchema);
