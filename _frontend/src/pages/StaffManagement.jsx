@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import SearchBar from '../components/common/SearchBar'
 import { Button } from '../components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '../components/ui/tabs'
@@ -8,22 +8,25 @@ import EditUserModal from '../components/staff/EditUserModal'
 import DeleteUserConfirmModal from '../components/staff/DeleteUserConfirmModal'
 import UserCard from '../components/staff/UserCard'
 import { useApi } from '../context/ApiContext'
+import { getUserInfo } from '../data/LocalStorage.jsx'
 
-const StaffManagement = ({userRole}) => {
+const StaffManagement = () => {
   const { apiCall, token } = useApi()
+
+  const userInfo = useMemo(() => getUserInfo(), [])
+  const roleName = userInfo?.role?.role_name
+
   const [users, setUsers] = useState([])
   const [roles, setRoles] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRole, setSelectedRole] = useState('all')
 
-  // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
 
-  // Fetch users and roles
   useEffect(() => {
     if (!token) return
 
@@ -33,11 +36,17 @@ const StaffManagement = ({userRole}) => {
         const usersRes = await apiCall('/api/auth/users/list', { method: 'GET' })
         const rolesRes = await apiCall('/api/roles/list', { method: 'GET' })
 
-        console.log('Users API response:', usersRes)
-        console.log('Roles API response:', rolesRes)
+        setUsers(
+          usersRes?.success && Array.isArray(usersRes.data?.data)
+            ? usersRes.data.data
+            : []
+        )
 
-        setUsers(usersRes.success && Array.isArray(usersRes.data.data) ? usersRes.data.data : [])
-        setRoles(rolesRes.success && Array.isArray(rolesRes.data.data) ? rolesRes.data.data : [])
+        setRoles(
+          rolesRes?.success && Array.isArray(rolesRes.data?.data)
+            ? rolesRes.data.data
+            : []
+        )
       } catch (error) {
         console.error('Error fetching data:', error)
         setUsers([])
@@ -50,33 +59,42 @@ const StaffManagement = ({userRole}) => {
     fetchData()
   }, [token, apiCall])
 
-
-  // Filter users based on search and role
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       !searchQuery ||
-      user.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchQuery.toLowerCase())
+      user.fullname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.username?.toLowerCase().includes(searchQuery.toLowerCase())
 
     const matchesRole = selectedRole === 'all' || user.role?._id === selectedRole
     return matchesSearch && matchesRole
   })
 
-  // Group users by role
   const usersByRole = roles.map((role) => ({
     ...role,
     count: users.filter((u) => u.role?._id === role._id).length,
   }))
 
-  // Handlers
+  const refreshUsers = async () => {
+    try {
+      const res = await apiCall('/api/auth/users/list', { method: 'GET' })
+      if (res?.success && Array.isArray(res.data?.data)) {
+        setUsers(res.data.data)
+      }
+    } catch (error) {
+      console.error('Error refreshing users:', error)
+    }
+  }
+
   const handleCreateUser = async (userData) => {
+    if (roleName !== 'admin') return
+
     try {
       const res = await apiCall('/api/auth/users', {
         method: 'POST',
         body: JSON.stringify(userData),
       })
 
-      if (res.success) {
+      if (res?.success) {
         setIsCreateModalOpen(false)
         await refreshUsers()
       }
@@ -86,18 +104,21 @@ const StaffManagement = ({userRole}) => {
   }
 
   const handleEditUser = (user) => {
+    if (roleName !== 'admin') return
     setSelectedUser(user)
     setIsEditModalOpen(true)
   }
 
   const handleSaveEdit = async (updatedData) => {
+    if (!selectedUser || roleName !== 'admin') return
+
     try {
       const res = await apiCall(`/api/auth/users/${selectedUser._id}`, {
         method: 'PUT',
         body: JSON.stringify(updatedData),
       })
 
-      if (res.success) {
+      if (res?.success) {
         setIsEditModalOpen(false)
         setSelectedUser(null)
         await refreshUsers()
@@ -108,33 +129,26 @@ const StaffManagement = ({userRole}) => {
   }
 
   const handleDeleteUser = (user) => {
+    if (roleName !== 'admin') return
     setSelectedUser(user)
     setIsDeleteModalOpen(true)
   }
 
   const handleConfirmDelete = async () => {
+    if (!selectedUser || roleName !== 'admin') return
+
     try {
       const res = await apiCall(`/api/auth/users/${selectedUser._id}`, {
         method: 'DELETE',
       })
 
-      if (res.success) {
+      if (res?.success) {
         setIsDeleteModalOpen(false)
         setSelectedUser(null)
         await refreshUsers()
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-    }
-  }
-
-  // Refresh users list helper
-  const refreshUsers = async () => {
-    try {
-      const usersRes = await apiCall('/api/auth/users/list', { method: 'GET' })
-      if (usersRes.success) setUsers(usersRes.data || [])
-    } catch (error) {
-      console.error('Error refreshing users:', error)
     }
   }
 
@@ -148,21 +162,24 @@ const StaffManagement = ({userRole}) => {
 
   return (
     <div className="min-h-screen bg-secondary-50 p-6">
-      {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-secondary-900">Quản Lý Nhân Viên</h1>
-        <Button
-          variant="primary"
-          size="md"
-          className="flex items-center gap-2"
-          onClick={() => setIsCreateModalOpen(true)}
-        >
-          <Plus className="h-5 w-5" />
-          Tạo Nhân Viên Mới
-        </Button>
+        <h1 className="text-3xl font-bold text-secondary-900">
+          Quản Lý Nhân Viên
+        </h1>
+
+        {roleName === 'admin' && (
+          <Button
+            variant="primary"
+            size="md"
+            className="flex items-center gap-2"
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            <Plus className="h-5 w-5" />
+            Tạo Nhân Viên Mới
+          </Button>
+        )}
       </div>
 
-      {/* Search Bar */}
       <div className="mb-6">
         <SearchBar
           value={searchQuery}
@@ -171,22 +188,15 @@ const StaffManagement = ({userRole}) => {
         />
       </div>
 
-      {/* Role Tabs */}
       <div className="mb-8 bg-white rounded-lg p-4 shadow-sm border border-secondary-200">
-        <Tabs value={selectedRole} onValueChange={setSelectedRole} className="w-full">
+        <Tabs value={selectedRole} onValueChange={setSelectedRole}>
           <TabsList className="flex gap-2 border-b border-secondary-200 pb-4 bg-transparent">
-            <TabsTrigger
-              value="all"
-              className="px-4 py-2 rounded-lg data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 transition-colors"
-            >
+            <TabsTrigger value="all">
               Tất Cả ({users.length})
             </TabsTrigger>
+
             {usersByRole.map((role) => (
-              <TabsTrigger
-                key={role._id}
-                value={role._id}
-                className="px-4 py-2 rounded-lg data-[state=active]:bg-primary-100 data-[state=active]:text-primary-700 transition-colors"
-              >
+              <TabsTrigger key={role._id} value={role._id}>
                 {role.role_name} ({role.count})
               </TabsTrigger>
             ))}
@@ -194,7 +204,6 @@ const StaffManagement = ({userRole}) => {
         </Tabs>
       </div>
 
-      {/* Users Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (
@@ -207,12 +216,13 @@ const StaffManagement = ({userRole}) => {
           ))
         ) : (
           <div className="col-span-full text-center py-12">
-            <p className="text-secondary-600 text-lg">Không tìm thấy nhân viên</p>
+            <p className="text-secondary-600 text-lg">
+              Không tìm thấy nhân viên
+            </p>
           </div>
         )}
       </div>
 
-      {/* Modals */}
       <CreateUserModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

@@ -166,25 +166,25 @@ export async function add_init() {
     }
 
     // 6. Reservations, OrderItems, and Invoices
-    const existingReservations = await Reservation.countDocuments();
-    if (existingReservations === 0) {
-        // Create first reservation
-        const datetime_checkin1 = new Date();
-        const reservation1 = await Reservation.create({
-            customer_name: "John Doe",
-            customer_phone: "0123456789",
-            guest_count: 4,
-            datetime_checkin: datetime_checkin1,
-            datetime_out: new Date(datetime_checkin1.getTime() + 60 * 60 * 1000),
-            status: "finished"
-        });
-        console.log("Sample reservation 1 added");
-        const tableB1 = await Table.findOne({ name: "B1" });
-        await Reservation_Table.create({
-            reservationId: reservation1._id,
-            tableId: tableB1._id
-        });
-        console.log("Table B1 assigned to reservation1");
+    // const existingReservations = await Reservation.countDocuments();
+    // if (existingReservations === 0) {
+    //     // Create first reservation
+    //     const datetime_checkin1 = new Date();
+    //     const reservation1 = await Reservation.create({
+    //         customer_name: "John Doe",
+    //         customer_phone: "0123456789",
+    //         guest_count: 4,
+    //         datetime_checkin: datetime_checkin1,
+    //         datetime_out: new Date(datetime_checkin1.getTime() + 60 * 60 * 1000),
+    //         status: "finished"
+    //     });
+    //     console.log("Sample reservation 1 added");
+    //     const tableB1 = await Table.findOne({ name: "B1" });
+    //     await Reservation_Table.create({
+    //         reservationId: reservation1._id,
+    //         tableId: tableB1._id
+    //     });
+    //     console.log("Table B1 assigned to reservation1");
         // Get tables and assign to reservation (1-N: 1 Reservation có nhiều Tables)
         /*const tables = await Table.find({ status: "empty" }).limit(2);
         if (tables.length > 0) {
@@ -195,108 +195,108 @@ export async function add_init() {
         }*/
 
         // Create order items for the first reservation
-        const menuItem = await MenuItem.findOne({ name: "Pad Thai" });
-        if (menuItem) {
-            await OrderItem.create({
-                reservation: reservation1._id,
-                item: menuItem._id,
-                quantity: 2,
-                note: "Less spicy",
-                status: "cooked",
-                price_at_time: menuItem.price
-            });
-            console.log("Sample order item 1 added");
-        }
+    //     const menuItem = await MenuItem.findOne({ name: "Pad Thai" });
+    //     if (menuItem) {
+    //         await OrderItem.create({
+    //             reservation: reservation1._id,
+    //             item: menuItem._id,
+    //             quantity: 2,
+    //             note: "Less spicy",
+    //             status: "cooked",
+    //             price_at_time: menuItem.price
+    //         });
+    //         console.log("Sample order item 1 added");
+    //     }
 
-        // Create invoice for the first reservation (1-1: 1 Reservation có 1 Invoice)
-        const cashier = userMap.cashier1;
-        if (cashier) {
-            await Invoice.create({
-                reservation: reservation1._id,
-                total_price: 25.98,
-                payment_method: "cash",
-                cashier: cashier
-            });
-            console.log("Sample invoice added");
-        }
+    //     // Create invoice for the first reservation (1-1: 1 Reservation có 1 Invoice)
+    //     const cashier = userMap.cashier1;
+    //     if (cashier) {
+    //         await Invoice.create({
+    //             reservation: reservation1._id,
+    //             total_price: 25.98,
+    //             payment_method: "cash",
+    //             cashier: cashier
+    //         });
+    //         console.log("Sample invoice added");
+    //     }
 
-        // Create second reservation to show multiple reservations with different tables
-        const datetime_checkin2 = new Date(Date.now() + 7200000) // 2 hour later res1
-        const reservation2 = await Reservation.create({
-            customer_name: "Jane Smith",
-            customer_phone: "0987654322",
-            guest_count: 2,
-            datetime_checkin: datetime_checkin2,
-            datetime_out: new Date(datetime_checkin2.getTime() + 60 * 60 * 1000),
-            status: "confirmed"
-        });
-        console.log("Sample reservation 2 added");
-        await Reservation_Table.create({
-            reservationId: reservation2._id,
-            tableId: tableB1._id
-        });
-        console.log("Table B1 assigned to reservation2");
+    //     // Create second reservation to show multiple reservations with different tables
+    //     const datetime_checkin2 = new Date(Date.now() + 7200000) // 2 hour later res1
+    //     const reservation2 = await Reservation.create({
+    //         customer_name: "Jane Smith",
+    //         customer_phone: "0987654322",
+    //         guest_count: 2,
+    //         datetime_checkin: datetime_checkin2,
+    //         datetime_out: new Date(datetime_checkin2.getTime() + 60 * 60 * 1000),
+    //         status: "confirmed"
+    //     });
+    //     console.log("Sample reservation 2 added");
+    //     await Reservation_Table.create({
+    //         reservationId: reservation2._id,
+    //         tableId: tableB1._id
+    //     });
+    //     console.log("Table B1 assigned to reservation2");
 
-        const datetime_checkin3 = new Date(Date.now() + 14400000) // 4 hour later res1
-        const reservation3 = await Reservation.create({
-            customer_name: "Tom",
-            customer_phone: "0975310135",
-            guest_count: 4,
-            datetime_checkin: datetime_checkin3,
-            datetime_out: new Date(datetime_checkin3.getTime() + 60 * 60 * 1000),
-            status: "confirmed"
-        });
-        console.log("Sample reservation 3 added");
-        const tableB3 = await Table.findOne({ name: "B3" });
-        await Reservation_Table.create({
-            reservationId: reservation3._id,
-            tableId: tableB3._id
-        });
-        console.log("Table B3 assigned to reservation3");
+    //     const datetime_checkin3 = new Date(Date.now() + 14400000) // 4 hour later res1
+    //     const reservation3 = await Reservation.create({
+    //         customer_name: "Tom",
+    //         customer_phone: "0975310135",
+    //         guest_count: 4,
+    //         datetime_checkin: datetime_checkin3,
+    //         datetime_out: new Date(datetime_checkin3.getTime() + 60 * 60 * 1000),
+    //         status: "confirmed"
+    //     });
+    //     console.log("Sample reservation 3 added");
+    //     const tableB3 = await Table.findOne({ name: "B3" });
+    //     await Reservation_Table.create({
+    //         reservationId: reservation3._id,
+    //         tableId: tableB3._id
+    //     });
+    //     console.log("Table B3 assigned to reservation3");
 
-        // Assign remaining empty table to second reservation
-        /*const remainingTable = await Table.findOne({ status: "empty" });
-        if (remainingTable) {
-            await Table.updateOne({ _id: remainingTable._id }, { reservation: reservation2._id, status: "reserved" });
-            console.log("Table assigned to reservation 2");
-        }*/
-    }
+    //     // Assign remaining empty table to second reservation
+    //     /*const remainingTable = await Table.findOne({ status: "empty" });
+    //     if (remainingTable) {
+    //         await Table.updateOne({ _id: remainingTable._id }, { reservation: reservation2._id, status: "reserved" });
+    //         console.log("Table assigned to reservation 2");
+    //     }*/
+    // }
 
-    // 7. LeaveRequests
-    const existingLeaves = await LeaveRequest.countDocuments();
-    if (existingLeaves === 0) {
-        const waiter = userMap.waiter1;
-        const manager = userMap.manager1;
+    // // 7. LeaveRequests
+    // const existingLeaves = await LeaveRequest.countDocuments();
+    // if (existingLeaves === 0) {
+    //     const waiter = userMap.waiter1;
+    //     const manager = userMap.manager1;
 
-        if (waiter) {
-            // Create a leave request from waiter
-            await LeaveRequest.create({
-                user: waiter,
-                leave_type: "nghi_phep",
-                start_date: new Date("2025-12-01"),
-                end_date: new Date("2025-12-03"),
-                total_days: 3,
-                reason: "Personal leave",
-                status: "pending"
-            });
-            console.log("Sample leave request 1 added");
+    //     if (waiter) {
+    //         // Create a leave request from waiter
+    //         await LeaveRequest.create({
+    //             user: waiter,
+    //             leave_type: "nghi_phep",
+    //             start_date: new Date("2025-12-01"),
+    //             end_date: new Date("2025-12-03"),
+    //             total_days: 3,
+    //             reason: "Personal leave",
+    //             status: "pending"
+    //         });
+    //         console.log("Sample leave request 1 added");
 
-            // Create another leave request and approve it by manager
-            if (manager) {
-                await LeaveRequest.create({
-                    user: waiter,
-                    leave_type: "nghi_thuong",
-                    start_date: new Date("2025-12-10"),
-                    end_date: new Date("2025-12-10"),
-                    total_days: 1,
-                    reason: "Sick leave",
-                    status: "approved",
-                    approved_by: manager
-                });
-                console.log("Sample leave request 2 added (approved by manager)");
-            }
-        }
-    }
+    //         // Create another leave request and approve it by manager
+    //         if (manager) {
+    //             await LeaveRequest.create({
+    //                 user: waiter,
+    //                 leave_type: "nghi_thuong",
+    //                 start_date: new Date("2025-12-10"),
+    //                 end_date: new Date("2025-12-10"),
+    //                 total_days: 1,
+    //                 reason: "Sick leave",
+    //                 status: "approved",
+    //                 approved_by: manager
+    //             });
+    //             console.log("Sample leave request 2 added (approved by manager)");
+    //         }
+        // }
+    // }
 
     console.log("\n Database initialization completed successfully!");
     // await mongoose.disconnect();

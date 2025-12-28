@@ -1,5 +1,4 @@
-import { Plus, Grid, List } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
 import TableGrid from '../components/table-management/TableGrid'
@@ -8,13 +7,16 @@ import EditTableModal from '../components/table-management/EditTableModal'
 import DeleteTableConfirmModal from '../components/table-management/DeleteTableConfirmModal'
 import WaiterOrderModal from '../components/table-management/WaiterOrderModal'
 import { useApi } from '../context/ApiContext'
+import { getUserInfo } from '../data/LocalStorage.jsx'
+import { Plus, Grid, List } from 'lucide-react'
 
-const TableManagement = ({userRole}) => {
+const TableManagement = () => {
     const navigate = useNavigate()
     const { apiCall } = useApi()
     const [tables, setTables] = useState([])
     const [loading, setLoading] = useState(true)
     const [viewMode, setViewMode] = useState('grid') // grid or image
+    const userInfo = useMemo(() => getUserInfo(), [])
 
     // Modal states
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -24,6 +26,8 @@ const TableManagement = ({userRole}) => {
 
     const [selectedTable, setSelectedTable] = useState(null)
     const [selectedReservation, setSelectedReservation] = useState(null)
+
+    const userRole = userInfo?.role.role_name
 
     // Fetch tables
     useEffect(() => {
@@ -36,7 +40,7 @@ const TableManagement = ({userRole}) => {
             const res = await apiCall('/api/tables/list', {
                 method: 'GET',
             })
-            console.log('API tables response:', res.data)
+            console.log('API tables response:', res.data?.data)
             if (res.success) {
                 setTables(res.data?.data || [])
             }
@@ -63,16 +67,27 @@ const TableManagement = ({userRole}) => {
 
         // Waiter: Get reservation and open order modal
         if (userRole === 'waiter') {
-            try {
-                const res = await apiCall(`/api/reservations/by-table/${table._id}`, {
-                    method: 'GET',
-                })
-                if (res.success && res.data) {
-                    setSelectedReservation(res.data)
-                    setIsWaiterOrderOpen(true)
+            if (table.isUsed && table.currentReservationId) {
+                console.log(table.currentReservationId)
+                try {
+                    const res = await apiCall(`/api/reservations/${table.currentReservationId}`, {
+                        method: 'GET',
+                    });
+
+                    console.log("reservation:", res)
+                    if (res.success && res.data) {
+                        // Set reservation kèm orderItems
+                        setSelectedReservation(res.data);
+                        setIsWaiterOrderOpen(true);
+                        console.log("WaiterOpen");
+                    } else {
+                        console.warn(`Reservation không tồn tại cho bàn ${table.name}`);
+                    }
+                } catch (error) {
+                    console.error('Error fetching reservation:', error);
                 }
-            } catch (error) {
-                console.error('Error fetching reservation:', error)
+            } else {
+                console.warn(`Table ${table.name} chưa có reservation`);
             }
         }
 
@@ -217,16 +232,16 @@ const TableManagement = ({userRole}) => {
                         <p className="text-sm text-secondary-600">Tổng bàn</p>
                         <p className="text-2xl font-bold text-secondary-900">{tables.length}</p>
                     </div>
-                    <div className="bg-primary-50 px-4 py-2 rounded-lg">
-                        <p className="text-sm text-primary-600">Đang phục vụ</p>
-                        <p className="text-2xl font-bold text-primary-700">
-                            {tables.filter((t) => t.currentStatus === 'serving').length}
+                    <div className="bg-red-50 px-4 py-2 rounded-lg">
+                        <p className="text-sm text-red-600">Đang sử dụng</p>
+                        <p className="text-2xl font-bold text-red-700">
+                            {tables.filter((t) => t.isUsed).length}
                         </p>
                     </div>
-                    <div className="bg-success-50 px-4 py-2 rounded-lg">
-                        <p className="text-sm text-success-600">Trống</p>
-                        <p className="text-2xl font-bold text-success-700">
-                            {tables.filter((t) => t.currentStatus === 'empty').length}
+                    <div className="bg-green-50 px-4 py-2 rounded-lg">
+                        <p className="text-sm text-green-600">Chưa sử dụng</p>
+                        <p className="text-2xl font-bold text-green-700">
+                            {tables.filter((t) => !t.isUsed).length}
                         </p>
                     </div>
                 </div>

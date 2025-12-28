@@ -2,6 +2,9 @@ import express from "express";
 import Reservation from "../database/schema/reservation_schema.js";
 import Table from "../database/schema/table_schema.js";
 import ReservationTable from "../database/schema/reservation_table_schema.js";
+import OrderItems from "../database/schema/order_item_schema.js";
+import mongoose from "mongoose";
+
 
 const router = express.Router();
 
@@ -95,6 +98,7 @@ router.get("/list", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 /**
  * =====================================================
@@ -251,6 +255,46 @@ router.post("/delete", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+
+router.get("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "ID không hợp lệ" });
+        }
+
+        const reservation = await Reservation.findById(id)
+            .populate({
+                path: "orderItems",
+                model: "OrderItem",
+                select: "_id item quantity note status serving_status price_at_time ordered_at",
+                populate: {
+                    path: "item",
+                    select: "_id name price category"
+                }
+            });
+
+        if (!reservation) {
+            return res.status(404).json({ success: false, message: "Reservation không tồn tại" });
+        }
+
+        // Đảm bảo orderItems là [] nếu null
+        const data = {
+            ...reservation.toObject(),
+            orderItems: reservation.orderItems || []
+        };
+
+        res.json({ success: true, data });
+    } catch (err) {
+        console.error("GET BY ID ERROR:", err);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+
+
+
 
 /**
  * =====================================================

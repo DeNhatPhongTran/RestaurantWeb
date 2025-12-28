@@ -29,6 +29,9 @@ import Profile from './pages/Profile';
 import ResetPassword from './pages/ResetPassword'
 import StaffManagement from './pages/StaffManagement'
 import TableManagement from './pages/TableManagement';
+import StaffDelivery from './pages/StaffDelivery';
+import KitchenOrder from './pages/KitchenOrder';
+import InvoicePage from './pages/InvoicePage';
 
 
 import './styles/globals.css';
@@ -178,6 +181,39 @@ function AppContent() {
                   <RouteGuard>
                     <ProtectedRoute requiredRoles={['manager', 'waiter', 'cashier', 'chef']}>
                       <TableManagement />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+              <Route
+                path="/delivery"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['waiter']}>
+                      <StaffDelivery />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+              <Route
+                path="/kitchen"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['chef']}>
+                      <KitchenOrder />
+                    </ProtectedRoute>
+                  </RouteGuard>
+                }
+              />
+
+              <Route
+                path="/invoices"
+                element={
+                  <RouteGuard>
+                    <ProtectedRoute requiredRoles={['cashier']}>
+                      <InvoicePage />
                     </ProtectedRoute>
                   </RouteGuard>
                 }

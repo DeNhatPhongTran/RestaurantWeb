@@ -11,16 +11,6 @@ const TableGrid = ({ tables, userRole, viewMode = 'grid', onTableClick, onEditTa
     'C': tables.filter(t => t.name?.startsWith('C')),
   }
 
-  const getStatusColor = (status) => {
-    if (status === 'serving') {
-      return 'bg-teal-100 text-teal-900 border-2 border-teal-300 hover:border-teal-400 hover:shadow-md'
-    }
-    if (status === 'empty') {
-      return 'bg-green-100 text-green-900 border-2 border-green-300 hover:border-green-400 hover:shadow-md'
-    }
-    return 'bg-white text-secondary-900 border-2 border-secondary-300 hover:border-secondary-400 hover:shadow-md'
-  }
-
   // Xác định kích thước bàn dựa trên capacity
   const getTableSize = (capacity) => {
     if (capacity <= 2) return { base: 'w-24 h-24', colSpan: '' }
@@ -29,13 +19,21 @@ const TableGrid = ({ tables, userRole, viewMode = 'grid', onTableClick, onEditTa
     return { base: 'w-48 h-24', colSpan: 'col-span-2' }
   }
 
+  const getStatusColor = (table) => {
+    if (table.isUsed) {
+      return 'bg-red-100 text-red-900 border-2 border-red-300 hover:border-red-400 hover:shadow-md'
+    } else {
+      return 'bg-green-100 text-green-900 border-2 border-green-300 hover:border-green-400 hover:shadow-md'
+    }
+  }
+
   const TableCard = ({ table }) => {
     const isDisabled = ['chef', 'cashier', 'guest'].includes(userRole)
     const isManager = userRole === 'manager'
     const isWaiter = userRole === 'waiter'
     const isExpanded = expandedTableId === table._id
     const size = viewMode === 'image' ? getTableSize(table.capacity) : { base: 'w-24 h-24', colSpan: '' }
-    
+
     return (
       <div className="relative">
         <button
@@ -48,7 +46,7 @@ const TableGrid = ({ tables, userRole, viewMode = 'grid', onTableClick, onEditTa
             }
           }}
           className={`${size.base} rounded-xl font-bold text-center flex flex-col items-center justify-center transition-all ${getStatusColor(
-            table.currentStatus
+            table
           )} ${isDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
           disabled={isDisabled}
         >

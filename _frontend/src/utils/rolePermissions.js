@@ -42,13 +42,17 @@ export const ROLE_PERMISSIONS = {
       { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
       { icon: 'Calendar', label: 'Đặt Bàn', href: '/reservations' },
       { icon: 'File', label: 'Gọi Món', href: '/orders' },
+      { icon: 'Package', label: 'Giao Món', href: '/delivery' },
       { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
     ],
     allowedRoutes: [
       '/tables',
       '/reservations',
       '/orders',
+      '/delivery',
       '/history',
+      '/profile',
+      '/reset_password',
     ],
   },
 
@@ -56,11 +60,15 @@ export const ROLE_PERMISSIONS = {
     label: '👨‍🍳 Đầu Bếp',
     navItems: [
       { icon: 'File', label: 'Danh Sách Món', href: '/orders', exact: true },
+      { icon: 'UtensilsCrossed', label: 'Gọi Món', href: '/kitchen' },
       { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
     ],
     allowedRoutes: [
       '/orders',
+      '/kitchen',
       '/history',
+      '/profile',
+      '/reset_password',
     ],
   },
 
@@ -73,6 +81,8 @@ export const ROLE_PERMISSIONS = {
     allowedRoutes: [
       '/invoices',
       '/history',
+      '/profile',
+      '/reset_password',
     ],
   },
 
