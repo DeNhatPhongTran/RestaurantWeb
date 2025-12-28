@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import Role from "../schema/role_schema.js";
-import Category from "../schema/category_schema.js";
 import User from "../schema/user_schema.js";
 import MenuItem from "../schema/menu_item_schema.js";
 import Table from "../schema/table_schema.js";

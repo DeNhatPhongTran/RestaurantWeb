@@ -24,7 +24,7 @@ export default function Section3() {
   const fetchDishes = async () => {
     try {
       setLoading(true);
-      const response = await apiCall('/api/menu/items');
+      const response = await apiCall('/api/dish_menu/list');
       
       if (response.success && response.data) {
         // Get all items and shuffle them

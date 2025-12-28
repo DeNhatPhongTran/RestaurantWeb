@@ -8,28 +8,16 @@
 
 export const ROLE_PERMISSIONS = {
   manager: {
-    label: '👔 Quản Lý',
+    label: 'Quản Lý',
     navItems: [
-      { icon: 'Store', label: 'Dashboard', href: '/dashboard', exact: true },
       { icon: 'Users', label: 'Nhân Viên', href: '/staff' },
-      { icon: 'File', label: 'Đơn Hàng', href: '/orders' },
       { icon: 'Store', label: 'Bàn', href: '/tables' },
-      { icon: 'Calendar', label: 'Đặt Bàn', href: '/reservations' },
-      { icon: 'FileText', label: 'Hóa Đơn', href: '/invoices' },
-      { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
       { icon: 'UtensilsCrossed', label: 'Quản Lý Menu', href: '/dish_menu' },
-      { icon: 'BarChart', label: 'Thống Kê', href: '/analytics' },
     ],
     allowedRoutes: [
-      '/dashboard',
       '/staff',
-      '/orders',
       '/tables',
-      '/reservations',
-      '/invoices',
-      '/history',
       '/dish_menu',
-      '/analytics',
       '/profile',
       '/reset_password',
       '/tables'
@@ -37,64 +25,54 @@ export const ROLE_PERMISSIONS = {
   },
 
   waiter: {
-    label: '🍽️ Phục Vụ',
+    label: 'Phục Vụ',
     navItems: [
       { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
       { icon: 'Calendar', label: 'Đặt Bàn', href: '/reservations' },
-      { icon: 'File', label: 'Gọi Món', href: '/orders' },
       { icon: 'Package', label: 'Giao Món', href: '/delivery' },
-      { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
     ],
     allowedRoutes: [
       '/tables',
       '/reservations',
-      '/orders',
       '/delivery',
-      '/history',
       '/profile',
       '/reset_password',
     ],
   },
 
   chef: {
-    label: '👨‍🍳 Đầu Bếp',
+    label: 'Đầu Bếp',
     navItems: [
-      { icon: 'File', label: 'Danh Sách Món', href: '/orders', exact: true },
+      { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
       { icon: 'UtensilsCrossed', label: 'Gọi Món', href: '/kitchen' },
-      { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
     ],
     allowedRoutes: [
-      '/orders',
       '/kitchen',
-      '/history',
       '/profile',
       '/reset_password',
+      '/tables'
     ],
   },
 
   cashier: {
-    label: '💰 Thu Ngân',
+    label: 'Thu Ngân',
     navItems: [
       { icon: 'FileText', label: 'Hóa Đơn', href: '/invoices', exact: true },
-      { icon: 'Clock', label: 'Lịch Sử', href: '/history' },
     ],
     allowedRoutes: [
       '/invoices',
-      '/history',
       '/profile',
       '/reset_password',
     ],
   },
 
   guest: {
-    label: '👤 Khách',
+    label: 'Khách',
     navItems: [
       { icon: 'UtensilsCrossed', label: 'Thực Đơn', href: '/menu', exact: true },
-      { icon: 'Calendar', label: 'Đặt Bàn', href: '/reservations' },
     ],
     allowedRoutes: [
       '/menu',
-      '/reservations',
       '/home',
     ],
   },
@@ -117,14 +95,14 @@ export const getPermission = (roleName) => {
  */
 export const isRouteAllowed = (roleName, pathname) => {
   const permission = getPermission(roleName);
-  
+
   // Cho phép route home và login
   if (pathname === '/' || pathname === '/home' || pathname === '/login') {
     return true;
   }
 
   // Kiểm tra xem pathname có trong allowedRoutes không
-  return permission.allowedRoutes.some(route => 
+  return permission.allowedRoutes.some(route =>
     pathname === route || pathname.startsWith(route + '/')
   );
 };

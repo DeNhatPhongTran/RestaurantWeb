@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./database/db_connect.js";
 import authRoutes from "./routes/auth.js";
-import menuRoutes from "./routes/menu.js";
 import reservationsRoute from './routes/reservations.js'
 import reservationsInvoicesRoute from './routes/reservations-invoices.js'
 import dishMenuRoute from './routes/dish_menu.js'
@@ -26,7 +25,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/menu", menuRoutes);
 app.use('/api/reservations', reservationsRoute)
 app.use('/api/reservations-invoices', reservationsInvoicesRoute)
 app.use('/api/reservations-tables', reservationsTablesRoute)

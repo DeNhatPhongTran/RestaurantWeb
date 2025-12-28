@@ -3,7 +3,7 @@ import { AlertCircle, Loader, CheckCircle, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useApi } from '../../context/ApiContext'
 
-const InvoiceDetailModal = ({ isOpen, onClose, invoice, onPaymentSuccess }) => {
+const InvoiceDetailModal = ({ isOpen, onClose, invoice, onPaymentSuccess, userInfo }) => {
   const [paymentMethod, setPaymentMethod] = useState('cash')
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
@@ -33,9 +33,11 @@ const InvoiceDetailModal = ({ isOpen, onClose, invoice, onPaymentSuccess }) => {
         method: 'PUT',
         body: JSON.stringify({
           payment_method: paymentMethod,
-          total_price: invoice.total_amount
+          total_price: invoice.total_amount,
+          cashierId: userInfo.id
         })
       })
+
 
       if (response.success) {
         setShowSuccess(true)

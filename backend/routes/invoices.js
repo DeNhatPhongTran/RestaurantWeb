@@ -121,10 +121,10 @@ router.get('/cashier/paid', async (req, res) => {
 });
 
 // PUT /api/invoices/:reservationId/process-payment - Process payment and mark as paid
-router.put('/:reservationId/process-payment', verifyToken, async (req, res) => {
+router.put('/:reservationId/process-payment', async (req, res) => {
   try {
     const { reservationId } = req.params
-    const { payment_method, total_price } = req.body
+    const { payment_method, total_price, cashierId } = req.body
 
     if (!payment_method || !total_price) {
       return res.status(400).json({
@@ -166,7 +166,7 @@ router.put('/:reservationId/process-payment', verifyToken, async (req, res) => {
       reservation: reservationId,
       total_price,
       payment_method,
-      cashier: req.userId,
+      cashier: cashierId,
       paid_at: new Date()
     })
 

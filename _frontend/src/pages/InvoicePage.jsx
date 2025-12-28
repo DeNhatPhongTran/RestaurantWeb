@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Loader, RefreshCw, AlertCircle } from 'lucide-react'
 import { useApi } from '../context/ApiContext'
 import InvoiceCard from '../components/orders/InvoiceCard'
 import InvoiceDetailModal from '../components/orders/InvoiceDetailModal'
 import { Button } from '../components/ui/button'
+import { getUserInfo } from '../data/LocalStorage.jsx'
 
 const InvoicePage = () => {
   const { apiCall } = useApi()
@@ -15,6 +16,7 @@ const InvoicePage = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [autoRefresh, setAutoRefresh] = useState(true)
+  const userInfo = useMemo(() => getUserInfo(), [])
 
   const fetchInvoices = async () => {
     try {
@@ -23,10 +25,10 @@ const InvoicePage = () => {
         apiCall('/api/invoices/cashier/unpaid', { method: 'GET' }),
         apiCall('/api/invoices/cashier/paid', { method: 'GET' })
       ])
-      
+
       console.log(unpaidRes)
       if (unpaidRes.success) {
-        setUnpaidInvoices(Array.isArray(unpaidRes.data.data) ? unpaidRes.data.data: [])
+        setUnpaidInvoices(Array.isArray(unpaidRes.data.data) ? unpaidRes.data.data : [])
       }
       if (paidRes.success) {
         setPaidInvoices(Array.isArray(paidRes.data.data) ? paidRes.data.data : [])
@@ -194,6 +196,7 @@ const InvoicePage = () => {
         }}
         invoice={selectedInvoice}
         onPaymentSuccess={handlePaymentSuccess}
+        userInfo={userInfo}
       />
     </div>
   )

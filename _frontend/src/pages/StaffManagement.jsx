@@ -86,7 +86,7 @@ const StaffManagement = () => {
   }
 
   const handleCreateUser = async (userData) => {
-    if (roleName !== 'admin') return
+    if (roleName !== 'manager') return
 
     try {
       const res = await apiCall('/api/auth/users', {
@@ -104,13 +104,13 @@ const StaffManagement = () => {
   }
 
   const handleEditUser = (user) => {
-    if (roleName !== 'admin') return
+    if (roleName !== 'manager') return
     setSelectedUser(user)
     setIsEditModalOpen(true)
   }
 
   const handleSaveEdit = async (updatedData) => {
-    if (!selectedUser || roleName !== 'admin') return
+    if (!selectedUser || roleName !== 'manager') return
 
     try {
       const res = await apiCall(`/api/auth/users/${selectedUser._id}`, {
@@ -129,13 +129,13 @@ const StaffManagement = () => {
   }
 
   const handleDeleteUser = (user) => {
-    if (roleName !== 'admin') return
+    if (roleName !== 'manager') return
     setSelectedUser(user)
     setIsDeleteModalOpen(true)
   }
 
   const handleConfirmDelete = async () => {
-    if (!selectedUser || roleName !== 'admin') return
+    if (!selectedUser || roleName !== 'manager') return
 
     try {
       const res = await apiCall(`/api/auth/users/${selectedUser._id}`, {
@@ -167,7 +167,7 @@ const StaffManagement = () => {
           Quản Lý Nhân Viên
         </h1>
 
-        {roleName === 'admin' && (
+        {roleName === 'manager' && (
           <Button
             variant="primary"
             size="md"

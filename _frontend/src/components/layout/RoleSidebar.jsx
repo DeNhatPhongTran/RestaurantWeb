@@ -49,11 +49,10 @@ const ICONS = {
 const RoleSidebar = ({ onLogout = null }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-
   const userInfo = useMemo(() => getUserInfo(), [])
   const roleName = userInfo?.role?.role_name
   const isGuest = !roleName
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
 
   const permission = isGuest ? null : getPermission(roleName)
 

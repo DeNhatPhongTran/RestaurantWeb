@@ -98,34 +98,6 @@ const EditUserModal = ({ isOpen, onClose, user, roles = [], onSave }) => {
               <p className="text-xs text-secondary-500 mt-1">Không thể chỉnh sửa tên tài khoản</p>
             </div>
 
-            {/* Full Name */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-secondary-900 mb-2">
-                Tên Nhân Viên <span className="text-danger-600">*</span>
-              </label>
-              <input
-                type="text"
-                value={fullname}
-                onChange={(e) => setFullname(e.target.value)}
-                placeholder="Nhập tên nhân viên"
-                className="w-full px-4 py-3 rounded-lg border-2 border-secondary-200 focus:border-primary-500 focus:outline-none transition-colors"
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-secondary-900 mb-2">
-                Số Điện Thoại <span className="text-secondary-400">(Tùy chọn)</span>
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Nhập số điện thoại"
-                className="w-full px-4 py-3 rounded-lg border-2 border-secondary-200 focus:border-primary-500 focus:outline-none transition-colors"
-              />
-            </div>
-
             {/* Role */}
             <div className="mb-6">
               <label className="block text-sm font-semibold text-secondary-900 mb-2">

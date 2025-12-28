@@ -3,14 +3,6 @@ import { useApi } from '../context/ApiContext';
 import Cards from '../components/Layouts/Cards';
 import '../styles/MenuStyle.css';
 
-const categoryTranslation = {
-  'Appetizers': 'Khai Vị',
-  'Soups': 'Súp',
-  'Main Dishes': 'Món Chính',
-  'Desserts': 'Tráng Miệng',
-  'Drinks': 'Đồ Uống'
-};
-
 export default function Menu() {
   const { apiCall } = useApi();
   const [menuItems, setMenuItems] = useState([]);
@@ -23,28 +15,23 @@ export default function Menu() {
     const fetchMenuItems = async () => {
       try {
         setLoading(true);
-        const response = await apiCall('/api/menu/items');
-        
-        if (response.success) {
-          setMenuItems(response.data.data || response.data);
-          
-          // Extract unique categories
-          const uniqueCategories = {};
-          (response.data.data || response.data).forEach(item => {
-            if (item.category) {
-              uniqueCategories[item.category._id] = item.category.category_name;
-            }
-          });
-          
-          const cats = Object.entries(uniqueCategories).map(([id, name]) => ({
-            _id: id,
-            name,
-            viName: categoryTranslation[name] || name
+        const response = await apiCall('/api/dish_menu/list');
+
+        // Kiểm tra dữ liệu trả về
+        if (response.success && response.data) {
+          const menuData = response.data;
+
+          setMenuItems(menuData);
+
+          // Lấy danh sách các category duy nhất (unique categories)
+          const uniqueCategories = new Set(menuData.map(item => item.category)); // Sử dụng category là chuỗi
+          const cats = Array.from(uniqueCategories).map(name => ({
+            name
           }));
           setCategories(cats);
           setError(null);
         } else {
-          setError(response.error || 'Không thể tải thực đơn');
+          setError('Không thể tải thực đơn');
         }
       } catch (err) {
         console.error('Error fetching menu:', err);
@@ -57,9 +44,10 @@ export default function Menu() {
     fetchMenuItems();
   }, [apiCall]);
 
+  // Lọc các món ăn theo danh mục đã chọn
   const filteredItems = selectedCategory === 'all'
     ? menuItems
-    : menuItems.filter(item => item.category._id === selectedCategory);
+    : menuItems.filter(item => item.category === selectedCategory);  // So sánh category là chuỗi
 
   if (loading) {
     return (
@@ -87,13 +75,13 @@ export default function Menu() {
             >
               Tất cả
             </button>
-            {categories.map(cat => (
+            {categories.map((cat, index) => (
               <button
-                key={cat._id}
-                className={`filter__btn ${selectedCategory === cat._id ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat._id)}
+                key={index} // Dùng index cho key nếu không có _id
+                className={`filter__btn ${selectedCategory === cat.name ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat.name)}
               >
-                {cat.viName}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -109,7 +97,7 @@ export default function Menu() {
                 description={item.description}
                 price={item.price}
                 image={item.image}
-                badge={item.status === 'available' ? 'Còn bán' : 'Đã bán hết'}
+                badge={item.status === 'Đang phục vụ' ? 'Còn bán' : 'Đã bán hết'}
               />
             ))}
           </div>

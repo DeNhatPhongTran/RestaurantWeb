@@ -69,7 +69,6 @@ function AppContent() {
   const handleLogout = () => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('token');
-    window.location.href = '/home';
   };
 
   return (
@@ -97,16 +96,6 @@ function AppContent() {
               <Route path="/login" element={<Login />} />
 
               {/* PROTECTED */}
-              <Route
-                path="/dashboard"
-                element={
-                  <RouteGuard>
-                    <ProtectedRoute requiredRoles={['manager']}>
-                      <OrderListPage />
-                    </ProtectedRoute>
-                  </RouteGuard>
-                }
-              />
 
               <Route
                 path="/orders"
