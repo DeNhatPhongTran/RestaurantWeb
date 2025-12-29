@@ -23,7 +23,6 @@ import Menu from './pages/Menu';
 import Login from './pages/Login';
 import OrderListPage from './pages/OrderListPage';
 import DishMenuMgmt from './pages/dish_menu/Dish_menu_mgmt';
-import ReservationMgmt from './pages/reservation/Reservation_mgmt';
 import ReservationsPage from './pages/ReservationsPage';
 import Profile from './pages/Profile';
 import ResetPassword from './pages/ResetPassword'
@@ -48,11 +47,11 @@ function RouteGuard({ children }) {
 
       if (!isRouteAllowed(roleName, location.pathname)) {
         console.warn('Access denied:', location.pathname);
-        return <Navigate to="/home" replace />;
+        return <Navigate to="/tables" replace />;
       }
     } catch (err) {
       console.error(err);
-      return <Navigate to="/home" replace />;
+      return <Navigate to="/tables" replace />;
     }
   }
 
@@ -90,7 +89,16 @@ function AppContent() {
           <main className="flex-1 overflow-y-auto">
             <Routes>
               {/* PUBLIC */}
-              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route
+                path="/"
+                element={
+                  userInfo ? (
+                    <Navigate to="/tables" replace />
+                  ) : (
+                    <Navigate to="/home" replace />
+                  )
+                }
+              />
               <Route path="/home" element={<Home />} />
               <Route path="/menu" element={<Menu />} />
               <Route path="/login" element={<Login />} />

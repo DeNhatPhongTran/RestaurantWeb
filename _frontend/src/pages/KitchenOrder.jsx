@@ -30,6 +30,7 @@ export default function KitchenOrder() {
 
       if (response.success) {
         setOrders(response.data.data)
+        console.log("orders", orders)
       } else {
         setError(response.message || 'Failed to fetch orders')
       }
@@ -48,7 +49,7 @@ export default function KitchenOrder() {
       let item = orders.waiting.find(o => o._id === itemId)
       if (!item) item = orders.cooking.find(o => o._id === itemId)
       if (!item) item = orders.cooked.find(o => o._id === itemId)
-      
+
       // Prevent invalid status transitions
       // Cannot go back to waiting or cooking from cooked
       if (item && item.serving_status === 'served') {
@@ -128,8 +129,8 @@ export default function KitchenOrder() {
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Gọi Món</h1>
-              <p className="text-gray-600 text-sm mt-1">Quản lý nấu ăn</p>
+              <h1 className="text-3xl font-bold text-gray-900">Chế biến</h1>
+              <p className="text-gray-600 text-sm mt-1">Chế biến</p>
             </div>
             <button
               onClick={() => {
@@ -186,12 +187,12 @@ export default function KitchenOrder() {
         {orders.waiting.length === 0 &&
           orders.cooking.length === 0 &&
           orders.cooked.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🎉</div>
-            <p className="text-gray-600 text-lg font-medium">Tất cả đơn hàng đã xong</p>
-            <p className="text-gray-500 text-sm">Bếp hiện đang rảnh rỗi</p>
-          </div>
-        )}
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🎉</div>
+              <p className="text-gray-600 text-lg font-medium">Tất cả đơn hàng đã xong</p>
+              <p className="text-gray-500 text-sm">Bếp hiện đang rảnh rỗi</p>
+            </div>
+          )}
       </div>
 
       {/* Updating Indicator */}

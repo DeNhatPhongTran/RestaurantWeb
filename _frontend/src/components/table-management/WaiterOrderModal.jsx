@@ -130,6 +130,19 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
         return;
       }
 
+      const newOrderItems = selectedItems.map(item => ({
+        _id: Date.now(),  
+        item: item.menuItem,
+        quantity: item.quantity,
+        note: item.note || '',
+        price_at_time: item.menuItem.price,
+        status: 'waiting',
+        serving_status: 'unserved',
+        ordered_at: new Date().toISOString()
+      }));
+
+      setOrderItems(prevItems => [...prevItems, ...newOrderItems]);
+
       const promises = selectedItems.map(item =>
         apiCall('/api/orderitems', {
           method: 'POST',
@@ -150,10 +163,10 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
       const allSuccess = results.every(r => r.success);
 
       if (allSuccess) {
-        await refetchOrderItems();
+        // Nếu API thành công, bạn có thể làm gì đó như đóng modal
         setIsAddItemOpen(false);
-
       } else {
+        setOrderItems(prevItems => prevItems.filter(item => !newOrderItems.includes(item)));
         alert('Có lỗi khi thêm một số món');
       }
     } catch (error) {

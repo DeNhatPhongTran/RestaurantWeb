@@ -26,7 +26,7 @@ export default function LoginPage() {
 
         const role = response.data.user.role?.role_name;
         console.log('User role:', role);
-        navigate('/home');
+        navigate('/tables');
       } else {
         setError(response.data.message || 'Đăng nhập không thành công');
       }

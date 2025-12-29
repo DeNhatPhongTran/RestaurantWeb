@@ -10,8 +10,8 @@ export const ROLE_PERMISSIONS = {
   manager: {
     label: 'Quản Lý',
     navItems: [
-      { icon: 'Users', label: 'Nhân Viên', href: '/staff' },
       { icon: 'Store', label: 'Bàn', href: '/tables' },
+      { icon: 'Users', label: 'Nhân Viên', href: '/staff' },
       { icon: 'UtensilsCrossed', label: 'Quản Lý Menu', href: '/dish_menu' },
     ],
     allowedRoutes: [
@@ -57,12 +57,14 @@ export const ROLE_PERMISSIONS = {
   cashier: {
     label: 'Thu Ngân',
     navItems: [
+      { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
       { icon: 'FileText', label: 'Hóa Đơn', href: '/invoices', exact: true },
     ],
     allowedRoutes: [
       '/invoices',
       '/profile',
       '/reset_password',
+      '/tables'
     ],
   },
 

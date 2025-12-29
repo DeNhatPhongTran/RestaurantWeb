@@ -22,6 +22,7 @@ export default function StaffDelivery() {
             const response = await apiCall('/api/orderitems/waiter/delivery', { method: 'GET' })
             if (response.success) {
                 setOrders(response.data.data)
+                console.log("orders", orders)
             } else {
                 setError(response.message || 'Failed to fetch orders')
             }

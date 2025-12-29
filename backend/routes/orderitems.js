@@ -321,25 +321,25 @@ router.get('/waiter/delivery', async (req, res) => {
   try {
     // Query OrderItems by status
     const [cooked, cooking, waiting, served] = await Promise.all([
-      OrderItem.find({ status: 'cooked' })
+      OrderItem.find({ status: 'cooked', serving_status: { $ne: 'served' } }) // Món đã nấu nhưng chưa phục vụ
         .populate('item', 'name price image category')
         .populate('reservation', '_id')
         .sort({ ordered_at: 1 })
         .lean(),
       
-      OrderItem.find({ status: 'cooking' })
+      OrderItem.find({ status: 'cooking', serving_status: { $ne: 'served' } }) // Món đang nấu nhưng chưa phục vụ
         .populate('item', 'name price image category')
         .populate('reservation', '_id')
         .sort({ ordered_at: 1 })
         .lean(),
 
-      OrderItem.find({ status: 'waiting' })
+      OrderItem.find({ status: 'waiting', serving_status: { $ne: 'served' } }) // Món đang chờ nhưng chưa phục vụ
         .populate('item', 'name price image category')
         .populate('reservation', '_id')
         .sort({ ordered_at: 1 })
         .lean(),
 
-      OrderItem.find({ serving_status: 'served' })
+      OrderItem.find({ serving_status: 'served' }) // Món đã phục vụ
         .populate('item', 'name price image category')
         .populate('reservation', '_id')
         .sort({ ordered_at: -1 })
@@ -396,6 +396,7 @@ router.get('/waiter/delivery', async (req, res) => {
     });
   }
 });
+
 
 // GET /api/orderitems/chef/orders - Get orders for chef (kitchen)
 // Only 3 categories: waiting, cooking, cooked (no served items)
