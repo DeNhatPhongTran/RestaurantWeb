@@ -28,6 +28,7 @@ const TableManagement = () => {
     const [selectedReservation, setSelectedReservation] = useState(null)
 
     const userRole = userInfo?.role.role_name
+    const token = localStorage.getItem('token');
 
     // Fetch tables
     useEffect(() => {
@@ -99,6 +100,10 @@ const TableManagement = () => {
         try {
             const res = await apiCall('/api/tables', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: JSON.stringify(tableData),
             })
 
@@ -121,6 +126,10 @@ const TableManagement = () => {
         try {
             const res = await apiCall(`/api/tables/${selectedTable._id}`, {
                 method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: JSON.stringify(updatedData),
             })
 

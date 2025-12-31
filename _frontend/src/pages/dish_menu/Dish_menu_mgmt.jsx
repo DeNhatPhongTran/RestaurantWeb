@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { AlertTriangle } from "lucide-react";
 
 export default function Dish_menu_mgmt() {
     const { apiUrl } = useApi();
@@ -26,7 +27,7 @@ export default function Dish_menu_mgmt() {
         setDishes(body);
 
         console.log(body)
-        
+
     };
 
     const createNewDish = async () => {
@@ -119,7 +120,7 @@ export default function Dish_menu_mgmt() {
                             <SelectTrigger className="w-50">
                                 <SelectValue placeholder="Lọc theo phân loại" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="z-50 bg-white">
                                 <SelectItem value=" ">Tất cả loại</SelectItem>
                                 <SelectItem value="Món khai vị">Món khai vị</SelectItem>
                                 <SelectItem value="Món chính">Món chính</SelectItem>
@@ -133,13 +134,14 @@ export default function Dish_menu_mgmt() {
                             <SelectTrigger className="w-50">
                                 <SelectValue placeholder="Lọc theo trạng thái" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="z-50 bg-white">
+                                <SelectItem value=" ">Tất cả</SelectItem>
                                 <SelectItem value="Đang phục vụ">Đang phục vụ</SelectItem>
                                 <SelectItem value="Dừng phục vụ">Dừng phục vụ</SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => fetchAllData()}>Làm mới</Button>
+                        <Button className="bg-yellow-400 hover:bg-yellow-500 text-black" onClick={() => fetchAllData()}>Làm mới</Button>
                     </div>
 
                     <p className="text-sm text-muted-foreground mb-2">
@@ -156,19 +158,52 @@ export default function Dish_menu_mgmt() {
                             return (
                                 <Card key={dish._id} className="overflow-hidden">
                                     <img src={dish.image} alt={dish.name} className="h-32 object-cover" />
-                                    <CardContent className="p-3 pt-0">
-                                        <div className="font-medium">{dish.name}</div>
-                                        <div>({dish.status})</div>
-                                        <div className="text-sm text-muted-foreground">
+                                    <CardContent className="p-3 pt-2 flex flex-col h-[160px]">
+                                        {/* HEADER */}
+                                        <div className="space-y-1">
+                                            {/* Tên món – chiếm không gian cố định */}
+                                            <div
+                                                className="font-medium text-sm leading-tight line-clamp-2 min-h-[1.8rem]"
+                                                title={dish.name}
+                                            >
+                                                {dish.name}
+                                            </div>
+
+                                            {/* Trạng thái – dạng badge */}
+                                            <span
+                                                className={`inline-block text-xs font-medium px-2 py-0.5 rounded-2 w-fit
+                                                    ${dish.status === "Đang phục vụ"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-red-100 text-red-700"
+                                                    }`}
+                                            >
+                                                {dish.status}
+                                            </span>
+                                        </div>
+
+                                        {/* GIÁ */}
+                                        <div className="text-sm text-muted-foreground mt-2">
                                             {dish.price.toLocaleString()}đ
                                         </div>
-                                        <div className="flex justify-between">
-                                            <Button size="sm" variant="outline"
+
+                                        {/* ACTIONS – luôn nằm dưới */}
+                                        <div className="flex justify-between gap-2 mt-auto">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="bg-yellow-200 hover:bg-yellow-400 text-black"
                                                 onClick={() => setEditDish(dish)}
-                                            >Sửa</Button>
-                                            <Button size="sm" variant="destructive"
+                                            >
+                                                Sửa
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="destructive"
+                                                className="flex-1 hover:bg-red-600"
                                                 onClick={() => setDeleteDish(dish)}
-                                            >Xóa</Button>
+                                            >
+                                                Xóa
+                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -177,11 +212,10 @@ export default function Dish_menu_mgmt() {
                     </div>
 
                     {/* Popup Edit */}
-                    <Dialog open={!!editDish} onOpenChange={() => setEditDish(null)}>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Chỉnh sửa thông tin món ăn</DialogTitle>
-                            </DialogHeader>
+                    <Dialog className="bg-black/10" open={!!editDish} onOpenChange={() => setEditDish(null)}>
+                        <DialogContent className="z-50 bg-white">                            <DialogHeader>
+                            <DialogTitle>Chỉnh sửa thông tin món ăn</DialogTitle>
+                        </DialogHeader>
                             {editDish && (
                                 <div className="space-y-2 text-sm grid grid-cols-2 items-center">
                                     <label>Tên món:</label>
@@ -205,28 +239,74 @@ export default function Dish_menu_mgmt() {
                                     </select>
                                     <label>Mô tả:</label>
                                     <Input id="editFormDesc" defaultValue={editDish.description} />
-                                    <Button onClick={() => sendEditDish()}>Lưu</Button>
+                                    <Button className="bg-orange-500 hover:bg-orange-600 text-white" onClick={() => sendEditDish()}>Lưu</Button>
                                 </div>
                             )}
                         </DialogContent>
                     </Dialog>
 
                     {/* Popup Delete */}
-                    <Dialog open={!!deleteDish} onOpenChange={() => setDeleteDish(null)}>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Xác nhận xóa</DialogTitle>
+                    <Dialog className="bg-black/10" open={!!deleteDish} onOpenChange={() => setDeleteDish(null)}>
+                        <DialogContent className="z-50 bg-white p-0 max-w-md rounded-2xl">
+                            {/* Header */}
+                            <DialogHeader className="px-6 pt-6">
+                                <DialogTitle className="flex items-center gap-2 text-red-600">
+                                    <AlertTriangle className="w-5 h-5" />
+                                    Xác nhận xóa món ăn
+                                </DialogTitle>
                             </DialogHeader>
+
+                            {/* Content */}
                             {deleteDish && (
-                                <div className="space-y-2">
-                                    <p>Bạn có chắc muốn xóa món ăn này?</p>
-                                    <p><strong>{deleteDish.name}</strong> - {deleteDish.price}đ</p>
-                                    <div className="flex gap-2">
-                                        <Button variant="outline" onClick={() => setDeleteDish(null)}>Hủy</Button>
-                                        <Button variant="destructive" onClick={() => confirmDelete()}>Xóa</Button>
+                                <div className="px-6 py-4">
+                                    {/* Warning box – giống layout chung */}
+                                    <div className="mb-4 p-4 rounded-lg bg-red-50 border border-red-200">
+                                        <p className="text-sm text-red-800 font-semibold">
+                                            ⚠️ Cảnh báo: Hành động này không thể hoàn tác
+                                        </p>
                                     </div>
+
+                                    {/* Info container */}
+                                    <div className="bg-secondary-50 rounded-lg p-4 space-y-2 mb-4">
+                                        <div className="flex justify-between">
+                                            <span className="text-secondary-600">Tên món</span>
+                                            <span className="font-semibold text-secondary-900">
+                                                {deleteDish.name}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex justify-between">
+                                            <span className="text-secondary-600">Giá</span>
+                                            <span className="font-semibold text-secondary-900">
+                                                {deleteDish.price.toLocaleString('vi-VN')}đ
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-secondary-700 mb-2">
+                                        Bạn có chắc chắn muốn xóa món ăn này?
+                                    </p>
                                 </div>
                             )}
+
+                            {/* Footer – button giữ nguyên vị trí */}
+                            <div className="flex gap-3 px-6 pb-6 pt-2 border-t border-secondary-200 bg-secondary-50">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => setDeleteDish(null)}
+                                >
+                                    Hủy
+                                </Button>
+
+                                <Button
+                                    variant="destructive"
+                                    className="flex-1"
+                                    onClick={confirmDelete}
+                                >
+                                    Xóa món
+                                </Button>
+                            </div>
                         </DialogContent>
                     </Dialog>
                 </div>

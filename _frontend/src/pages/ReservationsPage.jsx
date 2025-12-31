@@ -3,8 +3,9 @@ import { Plus, Search, Edit2, Trash2, Calendar, Users, Phone, Clock, AlertCircle
 import { Button } from '../components/ui/button'
 import { ModalHeader } from '../components/common'
 import { useApi } from '../context/ApiContext'
+import DeleteReservationConfirmModal from '../components/reservations/DeleteReservationConfirmModal'
 
-const ReservationsPage = ({userRole} ) => {
+const ReservationsPage = ({ userRole }) => {
     const { apiCall } = useApi()
     const [reservations, setReservations] = useState([])
     const [loading, setLoading] = useState(true)
@@ -14,6 +15,8 @@ const ReservationsPage = ({userRole} ) => {
     const [isTableSelectorOpen, setIsTableSelectorOpen] = useState(false)
     const [isCheckAvailableOpen, setIsCheckAvailableOpen] = useState(false)
     const [editingReservation, setEditingReservation] = useState(null)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [selectedReservation, setSelectedReservation] = useState(null)
 
     // Form state
     const [formData, setFormData] = useState({
@@ -207,19 +210,21 @@ const ReservationsPage = ({userRole} ) => {
     // ============================
     // DELETE RESERVATION
     // ============================
-    const handleDeleteReservation = async (reservationId) => {
-        if (!window.confirm('Bạn chắc chắn muốn xóa đơn đặt bàn này?')) return
+    const handleConfirmDeleteReservation = async (reservationId) => {
         try {
-            const res = await apiCall('/api/reservations/delete', { method: 'POST', body: JSON.stringify({ id: reservationId }) })
+            const res = await apiCall('/api/reservations/delete', {
+                method: 'POST',
+                body: JSON.stringify({ id: reservationId }),
+            })
+
             if (res.success || res.message === 'Xóa thành công') {
-                alert('✅ Xóa đơn đặt bàn thành công')
                 fetchReservations()
             } else {
                 alert(`❌ ${res.message || 'Xóa thất bại'}`)
             }
         } catch (error) {
-            console.error('Error deleting reservation:', error)
-            alert('❌ Lỗi khi xóa: ' + error.message)
+            console.error(error)
+            alert('❌ Lỗi khi xóa')
         }
     }
 
@@ -437,12 +442,15 @@ const ReservationsPage = ({userRole} ) => {
                                     >
                                         <Edit2 className="h-4 w-4" /> Sửa
                                     </button>
-                                    <button
-                                        onClick={() => handleDeleteReservation(res._id)}
-                                        className="flex-1 text-sm flex items-center justify-center gap-1 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                    <Button
+                                        variant="destructive"
+                                        onClick={() => {
+                                            setSelectedReservation(res)
+                                            setIsDeleteModalOpen(true)
+                                        }}
                                     >
-                                        <Trash2 className="h-4 w-4" /> Xóa
-                                    </button>
+                                        Xóa
+                                    </Button>
                                 </div>
                             </div>
                         ))}
@@ -490,7 +498,7 @@ const ReservationsPage = ({userRole} ) => {
                                 </div>
 
                                 {/* Right: Form */}
-                                <div className="w-96 p-6 space-y-4 flex flex-col">
+                                <div className="w-96 p-6 space-y-4 flex flex-col overflow-y-auto">
                                     {/* Customer Info */}
                                     <div>
                                         <label className="block text-sm font-semibold text-secondary-900 mb-2">
@@ -622,9 +630,16 @@ const ReservationsPage = ({userRole} ) => {
                                             Hủy
                                         </Button>
                                         <Button
-                                            variant="primary"
                                             size="md"
-                                            className="flex-1"
+                                            className={`
+                                                    flex-1
+                                                    h-8
+                                                    transition-colors
+                                                    ${editingReservation
+                                                    ? "bg-primary-500 hover:bg-primary-600 text-white"
+                                                    : "bg-red-500 hover:bg-red-600 text-white"
+                                                }
+                                            `}
                                             onClick={handleSubmitForm}
                                         >
                                             {editingReservation ? 'Cập Nhật' : 'Tạo Đơn'}
@@ -636,6 +651,15 @@ const ReservationsPage = ({userRole} ) => {
                     </div>
                 </>
             )}
+            <DeleteReservationConfirmModal
+                isOpen={isDeleteModalOpen}
+                reservation={selectedReservation}
+                onClose={() => {
+                    setIsDeleteModalOpen(false)
+                    setSelectedReservation(null)
+                }}
+                onConfirmDelete={handleConfirmDeleteReservation}
+            />
         </div>
     )
 }

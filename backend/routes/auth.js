@@ -11,9 +11,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
   if (!token) {
-    return res.status(401).json({ 
+    return res.status(401).json({
       success: false,
-      message: 'No token provided' 
+      message: 'No token provided'
     })
   }
   try {
@@ -21,41 +21,41 @@ export const verifyToken = (req, res, next) => {
     req.userId = decoded.userId
     next()
   } catch (error) {
-    res.status(401).json({ 
+    res.status(401).json({
       success: false,
-      message: 'Invalid token' 
+      message: 'Invalid token'
     })
   }
 }
 
 // POST /api/auth/register - Register new user
-router.post('/register', async (req, res) => {
+router.post('/register', verifyToken, async (req, res) => {
   try {
     const { fullname, username, password, phone } = req.body
 
     // Validate required fields
     if (!fullname || !username || !password) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Fullname, username, and password are required' 
+        message: 'Fullname, username, and password are required'
       })
     }
 
     // Check if username already exists
     const existingUser = await User.findOne({ username })
     if (existingUser) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Username already exists' 
+        message: 'Username already exists'
       })
     }
 
     // Get default waiter role
     const waiterRole = await Role.findOne({ role_name: 'waiter' })
     if (!waiterRole) {
-      return res.status(500).json({ 
+      return res.status(500).json({
         success: false,
-        message: 'Waiter role not found' 
+        message: 'Waiter role not found'
       })
     }
 
@@ -91,10 +91,10 @@ router.post('/register', async (req, res) => {
     })
   } catch (error) {
     console.error('Register error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Registration failed', 
-      error: error.message 
+      message: 'Registration failed',
+      error: error.message
     })
   }
 })
@@ -106,27 +106,27 @@ router.post('/login', async (req, res) => {
 
     // Validate required fields
     if (!username || !password) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Username and password are required' 
+        message: 'Username and password are required'
       })
     }
 
     // Find user by username
     const user = await User.findOne({ username }).populate('role', 'role_name')
     if (!user) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid username or password' 
+        message: 'Invalid username or password'
       })
     }
 
     // Compare password with hashed password
     const passwordMatch = await bcrypt.compare(password, user.password_hash)
     if (!passwordMatch) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Invalid username or password' 
+        message: 'Invalid username or password'
       })
     }
 
@@ -147,10 +147,10 @@ router.post('/login', async (req, res) => {
     })
   } catch (error) {
     console.error('Login error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Login failed', 
-      error: error.message 
+      message: 'Login failed',
+      error: error.message
     })
   }
 })
@@ -161,15 +161,15 @@ router.get('/me', verifyToken, async (req, res) => {
     const user = await User.findById(req.userId)
       .select('-password_hash')
       .populate('role', 'role_name')
-    
+
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
-    
-    res.json({ 
+
+    res.json({
       success: true,
       user: {
         id: user._id,
@@ -181,9 +181,9 @@ router.get('/me', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Get user error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to get user' 
+      message: 'Failed to get user'
     })
   }
 })
@@ -192,7 +192,7 @@ router.get('/me', verifyToken, async (req, res) => {
 router.put('/me', verifyToken, async (req, res) => {
   try {
     const { fullname, phone } = req.body
-    
+
     const user = await User.findByIdAndUpdate(
       req.userId,
       { fullname, phone },
@@ -202,9 +202,9 @@ router.put('/me', verifyToken, async (req, res) => {
       .populate('role', 'role_name')
 
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
 
@@ -221,9 +221,9 @@ router.put('/me', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Update user error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to update user' 
+      message: 'Failed to update user'
     })
   }
 })
@@ -231,9 +231,9 @@ router.put('/me', verifyToken, async (req, res) => {
 // POST /api/auth/logout - Logout user (requires token)
 router.post('/logout', verifyToken, (req, res) => {
   // Token is stored on client side, so logout just confirms the action
-  res.json({ 
+  res.json({
     success: true,
-    message: 'Logged out successfully' 
+    message: 'Logged out successfully'
   })
 })
 
@@ -241,66 +241,66 @@ router.post('/logout', verifyToken, (req, res) => {
 router.post('/change-password', verifyToken, async (req, res) => {
   try {
     const { oldPassword, newPassword, confirmPassword } = req.body
-    
+
     // Validate required fields
     if (!oldPassword || !newPassword || !confirmPassword) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'All password fields are required' 
+        message: 'All password fields are required'
       })
     }
-    
+
     // Check if new passwords match
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'New passwords do not match' 
+        message: 'New passwords do not match'
       })
     }
-    
+
     // Check if new password is different from old password
     if (oldPassword === newPassword) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'New password must be different from current password' 
+        message: 'New password must be different from current password'
       })
     }
-    
+
     // Find user and verify old password
     const user = await User.findById(req.userId)
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
-    
+
     const passwordMatch = await bcrypt.compare(oldPassword, user.password_hash)
     if (!passwordMatch) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         success: false,
-        message: 'Current password is incorrect' 
+        message: 'Current password is incorrect'
       })
     }
-    
+
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10)
-    
+
     // Update password
     user.password_hash = hashedPassword
     user.change_password = true
     await user.save()
-    
+
     res.json({
       success: true,
       message: 'Password changed successfully'
     })
   } catch (error) {
     console.error('Change password error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to change password', 
-      error: error.message 
+      message: 'Failed to change password',
+      error: error.message
     })
   }
 })
@@ -312,7 +312,7 @@ router.get('/users/list', verifyToken, async (req, res) => {
       .select('_id fullname username phone role state created_at')
       .populate('role', 'role_name')
       .sort({ created_at: -1 })
-    
+
     res.json({
       success: true,
       message: 'Users fetched successfully',
@@ -321,10 +321,10 @@ router.get('/users/list', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Error fetching users:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to fetch users', 
-      error: error.message 
+      message: 'Failed to fetch users',
+      error: error.message
     })
   }
 })
@@ -335,23 +335,23 @@ router.get('/users/:id', verifyToken, async (req, res) => {
     const user = await User.findById(req.params.id)
       .select('_id fullname username phone role state change_password created_at')
       .populate('role', 'role_name')
-    
+
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
-    
-    res.json({ 
+
+    res.json({
       success: true,
       data: user
     })
   } catch (error) {
     console.error('Error fetching user:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to fetch user' 
+      message: 'Failed to fetch user'
     })
   }
 })
@@ -360,36 +360,36 @@ router.get('/users/:id', verifyToken, async (req, res) => {
 router.post('/users', verifyToken, async (req, res) => {
   try {
     const { fullname, username, password, phone, role } = req.body
-    
+
     // Validate required fields
     if (!fullname || !username || !password || !role) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Fullname, username, password, and role are required' 
+        message: 'Fullname, username, password, and role are required'
       })
     }
-    
+
     // Check if username already exists
     const existingUser = await User.findOne({ username })
     if (existingUser) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Username already exists' 
+        message: 'Username already exists'
       })
     }
-    
+
     // Check if role exists
     const roleExists = await Role.findById(role)
     if (!roleExists) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'Role not found' 
+        message: 'Role not found'
       })
     }
-    
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
-    
+
     // Create new user
     const user = new User({
       fullname,
@@ -399,10 +399,10 @@ router.post('/users', verifyToken, async (req, res) => {
       role,
       change_password: false // New users must change password on first login
     })
-    
+
     await user.save()
     await user.populate('role', 'role_name')
-    
+
     res.status(201).json({
       success: true,
       message: 'User created successfully',
@@ -417,10 +417,10 @@ router.post('/users', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Error creating user:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to create user', 
-      error: error.message 
+      message: 'Failed to create user',
+      error: error.message
     })
   }
 })
@@ -429,24 +429,35 @@ router.post('/users', verifyToken, async (req, res) => {
 router.put('/users/:id', verifyToken, async (req, res) => {
   try {
     const { fullname, phone, role, state } = req.body
-    
+    const { id } = req.params
+
     const updateData = {}
     if (fullname) updateData.fullname = fullname
     if (phone !== undefined) updateData.phone = phone
     if (role) {
       const roleExists = await Role.findById(role)
       if (!roleExists) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           success: false,
-          message: 'Role not found' 
+          message: 'Role not found'
         })
       }
+
+      if (roleExists.role_name == "manager") {
+        return res.status(404).json({
+          success: false,
+          message: 'Cannot edit role manager'
+        })
+      }
+
       updateData.role = role
     }
+
+
     if (state && ['working', 'off_work'].includes(state)) {
       updateData.state = state
     }
-    
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -454,14 +465,14 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     )
       .select('-password_hash')
       .populate('role', 'role_name')
-    
+
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
-    
+
     res.json({
       success: true,
       message: 'User updated successfully',
@@ -476,9 +487,9 @@ router.put('/users/:id', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Error updating user:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to update user' 
+      message: 'Failed to update user'
     })
   }
 })
@@ -488,21 +499,32 @@ router.delete('/users/:id', verifyToken, async (req, res) => {
   try {
     // Prevent deleting the current user
     if (req.params.id === req.userId) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: 'Cannot delete your own account' 
+        message: 'Cannot delete your own account'
       })
     }
-    
-    const user = await User.findByIdAndDelete(req.params.id)
-    
+
+    const user = await User.findById(req.params.id)
+    console.log(user)
+
     if (!user) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'User not found' 
+        message: 'User not found'
       })
     }
-    
+
+    const role = await Role.findById(user.role)
+    if (role.role_name == "manager") {
+      return res.status(404).json({
+        success: false,
+        message: 'Cannot Delete Role Manager'
+      })
+    }
+
+    await user.deleteOne()
+
     res.json({
       success: true,
       message: 'User deleted successfully',
@@ -514,10 +536,10 @@ router.delete('/users/:id', verifyToken, async (req, res) => {
     })
   } catch (error) {
     console.error('Error deleting user:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Failed to delete user', 
-      error: error.message 
+      message: 'Failed to delete user',
+      error: error.message
     })
   }
 })

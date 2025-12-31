@@ -44,7 +44,7 @@ export const ROLE_PERMISSIONS = {
     label: 'Đầu Bếp',
     navItems: [
       { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
-      { icon: 'UtensilsCrossed', label: 'Gọi Món', href: '/kitchen' },
+      { icon: 'UtensilsCrossed', label: 'Chế biến', href: '/kitchen' },
     ],
     allowedRoutes: [
       '/kitchen',
@@ -58,7 +58,7 @@ export const ROLE_PERMISSIONS = {
     label: 'Thu Ngân',
     navItems: [
       { icon: 'Store', label: 'Bàn', href: '/tables', exact: true },
-      { icon: 'FileText', label: 'Hóa Đơn', href: '/invoices', exact: true },
+      { icon: 'FileText', label: 'Thanh toán & Hóa đơn', href: '/invoices', exact: true },
     ],
     allowedRoutes: [
       '/invoices',

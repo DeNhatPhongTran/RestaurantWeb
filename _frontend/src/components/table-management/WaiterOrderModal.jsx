@@ -1,4 +1,4 @@
-import { ChefHat, Plus, Trash2, ShoppingCart, Edit2, Clock } from 'lucide-react'
+import { ChefHat, Plus, Trash2, ShoppingCart, Edit2, Clock, CheckCircle2, Hourglass, Lock} from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { ModalHeader } from '../common'
 import { Button } from '../ui/button'
@@ -14,6 +14,8 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
   const [menuItems, setMenuItems] = useState([])
   const [editingItemId, setEditingItemId] = useState(null)
   const [editData, setEditData] = useState({})
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+
 
   useEffect(() => {
     if (isOpen && initialReservation?.data) {
@@ -25,23 +27,6 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
       setOrderItems([])
     }
   }, [isOpen, initialReservation])
-
-  const refetchOrderItems = async () => {
-    if (!reservation?._id) return;
-    setLoading(true);
-    try {
-      const res = await apiCall(`/api/reservations/${reservation._id}`, { method: 'GET' });
-      if (res.success) {
-        console.log('Dữ liệu sau khi gọi refetch:', res.data);
-        setReservation(res.data);
-        setOrderItems(res.data.orderItems || []);
-      }
-    } catch (error) {
-      console.error('Error fetching order items:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   const fetchMenuItems = async () => {
@@ -63,8 +48,6 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
   }
 
   const handleDeleteItem = async (itemId) => {
-    if (!window.confirm('Bạn có chắc muốn xóa món này?')) return
-
     try {
       const res = await apiCall(`/api/orderitems/${itemId}`, {
         method: 'DELETE',
@@ -131,7 +114,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
       }
 
       const newOrderItems = selectedItems.map(item => ({
-        _id: Date.now(),  
+        _id: Date.now(),
         item: item.menuItem,
         quantity: item.quantity,
         note: item.note || '',
@@ -196,132 +179,207 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
     return (
       <div
         key={item._id}
-        className={`rounded-lg p-3 border-2 transition-all ${isEditing
-          ? 'border-primary-500 bg-primary-50'
-          : 'border-secondary-100 bg-white hover:border-secondary-200'
+        className={`rounded-lg border-2 p-3 transition-all flex flex-col
+        ${isEditing
+            ? 'border-primary-500 bg-primary-50'
+            : 'border-secondary-100 bg-white hover:border-secondary-200'
           }`}
       >
         {isEditing ? (
-          // Edit Mode
+          /* ================= EDIT MODE ================= */
           <div className="space-y-2">
             <div>
-              <label className="text-xs font-semibold text-secondary-700 block mb-1">
+              <label className="text-xs font-semibold text-secondary-700 mb-1 block">
                 Số lượng
               </label>
               <input
                 type="number"
                 min="1"
                 value={editData.quantity}
-                onChange={(e) => setEditData({ ...editData, quantity: Math.max(1, parseInt(e.target.value) || 1) })}
-                className="w-full px-2 py-1 border border-primary-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    quantity: Math.max(1, parseInt(e.target.value) || 1),
+                  })
+                }
+                className="w-full px-2 py-1 text-sm border rounded focus:ring-2 focus:ring-primary-500"
               />
             </div>
+
             <div>
-              <label className="text-xs font-semibold text-secondary-700 block mb-1">
+              <label className="text-xs font-semibold text-secondary-700 mb-1 block">
                 Ghi chú
               </label>
               <input
                 type="text"
                 value={editData.note}
-                onChange={(e) => setEditData({ ...editData, note: e.target.value })}
-                className="w-full px-2 py-1 border border-primary-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                onChange={(e) =>
+                  setEditData({ ...editData, note: e.target.value })
+                }
+                className="w-full px-2 py-1 text-sm border rounded focus:ring-2 focus:ring-primary-500"
               />
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex gap-2 pt-1">
               <button
                 onClick={() => handleSaveEdit(item._id)}
-                className="flex-1 bg-primary-500 text-white py-1.5 rounded text-xs font-semibold hover:bg-primary-600 transition-colors"
+                className="flex-1 bg-primary-500 text-white py-1.5 rounded text-xs font-semibold hover:bg-primary-600"
               >
-                ✓ Lưu
+                Lưu
               </button>
               <button
                 onClick={() => setEditingItemId(null)}
-                className="flex-1 bg-secondary-200 text-secondary-700 py-1.5 rounded text-xs font-semibold hover:bg-secondary-300 transition-colors"
+                className="flex-1 bg-secondary-200 text-secondary-700 py-1.5 rounded text-xs font-semibold hover:bg-secondary-300"
               >
                 Hủy
               </button>
             </div>
           </div>
         ) : (
-          // Display Mode
+          /* ================= DISPLAY MODE ================= */
           <>
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-secondary-900 text-sm mb-1">
-                  {item.item?.name || 'Không xác định'}
-                </p>
+            {/* HEADER: NAME + QUANTITY */}
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <p className="font-semibold text-sl text-secondary-900 line-clamp-2">
+                {item.item?.name || 'Không xác định'}
+              </p>
 
-                {/* Status Badges */}
-                <div className="flex items-center gap-2 flex-wrap mb-2">
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-semibold ${item.status === 'waiting'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : item.status === 'cooking'
-                        ? 'bg-orange-100 text-orange-800'
-                        : 'bg-green-100 text-green-800'
-                      }`}
-                  >
-                    {item.status === 'waiting' ? '⏳ Chờ' : item.status === 'cooking' ? '🍳 Nấu' : '✅ Xong'}
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-semibold ${item.serving_status === 'served'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-800'
-                      }`}
-                  >
-                    {item.serving_status === 'served' ? '🍽️ Phục vụ' : '⏱️ Chưa'}
-                  </span>
-                </div>
-
-                {/* Quantity and Price */}
-                <div className="flex items-center justify-between text-xs text-secondary-600 mb-1">
-                  <span>
-                    SL: <span className="font-bold text-secondary-900">{item.quantity}</span>
-                  </span>
-                  <span className="font-semibold text-primary-600">
-                    {(item.price_at_time * item.quantity).toLocaleString('vi-VN')}₫
-                  </span>
-                </div>
-
-                {/* Time */}
-                {item.ordered_at && (
-                  <div className="text-xs text-secondary-500 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {formatTime(item.ordered_at)}
-                  </div>
-                )}
-
-                {/* Note */}
-                {item.note && (
-                  <p className="text-xs text-secondary-600 italic mt-1 line-clamp-1">
-                    📝 {item.note}
-                  </p>
-                )}
+              {/* QUANTITY BADGE */}
+              <div className="flex-shrink-0">
+                <span className="inline-flex items-center justify-center min-w-[32px] h-7 px-2
+                rounded-md border border-primary-300 bg-primary-50
+                text-primary-700 text-xs font-bold">
+                  x{item.quantity}
+                </span>
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* STATUS */}
+            <div className="flex items-center gap-2 mb-2">
+              <span
+                className={`inline-flex items-center gap-1 text-xs px-2 py rounded-full font-semibold
+                ${item.status === 'waiting'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : item.status === 'cooking'
+                      ? 'bg-orange-100 text-orange-800'
+                      : 'bg-green-100 text-green-800'
+                  }`}
+              >
+                {item.status === 'waiting' && <Hourglass className="w-3 h-3" />}
+                {item.status === 'cooking' && <ChefHat className="w-3 h-3" />}
+                {item.status === 'cooked' && <CheckCircle2 className="w-3 h-3" />}
+                <span>
+                  {item.status === 'waiting'
+                    ? 'Chờ nấu'
+                    : item.status === 'cooking'
+                      ? 'Đang nấu'
+                      : 'Hoàn thành'}
+                </span>
+              </span>
+            </div>
+
+            {/* PRICE + TIME */}
+            <div className="flex justify-between items-center text-xs mb-1">
+              {/* <span className="font-semibold text-primary-600">
+                {(item.price_at_time * item.quantity).toLocaleString('vi-VN')}₫
+              </span> */}
+
+              {item.ordered_at && (
+                <span className="flex items-center gap-1 text-secondary-500 ml-auto">
+                  <Clock className="w-3 h-3" />
+                  {formatTime(item.ordered_at)}
+                </span>
+              )}
+            </div>
+
+            {/* NOTE */}
+            {item.note && (
+              <p className="text-xs text-secondary-600 italic line-clamp-2">
+                {item.note}
+              </p>
+            )}
+
+            {/* ACTIONS */}
             {canEdit && (
-              <div className="flex gap-2 pt-2 border-t border-secondary-100">
+              <div className="flex gap-2 mt-auto pt-2 border-t border-secondary-100">
                 <button
                   onClick={() => startEditItem(item)}
-                  className="flex-1 text-xs text-primary-600 hover:text-primary-700 hover:bg-primary-50 p-1.5 rounded transition-colors flex items-center justify-center gap-1 font-medium"
+                  className="flex-1 flex items-center justify-center gap-1 text-xs
+                  text-primary-600 hover:bg-primary-50 p-1.5 rounded font-medium"
                 >
-                  <Edit2 className="h-3 w-3" /> Sửa
+                  <Edit2 className="w-3 h-3" />
+                  Sửa
                 </button>
                 <button
-                  onClick={() => handleDeleteItem(item._id)}
-                  className="flex-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors flex items-center justify-center gap-1 font-medium"
+                  onClick={() => setConfirmDeleteId(item._id)}
+                  className="flex-1 flex items-center justify-center gap-1 text-xs
+                  text-red-600 hover:bg-red-50 p-1.5 rounded font-medium"
                 >
-                  <Trash2 className="h-3 w-3" /> Xóa
+                  <Trash2 className="w-3 h-3" />
+                  Xóa
                 </button>
               </div>
             )}
+
             {isLocked && (
-              <div className="text-xs text-secondary-500 italic mt-2 p-1.5 bg-secondary-50 rounded text-center">
-                ⛔ Không thể chỉnh sửa khi đang nấu/đã nấu xong
+              <div className="mt-2 flex items-center justify-center gap-1
+              text-xs text-secondary-500 bg-secondary-50 rounded p-1">
+                <Lock className="w-3 h-3" />
+                Không thể chỉnh sửa
               </div>
             )}
+
+            {confirmDeleteId && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
+                <div
+                  className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-sm overflow-hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-secondary-200">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    <h3 className="font-semibold text-secondary-900">
+                      Xác nhận xóa
+                    </h3>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    {/* Warning box */}
+                    <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200">
+                      <p className="text-sm text-red-800 font-semibold">
+                        ⚠️ Hành động này không thể hoàn tác
+                      </p>
+                    </div>
+
+                    <p className="text-sm text-secondary-700 mb-4">
+                      Bạn có chắc chắn muốn xóa món này không?
+                    </p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex gap-2 p-3 border-t border-secondary-200 bg-secondary-50">
+                    <button
+                      onClick={() => setConfirmDeleteId(null)}
+                      className="flex-1 bg-secondary-200 text-secondary-700 py-2 rounded text-sm font-semibold hover:bg-secondary-300"
+                    >
+                      Hủy
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        handleDeleteItem(confirmDeleteId)
+                        setConfirmDeleteId(null)
+                      }}
+                      className="flex-1 bg-red-600 text-white py-2 rounded text-sm font-semibold hover:bg-red-700"
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </>
         )}
       </div>
@@ -331,7 +389,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
   if (!isOpen || !table || !reservation) return null
 
   const subtotal = orderItems.reduce((sum, item) => sum + item.price_at_time * item.quantity, 0)
-  const tax = subtotal * 0.12
+  const tax = subtotal * 0.1
   const total = subtotal + tax
 
   return (
@@ -353,7 +411,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
           onClick={(e) => e.stopPropagation()}
         >
           <ModalHeader
-            title={`👨‍🍳 Gọi Món - Bàn ${table.name}`}
+            title={`Gọi Món - Bàn ${table.name}`}
             icon={ChefHat}
             onClose={onClose}
           />
@@ -402,7 +460,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
                           <h4 className="text-xs font-bold text-yellow-700 bg-yellow-100 px-3 py-1.5 rounded-full inline-block mb-2">
                             ⏳ CHỜ NẤU ({groupedItems.waiting.length})
                           </h4>
-                          <div className="space-y-2">
+                          <div className="space-y-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {groupedItems.waiting.map(item => renderOrderItemCard(item))}
                           </div>
                         </div>
@@ -414,7 +472,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
                           <h4 className="text-xs font-bold text-orange-700 bg-orange-100 px-3 py-1.5 rounded-full inline-block mb-2">
                             🍳 ĐANG NẤU ({groupedItems.cooking.length})
                           </h4>
-                          <div className="space-y-2">
+                          <div className="space-y-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {groupedItems.cooking.map(item => renderOrderItemCard(item))}
                           </div>
                         </div>
@@ -426,7 +484,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
                           <h4 className="text-xs font-bold text-green-700 bg-green-100 px-3 py-1.5 rounded-full inline-block mb-2">
                             ✅ ĐÃ XONG ({groupedItems.cooked.length})
                           </h4>
-                          <div className="space-y-2">
+                          <div className="space-y-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {groupedItems.cooked.map(item => renderOrderItemCard(item))}
                           </div>
                         </div>
@@ -435,7 +493,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
                   )}
                 </div>
 
-                {/* Summary */}
+                Tổng đơn
                 {orderItems.length > 0 && (
                   <div className="bg-secondary-50 rounded-lg p-3 space-y-1.5 flex-shrink-0">
                     <div className="flex justify-between text-xs text-secondary-600">
@@ -445,7 +503,7 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
                       </span>
                     </div>
                     <div className="flex justify-between text-xs text-secondary-600">
-                      <span>Thuế 12%</span>
+                      <span>Thuế 10%</span>
                       <span className="font-semibold text-secondary-900">
                         {Math.round(tax).toLocaleString('vi-VN')}₫
                       </span>
@@ -500,19 +558,20 @@ const WaiterOrderModal = ({ isOpen, onClose, table, reservation: initialReservat
             <Button variant="outline" size="md" className="flex-1" onClick={onClose}>
               Đóng
             </Button>
-            <Button
+            {/* <Button
               variant="primary"
               size="md"
               className="flex-1"
               onClick={() => setIsAddItemOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" /> Gọi Thêm Món
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
     </>
+
+
   )
 }
-
 export default WaiterOrderModal

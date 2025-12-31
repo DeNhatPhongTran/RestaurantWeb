@@ -112,9 +112,18 @@ const StaffManagement = () => {
   const handleSaveEdit = async (updatedData) => {
     if (!selectedUser || roleName !== 'manager') return
 
+    if (selectedUser.role?.role_name === 'manager' && updatedData.role?.role_name !== 'manager') {
+      alert('Không thể thay đổi role của quản lý khác')
+      return
+    }
+
     try {
       const res = await apiCall(`/api/auth/users/${selectedUser._id}`, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify(updatedData),
       })
 

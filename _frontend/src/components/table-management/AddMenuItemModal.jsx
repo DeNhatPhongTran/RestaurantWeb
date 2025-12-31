@@ -160,7 +160,7 @@ const AddMenuItemModal = ({
 
               {/* Menu Items Grid */}
               <div className="flex-1 overflow-y-auto min-h-0">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                   {filteredItems.map(item => {
                     const isSelected = selectedItems.some(s => s.menuItem._id === item._id)
                     const selectedItem = selectedItems.find(s => s.menuItem._id === item._id)
@@ -179,7 +179,7 @@ const AddMenuItemModal = ({
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="w-full h-32 object-cover rounded-t-md"
+                            className="w-full h-48 object-cover rounded-t-md"
                           />
                         )}
 

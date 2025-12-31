@@ -130,7 +130,7 @@ export default function KitchenOrder() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Chế biến</h1>
-              <p className="text-gray-600 text-sm mt-1">Chế biến</p>
+              <p className="text-gray-600 text-sm mt-1">Tiếp nhận và chế biến các món ăn</p>
             </div>
             <button
               onClick={() => {
